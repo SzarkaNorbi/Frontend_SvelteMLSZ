@@ -1,25 +1,40 @@
 <script>
     import logo from '$lib/images/logo.png';
-    import AuthApi from "../../../generated-client/src/api/AuthApi.js"
+    import AuthApi from "../../../generated-client/src/api/AuthApi.js";
 
-    const loginInstance = new AuthApi()
-    async function handleLogin() {
-        
-        const loginModel = {
-            email: email.value,
-            password: password.value,
-            rememberMe: false
+    const loginInstance = new AuthApi();
+
+    async function handleLogin(event) {
+        event.preventDefault(); 
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+            document.getElementById("error-message").textContent = "Kérlek, add meg az e-mail címedet és a jelszavadat!";
+            document.getElementById("error-message").style.display = "block";
+            return;
         }
+
+        const loginModel = {
+            email: email,
+            password: password,
+            rememberMe: false
+        };
+
         console.log(loginModel);
+
         loginInstance.apiAuthLoginPost({ loginModel }, (error, data, response) => {
             if (error) {
-                console.error("Login erro:", error);
+                console.error("Login error:", error);
+                document.getElementById("error-message").textContent = "Hibás e-mail vagy jelszó!";
+                document.getElementById("error-message").style.display = "block"; 
             } else {
-                console.log("Login successful", response)
-                localStorage.setItem("AuthToken", JSON.parse(response.text).token)
-                window.location.href = "/admin/surface"
+                console.log("Login successful", response);
+                localStorage.setItem("AuthToken", JSON.parse(response.text).token);
+                window.location.href = "/admin/surface";
             }
-        })
+        });
     }
 </script>
 
@@ -43,7 +58,7 @@
                     <i class="fas fa-user-cog"></i>
                 </div>
                 <h2 class="section-title text-center">Adminisztrációs Felület</h2>
-                <form id="adminForm" onsubmit={handleLogin}>
+                <form id="adminForm" on:submit={handleLogin}>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email cím</label>
                         <input type="email" class="form-control" id="email" placeholder="Adja meg az email címét">
@@ -52,6 +67,9 @@
                         <label for="password" class="form-label">Jelszó</label>
                         <input type="password" class="form-control" id="password" placeholder="Adja meg a jelszavát">
                     </div>
+
+                    <p id="error-message" class="error-message" style="display: none;"></p>
+
                     <div class="text-center">
                         <button type="submit" class="btn btn-main">Belépés</button>
                     </div>
@@ -118,6 +136,13 @@
     .icon-container i {
         font-size: 4rem;
         color: #007bff;
+    }
+
+    .error-message {
+        color: #ff0000;
+        font-size: 1.2rem;
+        margin-top: 10px;
+        text-align: center;
     }
 
     @media (max-width: 768px) {
