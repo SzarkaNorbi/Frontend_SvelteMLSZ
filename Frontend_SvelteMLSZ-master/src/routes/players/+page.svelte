@@ -1,137 +1,188 @@
 <script>
-  import NemzetisegApi from '../../../generated-client/src/api/NemzetisegApi.js';
-  import JatekosApi from '../../../generated-client/src/api/JatekosApi.js';
-  import MediaApi from '../../../generated-client/src/api/MediaApi.js';
-  import { onMount } from 'svelte';
-  
-  let jatekosok = [];  
+	import NemzetisegApi from '../../../generated-client/src/api/NemzetisegApi.js';
+	import JatekosApi from '../../../generated-client/src/api/JatekosApi.js';
+	import CsapatApi from '../../../generated-client/src/api/CsapatApi.js';
+	import MediaApi from '../../../generated-client/src/api/MediaApi.js';
+	import { onMount } from 'svelte';
 
-  onMount(() => {
-      const apiInstance = new JatekosApi();
-      apiInstance.jatekosGet((error, data, response) => {
-        if (error) {
-          console.error(error);
-        } else {
-          const mediaApi = new MediaApi()
-          data.forEach(element => {
-            mediaApi.mediaFilesIdGet(element.media_Id, (error, data, response) => {
-              console.log(response.text);
-            })
-          });
-          jatekosok = data;
-        }
-      });
-  });
+	let jatekosok = [];
+
+	onMount(() => {
+		const jatekosApi = new JatekosApi();
+
+		// Játékosok lekérése
+		jatekosApi.jatekosGet((error, data, response) => {
+			if (error) {
+				console.error(error);
+			} else {
+				jatekosok = data;
+			}
+		});
+	});
+
+	// Segédfüggvények a megfelelő szövegek lekérésére
+	async function getNemzetisegName(nemzetisegId) {
+		const nemzetisegApi = new NemzetisegApi();
+		try {
+			const response = await new Promise((resolve, reject) => {
+				nemzetisegApi.nemzetisegIdGet(nemzetisegId, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data.nemzetisegNev);
+					}
+				});
+			});
+			return response;
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+	}
+
+	function convertPozicio(id) {
+		switch (id) {
+			case 0:
+				return 'Kapus';
+			case 1:
+				return 'Védő';
+			case 2:
+				return 'Középpályás';
+			case 3:
+				return 'Csatár';
+		}
+	}
+
+	function convertStatusz(id) {
+		switch (id) {
+			case 0:
+				return 'Aktív';
+			case 1:
+				return 'Inaktív';
+			case 2:
+				return 'Sérült';
+			case 3:
+				return 'Visszavonult';
+		}
+	}
+
+	async function getCsapatName(csapatId) {
+		const csapatApi = new CsapatApi();
+		try {
+			const response = await new Promise((resolve, reject) => {
+				csapatApi.apiCsapatIdGet(csapatId, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data.csapatNev);
+					}
+				});
+			});
+			return response;
+		} catch (error) {
+			console.error('Error fetching csapatok:', error);
+			errorMessage = 'An error occurred while fetching the csapatok.';
+		}
+	}
 </script>
 
-<section class="banner_section">
-  <div class="container">
-    <div class="banner-content">
-      <h1>Játékosok</h1>
-    </div>
-  </div>
-</section>
+<section class="product_section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 text-center pb-5">
+				<div class="section-title-frame">
+					<p class="section-subtitle">Tekintsen meg kiemelt játékosokat!</p>
+				</div>
+			</div>
+		</div>
 
-<section class="gallery_section">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 text-center pb-5">
-        <h2 style="font-size: 3rem; font-weight: bold; margin-bottom: 10px;">Játékosaink</h2>
-        <p style="font-size: 2rem; color: #666;">Tekintse meg kiemelt játékosainkat!</p>
-      </div>
-        <ul>
-          {#each jatekosok as jatekos}
-            <li class="product-content">
-              <p><strong>Név:</strong> {jatekos.vezeteknev} {jatekos.keresztnev}</p>
-              <p><strong>Nemzetiség:</strong> {jatekos.nemzetisegId}</p>
-              <p><strong>Születési dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString("hu-HU")}</p>
-              <p><strong>Pozíció:</strong> {jatekos.pozicio}</p>
-              <p><strong>Csapat:</strong> {jatekos.csapatId}</p>
-            </li>
-          {/each}
-        </ul>
-    </div>
-  </div>
+		<div class="table-container">
+			<table class="csapat-table">
+				<thead>
+					<tr>
+						<th>Név</th>
+						<th>Nemzetiség</th>
+						<th>Születési dátum</th>
+						<th>Pozíció</th>
+						<th>Csapat</th>
+						<th>Státusz</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each jatekosok as jatekos}
+						<tr>
+							<td>{jatekos.vezeteknev} {jatekos.keresztnev}</td>
+							{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
+								<td>{nemzetiseg}</td>
+							{/await}
+							<td>{new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</td>
+							<td>{convertPozicio(jatekos.pozicio)}</td>
+							{#await getCsapatName(jatekos.csapatId) then csapat}
+								<td>{csapat}</td>
+							{/await}
+							<td>{convertStatusz(jatekos.statuszId)}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	</div>
 </section>
 
 <style>
-  .img-small {
-          max-width: 250px; 
-          height: auto; 
-      }
-  
-  .product-content {
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      border: 1px solid #32cd32;
-      margin-bottom: 1rem;
-  }
+	.section-subtitle {
+		font-size: 2em;
+		color: #32cd32;
+		padding: 10px;
+		text-align: center;
+	}
 
-  .product-content h1 {
-      font-size: 3rem; 
-      font-weight: bold;
-      color: #32cd32;
-      margin-bottom: 15px;
-  }
+	.container {
+		padding-top: 80px;
+	}
 
-  .product-content p,
-  .product-content ul {
-      font-size: 1.5rem; 
-      line-height: 1.7;
-      color: #ffffff;
-      margin-bottom: 10px;
-  }
+	.section-title-frame {
+		padding: 20px;
+		border-radius: 10px;
+		background-color: #333;
+	}
 
-  .product-content ul li {
-      margin-bottom: 8px;
-      padding: 5px 0;
-  }
+	.table-container {
+		margin-top: 30px;
+		padding: 20px 0;
+		border-radius: 8px;
+		background-color: #333;
+	}
 
-  .product-details {
-      margin-top: 20px;
-  }
+	.csapat-table {
+		width: 100%;
+		border-collapse: collapse;
+		color: #fff;
+		font-size: 1.4rem;
+	}
 
-  .product-content h4 {
-      color: #32cd32;
-  }
+	.csapat-table th,
+	.csapat-table td {
+		text-align: left;
+		padding: 10px;
+		border-bottom: 1px solid #32cd32;
+	}
 
-  .modern-button {
-    padding: 8px 16px; /* Kisebb padding */
-    background-color: #32cd32;
-    color: white;
-    border: 2px solid #32cd32;
-    border-radius: 30px; /* Kisebb kerekítés */
-    font-size: 14px; /* Kisebb betűméret */
-    font-weight: bold;
-    cursor: pointer;
-    outline: none;
-    position: relative;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+	.csapat-table th {
+		background-color: #32cd32;
+		color: #fff;
+		font-weight: bold;
+	}
 
-  /* Hover és active effektusok */
-  .modern-button:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-3px);
-  }
+	.csapat-table tr:nth-child(even) {
+		background-color: #555;
+	}
 
-  .modern-button:active {
-    background-color: #1c6d98;
-    border-color: #1c6d98;
-    transform: translateY(1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
+	.csapat-table tr:hover {
+		background-color: #666;
+	}
 
-  .modern-button:disabled {
-    background-color: #BDC3C7;
-    border-color: #BDC3C7;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
+	.csapat-table td {
+		color: #ddd;
+	}
 </style>

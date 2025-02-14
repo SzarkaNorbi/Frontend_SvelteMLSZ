@@ -1,48 +1,52 @@
 <script>
-    import image1 from '$lib/images/logo.png'; 
+	import { page } from '$app/stores';
+
+	const paths = [
+		{ href: '/', name: 'Rólunk' },
+		{ href: '/teams', name: 'Csapatok' },
+		{ href: '/players', name: 'Játékosok' },
+		{ href: '/competetion', name: 'Versenyek' },
+		{ href: '/admin', name: 'Admin felület' }
+	];
 </script>
 
 <header id="full_nav">
-    <div class="header">
-        <div class="container">
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                  <a class="navbar-brand" href="/">
-                    <img src={image1} alt="logo">
-                  </a>
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-stream navbar-toggler-icon "></i>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                      <li class="nav-item">
-                        <a class="nav-link" href="/about">Rólunk</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/teams">Csapatok</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/players">Játékosok</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/competetion">Versenyek</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/events">Jövőbeli Események</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin felület</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </nav>
-        </div>
-    </div>
+	<div class="header">
+		<div class="container">
+			<nav class="navbar navbar-expand-lg">
+				<div class="container-fluid">
+					<button
+						class="navbar-toggler"
+						type="button"
+						data-bs-toggle="collapse"
+						data-bs-target="#navbarNav"
+						aria-controls="navbarNav"
+						aria-expanded="false"
+						aria-label="Toggle navigation"
+					>
+						<i class="fas fa-stream navbar-toggler-icon"></i>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarNav">
+						<ul class="navbar-nav mx-auto">
+							{#each paths as path}
+								<li class="nav-item {$page.url.pathname === path.href ? 'active' : ''}">
+									<a class="nav-link" href={path.href}>{path.name}</a>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</div>
 </header>
 
 <style>
-  .navbar-toggler i {
-    color: red
-  }
+	.navbar-toggler i {
+		color: red;
+	}
+
+	.active .nav-link {
+		color: red !important;
+	}
 </style>

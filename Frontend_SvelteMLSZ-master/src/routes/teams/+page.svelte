@@ -1,127 +1,149 @@
 <script>
-    import CsapatApi from '../../../generated-client/src/api/CsapatApi.js';
-    import { onMount } from 'svelte';
-    import ApiClient from '../../../generated-client/src/ApiClient.js';
+	import CsapatApi from '../../../generated-client/src/api/CsapatApi.js';
+	import StadionApi from '../../../generated-client/src/api/StadionApi.js';
+	import { onMount } from 'svelte';
+	import ApiClient from '../../../generated-client/src/ApiClient.js';
 
-    const apiInstance = new CsapatApi();
-    let csapatok = []
+	const apiInstance = new CsapatApi();
+	let csapatok = [];
 
-    function getAuthToken() {
-        return ""
-    }
+	onMount(() => {
+		apiInstance.apiCsapatGet((error, data, response) => {
+			if (error) {
+				console.error(error);
+			} else {
+				csapatok = data;
+			}
+		});
+	});
 
-    function handleAddTeam() {
-        const csapat = {
-            csapatId: 0,
-            csapatNev: "",
-            alapitasDatum: "",
-            jelenlegiEdzo: "",
-            stadionId: 0,
-            statusz: false,
-            media_Id: 0,
-        }
-        apiInstance.apiCsapatPost({csapat}, (error, data, response) => {
-            if (error) {
-                console.error("Error:", error);
-            } else {
-                ApiClient.instance.defaultHeaders = {
-                    'Authorization': `Bearer ${localStorage.getItem("AuthToken")}`,
-                    'Content-Type': 'application/json'
-                }
-                console.log("Csapat létrehozva", response)
-            }
-        })
-    }
+	// Segédfüggvények az id alapján történő szöveg megjelenítéséhez
+	async function getStadionName(stadionId) {
+		const stadionApi = new StadionApi();
+		try {
+			const response = await new Promise((resolve, reject) => {
+				stadionApi.stadionIdGet(stadionId, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data.stadionNeve);
+					}
+				});
+			});
+			return response;
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+	}
 
-    function handleRemoveTeam() {
-        
-    }
-
-    onMount(() => {
-        apiInstance.apiCsapatGet((error, data, response) => {
-        if (error) {
-            console.error(error);
-        } else {
-            csapatok = data;
-        }
-        });
-    });
+	function convertStatusz(id) {
+		switch (id) {
+			case 0:
+				return 'Aktív';
+			case 1:
+				return 'Inaktív';
+			case 3:
+				return 'Felbomlott';
+		}
+	}
 </script>
 
-<section class="banner_section">
-    <div class="container">
-        <div class="banner-content">
-            <h1>Csapatok</h1>
-        </div>
-    </div>
-</section>
 <section class="product_section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 text-center pb-5">
-                <h2 class="section-title">A legjobb magyar csapatok</h2>
-                <p class="section-subtitle">Ismerje meg a magyar csapatokat és játékosaikat!</p>
-            </div>
-        </div>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-12 text-center pb-5">
+				<div class="section-title-frame">
+					<p class="section-subtitle">Ismerjen meg magyar csapatokat!</p>
+				</div>
+			</div>
+		</div>
 
-        <div>
-            <h1 class="product-content">Csapatok</h1>
-            <ul class="product-content">
-                {#each csapatok as csapat}
-                    <li class="product-content">
-                        <p>Csapatnév: {csapat.csapatNev} <img src="" alt=""></p>
-                        <p>Jelenlegi Edző: {csapat.jelenlegiEdzo}</p>
-                        <p>Alapítási dátum: {new Date(csapat.alapitasDatum).toLocaleDateString("hu-HU")}</p>
-                        <p>Stadion: {csapat.stadionId}</p>
-                        <p>Státusz: {csapat.statusz}</p>
-                    </li>
-                {/each}
-            </ul>
-        </div>
-    </div>
-</section> 
+		<div>
+			<div class="table-container">
+					<table class="csapat-table">
+						<thead>
+							<tr>
+								<th>Csapatnév</th>
+								<th>Jelenlegi Edző</th>
+								<th>Alapítási Dátum</th>
+								<th>Stadion</th>
+								<th>Státusz</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each csapatok as csapat}
+								<tr>
+									<td>{csapat.csapatNev}</td>
+									<td>{csapat.jelenlegiEdzo}</td>
+									<td>{new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</td>
+									{#await getStadionName(csapat.stadionId) then stadion}
+										<td>{stadion}</td>
+									{/await}
+									<td>{convertStatusz(csapat.statusz)}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+			</div>
+		</div>
+	</div>
+</section>
 
 <style>
-    .img-small {
-        max-width: 250px; 
-        height: auto; 
-    }
+	.section-subtitle {
+		font-size: 2em;
+		color: #32cd32;
+		padding: 5px;
+		text-align: center;
+	}
 
-    .product-content {
-        background-color: rgba(0, 0, 0, 0.85);
-        color: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        border: 1px solid #32cd32;
-        margin-bottom: 1rem;
-    }
+	.container {
+		padding-top: 80px;
+	}
 
-    .product-content h1 {
-        font-size: 3rem; 
-        font-weight: bold;
-        color: #32cd32;
-        margin-bottom: 15px;
-    }
+	.section-title-frame {
+		padding: 20px;
+		border-radius: 10px;
+		background-color: #333;
+	}
 
-    .product-content p,
-    .product-content ul {
-        font-size: 1.5rem; 
-        line-height: 1.7;
-        color: #ffffff;
-        margin-bottom: 10px;
-    }
+	.table-container {
+		margin-top: 30px;
+		padding: 20px 0;
+		border-radius: 8px;
+		background-color: #333;
+	}
 
-    .product-content ul li {
-        margin-bottom: 8px;
-        padding: 5px 0;
-    }
+	.csapat-table {
+		width: 100%;
+		border-collapse: collapse;
+		color: #fff;
+		font-size: 1.4rem;
+	}
 
-    .product-details {
-        margin-top: 20px;
-    }
+	.csapat-table th,
+	.csapat-table td {
+		text-align: left;
+		padding: 10px;
+		border-bottom: 1px solid #32cd32;
+	}
 
-    .product-content h4 {
-        color: #32cd32;
-    }
+	.csapat-table th {
+		background-color: #32cd32;
+		color: #fff;
+		font-weight: bold;
+	}
+
+	.csapat-table tr:nth-child(even) {
+		background-color: #555;
+	}
+
+	.csapat-table tr:hover {
+		background-color: #666;
+	}
+
+	.csapat-table td {
+		color: #ddd;
+	}
 </style>

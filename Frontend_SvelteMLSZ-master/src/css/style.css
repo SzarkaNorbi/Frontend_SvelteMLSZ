@@ -188,15 +188,20 @@ section{
     margin-bottom: 1.5rem;
 }
 
-.banner_section {
-    background: url('../lib/images/banner-slide/top-banner.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    padding-top: 17rem;
-    padding-bottom: 10rem;
-    min-height: auto;
-}
+
+
+/*!!!!!.banner_section {
+    background: url('../lib/images/banner-slide/top-banner.jpg') no-repeat center center / cover;
+    padding: 10rem 0;
+    min-height: 400px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+   width: 100%; 
+} */
+  
 
 .header{
     position: absolute;
@@ -229,10 +234,7 @@ section{
     font-family: var(--primary-font);
 }
 
-.header .navbar-nav .nav-link:hover,
-.header .navbar-nav .nav-link.active{
-    color: var(--secondary-color);
-}
+
 
 .header .navbar-toggler{
     color: var(--text-white);
@@ -418,7 +420,7 @@ section{
 }*/
 
 .testimonial_section .card{
-    background: url('../lib/images/testimonial/testimonial-bg.png');
+   background-color: #e2f6de;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

@@ -5,12 +5,11 @@
     const loginInstance = new AuthApi();
 
     async function handleLogin(event) {
-        event.preventDefault(); // Megakadályozza az alapértelmezett űrlapbeküldést
+        event.preventDefault(); 
 
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
-        // Ellenőrizzük, hogy mindkét mező ki van-e töltve
         if (!email || !password) {
             document.getElementById("error-message").textContent = "Kérlek, add meg az e-mail címedet és a jelszavadat!";
             document.getElementById("error-message").style.display = "block";
@@ -29,7 +28,7 @@
             if (error) {
                 console.error("Login error:", error);
                 document.getElementById("error-message").textContent = "Hibás e-mail vagy jelszó!";
-                document.getElementById("error-message").style.display = "block"; // Hibás bejelentkezés esetén figyelmeztetés
+                document.getElementById("error-message").style.display = "block"; 
             } else {
                 console.log("Login successful", response);
                 localStorage.setItem("AuthToken", JSON.parse(response.text).token);
@@ -42,10 +41,8 @@
 <header class="bg-white py-3 shadow-sm">
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-between align-items-center">
-            <a href="/" class="navbar-brand d-flex align-items-center">
-                <img src={logo} alt="logo" style="height: 40px; margin-right: 10px;">
                 <span class="fs-3 fw-bold">Admin Felület</span>
-            </a>
+            
             <a href="/" class="btn btn-outline-primary">Vissza a főoldalra</a>
         </nav>
     </div>
@@ -69,7 +66,6 @@
                         <input type="password" class="form-control" id="password" placeholder="Adja meg a jelszavát">
                     </div>
 
-                    <!-- Hibaüzenet -->
                     <p id="error-message" class="error-message" style="display: none;"></p>
 
                     <div class="text-center">
@@ -140,7 +136,6 @@
         color: #007bff;
     }
 
-    /* Hibaüzenet stílus */
     .error-message {
         color: #ff0000;
         font-size: 1.2rem;

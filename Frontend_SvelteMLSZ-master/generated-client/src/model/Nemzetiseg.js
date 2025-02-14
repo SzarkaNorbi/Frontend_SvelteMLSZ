@@ -43,10 +43,8 @@ class Nemzetiseg {
      * @param {module:model/Nemzetiseg} obj Optional instance to populate.
      * @return {module:model/Nemzetiseg} The populated <code>Nemzetiseg</code> instance.
      */
-    static constructFromObject(data, obj) {
+    static constructFromObject(data, obj = {}) {
         if (data) {
-            obj = obj || new Nemzetiseg();
-
             if (data.hasOwnProperty('nemzetisegId')) {
                 obj['nemzetisegId'] = ApiClient.convertToType(data['nemzetisegId'], 'Number');
             }
