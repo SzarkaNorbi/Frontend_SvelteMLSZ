@@ -124,7 +124,8 @@ export default class JatekosApi {
      * @param {Number} id 
      * @param {module:api/JatekosApi~jatekosIdDeleteCallback} callback The callback function, accepting three arguments: error, data, response
      */
-    jatekosIdDelete(id, callback) {
+    jatekosIdDelete(id, opts, callback) {
+      opts = opts || {}
       let postBody = null;
       // verify the required parameter 'id' is set
       if (id === undefined || id === null) {
@@ -136,7 +137,9 @@ export default class JatekosApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };
@@ -261,7 +264,9 @@ export default class JatekosApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };
@@ -340,7 +345,9 @@ export default class JatekosApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };

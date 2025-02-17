@@ -81,7 +81,8 @@ export default class CsapatApi {
      * @param {Number} id 
      * @param {module:api/CsapatApi~apiCsapatIdDeleteCallback} callback The callback function, accepting three arguments: error, data, response
      */
-    apiCsapatIdDelete(id, callback) {
+    apiCsapatIdDelete(id, opts, callback) {
+      opts = opts || {};
       let postBody = null;
       // verify the required parameter 'id' is set
       if (id === undefined || id === null) {
@@ -93,7 +94,9 @@ export default class CsapatApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };
@@ -177,7 +180,9 @@ export default class CsapatApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };
@@ -215,7 +220,9 @@ export default class CsapatApi {
       };
       let queryParams = {
       };
+      let authToken = opts['authToken']; // Make sure to pass the token as an option when calling the method
       let headerParams = {
+          'Authorization': `Bearer ${authToken}`  // Set the Authorization header
       };
       let formParams = {
       };

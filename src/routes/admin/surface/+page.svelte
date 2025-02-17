@@ -8,6 +8,7 @@
 	import VersenyApi from '../../../../generated-client/src/api/VersenyApi';
 	import Stadion from '../../../../generated-client/src/model/Stadion';
 	import { onMount } from 'svelte';
+	import axios from 'axios';
 
 	let stadions = [];
 	let nationalitys = [];
@@ -16,7 +17,7 @@
 	let competetions = [];
 
 	let createModalType = '';
-	let modifyModalType = '';
+	let modifyModal = {};
 	let modalType = '';
 	let showModal = false;
 	function openModal(type) {
@@ -42,6 +43,7 @@
 		});
 	}
 	onMount(loadStadions);
+
 	function loadNationalitys() {
 		const nemzetisegApi = new NemzetisegApi();
 		nemzetisegApi.nemzetisegGet((error, data, response) => {
@@ -61,7 +63,6 @@
 				console.error(error);
 			} else {
 				teams = data;
-				console.log(data);
 			}
 		});
 	}
@@ -72,7 +73,6 @@
 				console.error(error);
 			} else {
 				players = data;
-				console.log(data);
 			}
 		});
 	}
@@ -83,7 +83,6 @@
 				console.error(error);
 			} else {
 				competetions = data;
-				console.log(data);
 			}
 		});
 	}
@@ -190,7 +189,6 @@
 		switch (type) {
 			case 'Csapatok':
 				const csapatApi = new CsapatApi();
-				console.log(stadium.value);
 				const csapat = {
 					csapatId: 0,
 					csapatNev: team_name.value,
@@ -198,15 +196,16 @@
 					jelenlegiEdzo: coach_name.value,
 					stadionId: stadium.value,
 					statusz: status.value,
-					media_Id: 0
+					media_Id: 1
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						csapatApi.apiCsapatPost({ csapat }, (error, data, response) => {
+						csapatApi.apiCsapatPost({ csapat, authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
 							if (error) {
 								reject(error);
 							} else {
 								resolve(data.csapatNev);
+								loadTeams();
 							}
 						});
 					});
@@ -220,27 +219,154 @@
 				const jatekosApi = new JatekosApi();
 				const jatekos = {
 					jatekosId: 0,
-					vezeteknev: 'string',
-					keresztnev: 'string',
-					szuletesiDatum: '2025-02-14T11:59:54.915Z',
-					nemzetisegId: 0,
-					pozicio: 0,
-					csapatId: 0,
-					statuszId: 0,
-					media_Id: 0
+					vezeteknev: player_name.value.split(" ")[0],
+					keresztnev: player_name.value.split(" ")[1],
+					szuletesiDatum: birth_date.value,
+					nemzetisegId: nationality.value,
+					pozicio: +position.value,
+					csapatId: +team.value,
+					statuszId: status.value,
+					media_Id: 1
 				};
+				try {
+					const response = await new Promise((resolve, reject) => {
+						jatekosApi.jatekosPost({ jatekos, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
+							if (error) {
+								reject(error);
+							} else {
+								resolve(data.csapatNev);
+								loadPlayers();
+							}
+						})
+					})
+					return response;
+				} catch (error) {
+					console.error('Error fetching csapatok:', error);
+					errorMessage = 'An error occurred while fetching the csapatok.';
+				}
 				break;
 			case 'Események':
 				const versenyApi = new VersenyApi();
 				const verseny = {
 					versenyId: 0,
-					liga: 'string',
-					fordulo: 0,
-					stadionId: 0,
-					kezdesDatum: '2025-02-14T12:00:18.245Z',
-					befejezesDatum: '2025-02-14T12:00:18.245Z',
-					leiras: 'string',
-					aktualis: true
+					liga: liga.value,
+					fordulo: round.value,
+					stadionId: stadium.value,
+					kezdesDatum: starting_date.value,
+					befejezesDatum: ending_date.value,
+					leiras: "",
+					aktualis: status.value ? true : false
+				};
+				try {
+					const response = await new Promise((resolve, reject) => {
+						versenyApi.versenyPost({ verseny, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
+							if (error) {
+								reject(error);
+							} else {
+								resolve(data.csapatNev);
+								loadCompetetions();
+							}
+						})
+					})
+					return response;
+				} catch (error) {
+					console.error('Error fetching csapatok:', error);
+					errorMessage = 'An error occurred while fetching the csapatok.';
+				};
+				break;
+			default:
+				break;
+		}
+	}
+
+	async function handleModify(modal) {
+		switch (modal.type) {
+			case "Csapatok":
+				console.log(modal.id)
+			const csapatApi = new CsapatApi();
+				const csapat = {
+					csapatId: 0,
+					csapatNev: team_name.value,
+					alapitasDatum: foundation_date.value,
+					jelenlegiEdzo: coach_name.value,
+					stadionId: stadium.value,
+					statusz: status.value,
+					media_Id: 1
+				};
+				try {
+					const response = await new Promise((resolve, reject) => {
+						csapatApi.apiCsapatIdPut(modal.id, { csapat, authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
+							if (error) {
+								reject(error);
+							} else {
+								resolve(data.csapatNev);
+								loadTeams();
+							}
+						});
+					});
+					return response;
+				} catch (error) {
+					console.error('Error fetching csapatok:', error);
+					errorMessage = 'An error occurred while fetching the csapatok.';
+				}
+				break;
+			case "Játékosok":
+			const jatekosApi = new JatekosApi();
+				const jatekos = {
+					jatekosId: 0,
+					vezeteknev: player_name.value.split(" ")[0],
+					keresztnev: player_name.value.split(" ")[1],
+					szuletesiDatum: birth_date.value,
+					nemzetisegId: nationality.value,
+					pozicio: +position.value,
+					csapatId: +team.value,
+					statuszId: status.value,
+					media_Id: 1
+				};
+				try {
+					const response = await new Promise((resolve, reject) => {
+						jatekosApi.jatekosIdPut(modal.id, { jatekos, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
+							if (error) {
+								reject(error);
+							} else {
+								resolve(data.csapatNev);
+								loadPlayers();
+							}
+						})
+					})
+					return response;
+				} catch (error) {
+					console.error('Error fetching csapatok:', error);
+					errorMessage = 'An error occurred while fetching the csapatok.';
+				}
+				break;
+			case "Események":
+				const versenyApi = new VersenyApi();
+				const verseny = {
+					versenyId: 0,
+					liga: liga.value,
+					fordulo: round.value,
+					stadionId: stadium.value,
+					kezdesDatum: starting_date.value,
+					befejezesDatum: ending_date.value,
+					leiras: "",
+					aktualis: status.value ? true : false
+				};
+				try {
+					const response = await new Promise((resolve, reject) => {
+						versenyApi.versenyIdPut(modal.id, { verseny, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
+							if (error) {
+								reject(error);
+							} else {
+								resolve(data.csapatNev);
+								loadCompetetions();
+							}
+						})
+					})
+					return response;
+				} catch (error) {
+					console.error('Error fetching csapatok:', error);
+					errorMessage = 'An error occurred while fetching the csapatok.';
 				};
 				break;
 			default:
@@ -253,25 +379,70 @@
 	}
 
 	function openModifyModal(id, type) {
-		modifyModalType = type;
+		modifyModal = { type, id };
 	}
 
 	async function handleRemove(id, type) {
-		const csapatApi = new CsapatApi();
+		switch (type) {
+			case 'Csapatok':
+			const csapatApi = new CsapatApi();
 		try {
 			const response = await new Promise((resolve, reject) => {
-				csapatApi.apiCsapatIdDelete(id, (error, data, response) => {
+				csapatApi.apiCsapatIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
 					if (error) {
 						reject(error);
 					} else {
 						resolve(data);
+						loadTeams();
 					}
 				});
 			});
-			console.log(response);
+			// console.log(response);
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+				break;
+			case 'Játékosok':
+			const jatekosApi = new JatekosApi();
+		try {
+			const response = await new Promise((resolve, reject) => {
+				jatekosApi.jatekosIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data);
+						loadPlayers();
+					}
+				});
+			});
+			// console.log(response);
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+				break;
+			case 'Események':
+			const versenyApi = new VersenyApi();
+			try {
+			const response = await new Promise((resolve, reject) => {
+				versenyApi.versenyIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data);
+						loadCompetetions();
+					}
+				});
+			});
+			// console.log(response);
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -315,7 +486,7 @@
 			<div class="modal-content" on:click|stopPropagation>
 				<span class="close" on:click={closeModal}>&times;</span>
 				<h2 class="modal-title">{modalType}</h2>
-				<button class="edit-btn" on:click={openCreateModal(modalType)}>Hozzáadás</button>
+				<button class="edit-btn" on:click={() => openCreateModal(modalType)}>Hozzáadás</button>
 				<div class="table-container">
 					<table class="csapat-table">
 						{#if modalType === 'Csapatok'}
@@ -442,97 +613,113 @@
 		</div>
 	{/if}
 
-	{#if modifyModalType !== ''}
-		<div class="modal" on:click={() => (modifyModalType = '')}>
+	{#if modifyModal.type !== ''}
+		<div class="modal" on:click={() => (modifyModal.type = '')}>
 			<div class="modal-content" on:click|stopPropagation>
-				<span class="close" on:click={() => (modifyModalType = '')}>&times;</span>
-				<h2 class="modal-title">{modifyModalType} módosítása</h2>
+				<span class="close" on:click={() => (modifyModal.type = '')}>&times;</span>
+				<h2 class="modal-title">{modifyModal.type} módosítása</h2>
 				<div class="input-container">
-					{#if modifyModalType === 'Csapatok'}
-						<label for="team_name">Csapatnév:</label>
-						<input type="text" id="team_name" placeholder="Írd be a csapat nevét" />
+					{#if modifyModal.type === 'Csapatok'}
+					<label for="team_name">Csapatnév:</label>
+					<input type="text" id="team_name" placeholder="Írd be a csapat nevét" />
 
-						<label for="coach_name">Jelenlegi Edző:</label>
-						<input type="text" id="coach_name" placeholder="Írd be az edző nevét" />
+					<label for="coach_name">Jelenlegi Edző:</label>
+					<input type="text" id="coach_name" placeholder="Írd be az edző nevét" />
 
-						<label for="foundation-date">Alapítási Dátum:</label>
-						<input type="date" id="foundation-date" />
+					<label for="foundation_date">Alapítási Dátum:</label>
+					<input type="date" id="foundation_date" />
 
-						<label for="stadium">Stadion:</label>
-						<select id="stadium">
-							<option value="">Válassz stadiont</option>
-							{#each stadions as stadion}
-								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
-							{/each}
-						</select>
+					<label for="stadium">Stadion:</label>
+					<select id="stadium">
+						<option value="">Válassz stadiont</option>
+						{#each stadions as stadion}
+							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
+						{/each}
+					</select>
 
-						<label for="status">Státusz:</label>
-						<select id="status">
-							<option value="0">Aktív</option>
-							<option value="1">Inaktív</option>
-							<option value="3">Felbomlott</option>
-						</select>
+					<label for="status">Státusz:</label>
+					<select id="status">
+						<option value="0">Aktív</option>
+						<option value="1">Inaktív</option>
+						<option value="3">Felbomlott</option>
+					</select>
 
-						<button class="submit-btn">Mentés</button>
-					{:else if modifyModalType === 'Játékosok'}
-						<label for="player_name">Játékos neve:</label>
-						<input type="text" id="player_name" placeholder="Írd be a játékos nevét" />
+						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
+					{:else if modifyModal.type === 'Játékosok'}
+					<label for="player_name">Játékos neve:</label>
+					<input type="text" id="player_name" placeholder="Írd be a játékos nevét" />
 
-						<label for="nationality">Nemzetiség:</label>
-						<select id="nationality">
-							<option value="">Válassz nemzetiséget</option>
-							{#each nationalitys as nationality}
-								<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
-							{/each}
-						</select>
+					<label for="nationality">Nemzetiség:</label>
+					<select id="nationality">
+						<option value="">Válassz nemzetiséget</option>
+						{#each nationalitys as nationality}
+							<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
+						{/each}
+					</select>
 
-						<label for="birth_date">Születési Dátum:</label>
-						<input type="date" id="birth_date" />
+					<label for="birth_date">Születési Dátum:</label>
+					<input type="date" id="birth_date" />
 
-						<label for="position">Pozíció:</label>
-						<input type="text" id="position" placeholder="Írd be a játékos pozícióját" />
+					<label for="position">Pozíció:</label>
+					<select id="position">
+						<option value="">Válasszon csapatot!</option>
+						<option value="0">Kapus</option>
+						<option value="1">Védő</option>
+						<option value="2">Középpályás</option>
+						<option value="3">Csatár</option>
+					</select>
 
-						<label for="team">Pozíció:</label>
-						<input type="text" id="team" placeholder="Írd be a játékos csapatát" />
+					<label for="team">Csapat:</label>
+					<select id="team">
+						<option value="">Válasszon csapatot!</option>
+						{#each teams as team}
+							<option value="{team.csapatId}">{team.csapatNev}</option>
+						{/each}
+					</select>
 
-						<label for="status">Státusz:</label>
-						<select id="status">
-							<option value="0">Aktív</option>
-							<option value="1">Inaktív</option>
-							<option value="2">Sérült</option>
-							<option value="3">Visszavonult</option>
-						</select>
+					<label for="status">Státusz:</label>
+					<select id="status">
+						<option value="0">Aktív</option>
+						<option value="1">Inaktív</option>
+						<option value="2">Sérült</option>
+						<option value="3">Visszavonult</option>
+					</select>
 
-						<button class="submit-btn">Mentés</button>
+						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
 					{:else}
-						<label for="liga">Liga:</label>
-						<input type="text" id="liga" placeholder="Írd be a liga nevét" />
+					<label for="liga">Liga:</label>
+					<input type="text" id="liga" placeholder="Írd be a liga nevét" />
 
-						<label for="round">Forduló:</label>
-						<input
-							type="number"
-							id="round"
-							placeholder="Írd be a forduló számát"
-							min="1"
-							max="38"
-						/>
+					<label for="round">Forduló:</label>
+					<input
+						type="number"
+						id="round"
+						placeholder="Írd be a forduló számát"
+						min="1"
+						max="38"
+					/>
 
-						<label for="stadium">Stadion:</label>
-						<input type="text" id="stadium" placeholder="Írd be a stadion nevét" />
+					<label for="stadium">Stadion:</label>
+					<select id="stadium">
+						<option value="">Válassz stadiont</option>
+						{#each stadions as stadion}
+							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
+						{/each}
+					</select>
 
-						<label for="starting_date">Kezdés Dátuma:</label>
-						<input type="date" id="starting_date" />
+					<label for="starting_date">Kezdés Dátuma:</label>
+					<input type="date" id="starting_date" />
 
-						<label for="ending_date">Befejezés Dátuma:</label>
-						<input type="date" id="ending_date" />
+					<label for="ending_date">Befejezés Dátuma:</label>
+					<input type="date" id="ending_date" />
 
-						<label for="status">Állapot:</label>
-						<select id="status">
-							<option value="1">Jelenleg fut</option>
-							<option value="0">Már véget ért / Még nem kezdődött el</option>
-						</select>
+					<label for="status">Állapot:</label>
+					<select id="status">
+						<option value="1">Jelenleg fut</option>
+						<option value="0">Már véget ért / Még nem kezdődött el</option>
+					</select>
 
-						<button class="submit-btn">Mentés</button>
+						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
 					{/if}
 				</div>
 			</div>
@@ -572,7 +759,7 @@
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
 							>Létrehozás</button
 						>
-					{:else if modifyModalType === 'Játékosok'}
+					{:else if createModalType === 'Játékosok'}
 						<label for="player_name">Játékos neve:</label>
 						<input type="text" id="player_name" placeholder="Írd be a játékos nevét" />
 
@@ -588,10 +775,21 @@
 						<input type="date" id="birth_date" />
 
 						<label for="position">Pozíció:</label>
-						<input type="text" id="position" placeholder="Írd be a játékos pozícióját" />
+						<select id="position">
+							<option value="">Válasszon csapatot!</option>
+							<option value="0">Kapus</option>
+							<option value="1">Védő</option>
+							<option value="2">Középpályás</option>
+							<option value="3">Csatár</option>
+						</select>
 
-						<label for="team">Pozíció:</label>
-						<input type="text" id="team" placeholder="Írd be a játékos csapatát" />
+						<label for="team">Csapat:</label>
+						<select id="team">
+							<option value="">Válasszon csapatot!</option>
+							{#each teams as team}
+								<option value="{team.csapatId}">{team.csapatNev}</option>
+							{/each}
+						</select>
 
 						<label for="status">Státusz:</label>
 						<select id="status">
@@ -618,7 +816,12 @@
 						/>
 
 						<label for="stadium">Stadion:</label>
-						<input type="text" id="stadium" placeholder="Írd be a stadion nevét" />
+						<select id="stadium">
+							<option value="">Válassz stadiont</option>
+							{#each stadions as stadion}
+								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
+							{/each}
+						</select>
 
 						<label for="starting_date">Kezdés Dátuma:</label>
 						<input type="date" id="starting_date" />
