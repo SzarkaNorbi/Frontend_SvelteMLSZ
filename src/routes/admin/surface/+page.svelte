@@ -9,6 +9,7 @@
 	import Stadion from '../../../../generated-client/src/model/Stadion';
 	import { onMount } from 'svelte';
 	import axios from 'axios';
+	import { type } from 'superagent/lib/utils';
 
 	let stadions = [];
 	let nationalitys = [];
@@ -16,9 +17,9 @@
 	let players = [];
 	let competetions = [];
 
-	let createModalType = '';
-	let modifyModal = {};
-	let modalType = '';
+	let createModalType = null;
+	let modifyModal = { type: null, id: null};
+	let modalType = null;
 	let showModal = false;
 	function openModal(type) {
 		modalType = type;
@@ -204,8 +205,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadTeams();
+								createModalType = null
 							}
 						});
 					});
@@ -234,8 +236,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadPlayers();
+								createModalType = null
 							}
 						})
 					})
@@ -255,7 +258,7 @@
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
 					leiras: "",
-					aktualis: status.value ? true : false
+					aktualis: +statuss.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -263,8 +266,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadCompetetions();
+								createModalType = null
 							}
 						})
 					})
@@ -299,8 +303,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadTeams();
+								modifyModal.type = null
 							}
 						});
 					});
@@ -329,8 +334,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadPlayers();
+								modifyModal.type = null
 							}
 						})
 					})
@@ -343,14 +349,14 @@
 			case "Események":
 				const versenyApi = new VersenyApi();
 				const verseny = {
-					versenyId: 0,
+					versenyId: modal.id,
 					liga: liga.value,
 					fordulo: round.value,
 					stadionId: stadium.value,
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
 					leiras: "",
-					aktualis: status.value ? true : false
+					aktualis: +statuss.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -358,8 +364,9 @@
 							if (error) {
 								reject(error);
 							} else {
-								resolve(data.csapatNev);
+								resolve(data);
 								loadCompetetions();
+								modifyModal.type = null
 							}
 						})
 					})
@@ -450,8 +457,14 @@
 	function navigateToHomePage() {
 		if (goto) {
 			goto('/'); // SvelteKit natív navigáció
+			showModal = false
+			modalType = null
+			createModalType = null
 		} else {
 			window.location.href = '/'; // Ha nem SvelteKit-et használsz
+			showModal = false
+			modalType = null
+			createModalType = null
 		}
 	}
 </script>
@@ -590,7 +603,7 @@
 										<td>{new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}</td>
 										<td>
 											<div class="actions-btn">
-												{verseny.aktualis ? 'Jelenleg fut' : 'Már végetért / Még nem kezdődött el'}
+												{verseny.aktualis? 'Jelenleg fut' : "Lezárult"}
 												<div>
 													<button
 														on:click|preventDefault={() =>
@@ -613,10 +626,10 @@
 		</div>
 	{/if}
 
-	{#if modifyModal.type !== ''}
-		<div class="modal" on:click={() => (modifyModal.type = '')}>
+	{#if showModal && modifyModal.type !== null}
+		<div class="modal" on:click={() => (modifyModal.type = null)}>
 			<div class="modal-content" on:click|stopPropagation>
-				<span class="close" on:click={() => (modifyModal.type = '')}>&times;</span>
+				<span class="close" on:click={() => (modifyModal.type = null)}>&times;</span>
 				<h2 class="modal-title">{modifyModal.type} módosítása</h2>
 				<div class="input-container">
 					{#if modifyModal.type === 'Csapatok'}
@@ -686,7 +699,7 @@
 					</select>
 
 						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
-					{:else}
+					{:else if modifyModal.type === "Események"}
 					<label for="liga">Liga:</label>
 					<input type="text" id="liga" placeholder="Írd be a liga nevét" />
 
@@ -713,10 +726,10 @@
 					<label for="ending_date">Befejezés Dátuma:</label>
 					<input type="date" id="ending_date" />
 
-					<label for="status">Állapot:</label>
-					<select id="status">
+					<label for="statuss">Állapot:</label>
+					<select id="statuss">
 						<option value="1">Jelenleg fut</option>
-						<option value="0">Már véget ért / Még nem kezdődött el</option>
+						<option value="0">Lezárult</option>
 					</select>
 
 						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
@@ -725,10 +738,10 @@
 			</div>
 		</div>
 	{/if}
-	{#if createModalType !== ''}
-		<div class="modal" on:click={() => (createModalType = '')}>
+	{#if showModal && createModalType !== null}
+		<div class="modal" on:click={() => (createModalType = null)}>
 			<div class="modal-content" on:click|stopPropagation>
-				<span class="close" on:click={() => (createModalType = '')}>&times;</span>
+				<span class="close" on:click={() => (createModalType = null)}>&times;</span>
 				<h2 class="modal-title">{createModalType} létrehozása</h2>
 				<div class="input-container">
 					{#if createModalType === 'Csapatok'}
@@ -802,7 +815,7 @@
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
 							>Létrehozás</button
 						>
-					{:else}
+					{:else if createModalType === "Események"}
 						<label for="liga">Liga:</label>
 						<input type="text" id="liga" placeholder="Írd be a liga nevét" />
 
@@ -829,10 +842,10 @@
 						<label for="ending_date">Befejezés Dátuma:</label>
 						<input type="date" id="ending_date" />
 
-						<label for="status">Állapot:</label>
+						<label for="status">Státusz:</label>
 						<select id="status">
-							<option value="1">Jelenleg fut</option>
-							<option value="0">Már véget ért / Még nem kezdődött el</option>
+							<option value="0">Jelenleg fut</option>
+							<option value="1">Lezárult</option>
 						</select>
 
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}

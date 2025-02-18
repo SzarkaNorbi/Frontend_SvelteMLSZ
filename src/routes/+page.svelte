@@ -220,7 +220,6 @@
 		transition: background-color 0.3s;
 	}
 
-	/* Disable clickable indicators */
 	.carousel-indicators button.disabled {
 		pointer-events: none;
 	}
@@ -246,4 +245,5 @@
 			line-height: 1.6;
 		}
 	}
+	
 </style>

@@ -2,7 +2,6 @@
 	import NemzetisegApi from '../../../generated-client/src/api/NemzetisegApi.js';
 	import JatekosApi from '../../../generated-client/src/api/JatekosApi.js';
 	import CsapatApi from '../../../generated-client/src/api/CsapatApi.js';
-	import MediaApi from '../../../generated-client/src/api/MediaApi.js';
 	import { onMount } from 'svelte';
 
 	let jatekosok = [];
@@ -10,7 +9,6 @@
 	onMount(() => {
 		const jatekosApi = new JatekosApi();
 
-		// Játékosok lekérése
 		jatekosApi.jatekosGet((error, data, response) => {
 			if (error) {
 				console.error(error);
@@ -20,7 +18,6 @@
 		});
 	});
 
-	// Segédfüggvények a megfelelő szövegek lekérésére
 	async function getNemzetisegName(nemzetisegId) {
 		const nemzetisegApi = new NemzetisegApi();
 		try {
@@ -36,7 +33,7 @@
 			return response;
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
-			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+			return 'Ismeretlen nemzetiség';
 		}
 	}
 
@@ -50,6 +47,8 @@
 				return 'Középpályás';
 			case 3:
 				return 'Csatár';
+			default:
+				return 'Ismeretlen';
 		}
 	}
 
@@ -63,6 +62,8 @@
 				return 'Sérült';
 			case 3:
 				return 'Visszavonult';
+			default:
+				return 'Ismeretlen';
 		}
 	}
 
@@ -81,7 +82,7 @@
 			return response;
 		} catch (error) {
 			console.error('Error fetching csapatok:', error);
-			errorMessage = 'An error occurred while fetching the csapatok.';
+			return 'Ismeretlen csapat';
 		}
 	}
 </script>
@@ -96,42 +97,28 @@
 			</div>
 		</div>
 
-		<div class="table-container">
-			<table class="csapat-table">
-				<thead>
-					<tr>
-						<th>Név</th>
-						<th>Nemzetiség</th>
-						<th>Születési dátum</th>
-						<th>Pozíció</th>
-						<th>Csapat</th>
-						<th>Státusz</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each jatekosok as jatekos}
-						<tr>
-							<td>{jatekos.vezeteknev} {jatekos.keresztnev}</td>
-							{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
-								<td>{nemzetiseg}</td>
-							{/await}
-							<td>{new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</td>
-							<td>{convertPozicio(jatekos.pozicio)}</td>
-							{#await getCsapatName(jatekos.csapatId) then csapat}
-								<td>{csapat}</td>
-							{/await}
-							<td>{convertStatusz(jatekos.statuszId)}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+		<div class="card-container">
+			{#each jatekosok as jatekos}
+				<div class="csapat-card">
+					<h2 class="green-text">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
+					{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
+						<p class="white-text"><strong>Nemzetiség:</strong> {nemzetiseg}</p>
+					{/await}
+					<p class="white-text"><strong>Születési dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
+					<p class="white-text"><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
+					{#await getCsapatName(jatekos.csapatId) then csapat}
+						<p class="white-text"><strong>Csapat:</strong> {csapat}</p>
+					{/await}
+					<p class="white-text"><strong>Státusz:</strong> {convertStatusz(jatekos.statuszId)}</p>
+				</div>
+			{/each}
 		</div>
 	</div>
 </section>
 
 <style>
 	.section-subtitle {
-		font-size: 2em;
+		font-size: 2.5em;
 		color: #32cd32;
 		padding: 10px;
 		text-align: center;
@@ -147,42 +134,49 @@
 		background-color: #333;
 	}
 
-	.table-container {
+	.card-container {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
 		margin-top: 30px;
-		padding: 20px 0;
-		border-radius: 8px;
+	}
+
+	.csapat-card {
 		background-color: #333;
-	}
-
-	.csapat-table {
-		width: 100%;
-		border-collapse: collapse;
+		border: 1px solid #32cd32;
+		border-radius: 12px;
+		padding: 20px;
 		color: #fff;
-		font-size: 1.4rem;
+		transition: transform 0.3s ease;
 	}
 
-	.csapat-table th,
-	.csapat-table td {
-		text-align: left;
-		padding: 10px;
-		border-bottom: 1px solid #32cd32;
+	.csapat-card:hover {
+		transform: translateY(-10px);
+		box-shadow: 0 4px 8px rgba(50, 205, 50, 0.5);
 	}
 
-	.csapat-table th {
-		background-color: #32cd32;
+	.white-text {
 		color: #fff;
-		font-weight: bold;
 	}
 
-	.csapat-table tr:nth-child(even) {
-		background-color: #555;
+	.green-text {
+		color: #32cd32;
 	}
+	.csapat-card {
+	font-size: 1.5em;
+	background-color: #333;
+	border: 1px solid #32cd32;
+	border-radius: 12px;
+	padding: 20px;
+	color: #fff;
+	transition: transform 0.3s ease;
+}
 
-	.csapat-table tr:hover {
-		background-color: #666;
-	}
+.csapat-card h2 {
+	font-size: 1.5em; 
+}
 
-	.csapat-table td {
-		color: #ddd;
-	}
+.csapat-card p {
+	font-size: 1.1em;
+}
 </style>
