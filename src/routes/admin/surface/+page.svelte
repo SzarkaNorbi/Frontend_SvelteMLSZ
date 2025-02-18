@@ -583,136 +583,69 @@
 	</div>
 
 	{#if showModal}
-		<div class="modal" on:click={closeModal}>
-			<div class="modal-content" on:click|stopPropagation>
-				<span class="close" on:click={closeModal}>&times;</span>
-				<h2 class="modal-title">{modalType}</h2>
-				<button class="edit-btn" on:click={() => openCreateModal(modalType)}>Hozzáadás</button>
-				<div class="table-container">
-					<table class="csapat-table">
-						{#if modalType === 'Csapatok'}
-							<thead>
-								<tr>
-									<th>Csapatnév</th>
-									<th>Jelenlegi Edző</th>
-									<th>Alapítási Dátum</th>
-									<th>Stadion</th>
-									<th>Státusz</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each teams as csapat}
-									<tr>
-										<td>{csapat.csapatNev}</td>
-										<td>{csapat.jelenlegiEdzo}</td>
-										<td>{new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</td>
-										{#await getStadionName(csapat.stadionId) then stadion}
-											<td>{stadion}</td>
-										{/await}
-										<td>
-											<div class="actions-btn">
-												{convertCsapatStatusz(csapat.statusz)}
-												<div>
-													<button
-														on:click|preventDefault={() =>
-															openModifyModal(csapat.csapatId, modalType)}
-														><Pencil class="me-2" /></button
-													>
-													<button on:click={() => handleRemove(csapat.csapatId, modalType)}
-														><Trash2 /></button
-													>
-												</div>
-											</div>
-										</td>
-									</tr>
-								{/each}
-							</tbody>
-						{:else if modalType === 'Játékosok'}
-							<thead>
-								<tr>
-									<th>Név</th>
-									<th>Nemzetiség</th>
-									<th>Születési dátum</th>
-									<th>Pozíció</th>
-									<th>Csapat</th>
-									<th>Státusz</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each players as jatekos}
-									<tr>
-										<td>{jatekos.vezeteknev} {jatekos.keresztnev}</td>
-										{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
-											<td>{nemzetiseg}</td>
-										{/await}
-										<td>{new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</td>
-										<td>{convertPozicio(jatekos.pozicio)}</td>
-										{#await getCsapatName(jatekos.csapatId) then csapat}
-											<td>{csapat}</td>
-										{/await}
-										<td>
-											<div class="actions-btn">
-												{convertJatekosStatusz(jatekos.statuszId)}
-												<div>
-													<button
-														on:click|preventDefault={() =>
-															openModifyModal(jatekos.jatekosId, modalType)}
-														><Pencil class="me-2" /></button
-													>
-													<button on:click={() => handleRemove(jatekos.jatekosId, modalType)}
-														><Trash2 /></button
-													>
-												</div>
-											</div>
-										</td>
-									</tr>
-								{/each}
-							</tbody>
-						{:else}
-							<thead>
-								<tr>
-									<th>Liga</th>
-									<th>Forduló</th>
-									<th>Stadion</th>
-									<th>Kezdési Dátum</th>
-									<th>Befejezési Dátum</th>
-									<th>Jelenleg</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each competetions as verseny}
-									<tr>
-										<td>{verseny.liga}</td>
-										<td>{verseny.fordulo}</td>
-										{#await getStadionName(verseny.stadionId) then stadion}
-											<td>{stadion}</td>
-										{/await}
-										<td>{new Date(verseny.kezdesDatum).toLocaleDateString('hu-HU')}</td>
-										<td>{new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}</td>
-										<td>
-											<div class="actions-btn">
-												{verseny.aktualis? 'Jelenleg fut' : "Lezárult"}
-												<div>
-													<button
-														on:click|preventDefault={() =>
-															openModifyModal(verseny.versenyId, modalType)}
-														><Pencil class="me-2" /></button
-													>
-													<button on:click={() => handleRemove(verseny.versenyId, modalType)}
-														><Trash2 /></button
-													>
-												</div>
-											</div>
-										</td>
-									</tr>
-								{/each}
-							</tbody>
-						{/if}
-					</table>
-				</div>
+	<div class="modal" on:click={closeModal}>
+		<div class="modal-content" on:click|stopPropagation>
+			<span class="close" on:click={closeModal}>&times;</span>
+			<h2 class="modal-title">{modalType}</h2>
+			<button class="edit-btn" on:click={() => openCreateModal(modalType)}>Hozzáadás</button>
+			<div class="grid-container">
+				{#if modalType === 'Csapatok'}
+					{#each teams as csapat}
+						<div class="card">
+							<h3>{csapat.csapatNev}</h3>
+							<p><strong>Edző:</strong> {csapat.jelenlegiEdzo}</p>
+							<p><strong>Alapítási Dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
+							{#await getStadionName(csapat.stadionId) then stadion}
+								<p><strong>Stadion:</strong> {stadion}</p>
+							{/await}
+							<p><strong>Státusz:</strong> {convertCsapatStatusz(csapat.statusz)}</p>
+							<div class="actions-btn">
+								<button on:click|preventDefault={() => openModifyModal(csapat.csapatId, modalType)}><Pencil class="me-2" /></button>
+								<button on:click={() => handleRemove(csapat.csapatId, modalType)}><Trash2 /></button>
+							</div>
+						</div>
+					{/each}
+				{:else if modalType === 'Játékosok'}
+					{#each players as jatekos}
+						<div class="card">
+							<h3>{jatekos.vezeteknev} {jatekos.keresztnev}</h3>
+							{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
+								<p><strong>Nemzetiség:</strong> {nemzetiseg}</p>
+							{/await}
+							<p><strong>Születési Dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
+							<p><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
+							{#await getCsapatName(jatekos.csapatId) then csapat}
+								<p><strong>Csapat:</strong> {csapat}</p>
+							{/await}
+							<p><strong>Státusz:</strong> {convertJatekosStatusz(jatekos.statuszId)}</p>
+							<div class="actions-btn">
+								<button on:click|preventDefault={() => openModifyModal(jatekos.jatekosId, modalType)}><Pencil class="me-2" /></button>
+								<button on:click={() => handleRemove(jatekos.jatekosId, modalType)}><Trash2 /></button>
+							</div>
+						</div>
+					{/each}
+				{:else}
+					{#each competetions as verseny}
+						<div class="card">
+							<h3>{verseny.liga} - {verseny.fordulo}</h3>
+							{#await getStadionName(verseny.stadionId) then stadion}
+								<p><strong>Stadion:</strong> {stadion}</p>
+							{/await}
+							<p><strong>Kezdési Dátum:</strong> {new Date(verseny.kezdesDatum).toLocaleDateString('hu-HU')}</p>
+							<p><strong>Befejezési Dátum:</strong> {new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}</p>
+							<p><strong>Jelenleg:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
+							<div class="actions-btn">
+								<button on:click|preventDefault={() => openModifyModal(verseny.versenyId, modalType)}><Pencil class="me-2" /></button>
+								<button on:click={() => handleRemove(verseny.versenyId, modalType)}><Trash2 /></button>
+							</div>
+						</div>
+					{/each}
+				{/if}
 			</div>
 		</div>
-	{/if}
+	</div>
+{/if}
+
 
 	{#if showModal && modifyModal.type !== null}
 		<div class="modal" on:click={() => (modifyModal.type = null)}>
@@ -947,14 +880,243 @@
 </main>
 
 <style>
-	.container {
-		margin: auto;
+
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* Responsív modal stílusok */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-title {
+        font-size: 1.2em;
+    }
+
+    .close {
+        font-size: 1.3em;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .modal-title {
+        font-size: 1em;
+    }
+
+    .close {
+        font-size: 1.2em;
+    }
+}
+
+/* Form input és gombok */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Akciógombok responsívan */
+@media (max-width: 768px) {
+    button {
+        font-size: 0.9em;
+    }
+
+    input, select {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    button {
+        font-size: 0.8em;
+    }
+
+    input, select {
+        font-size: 0.8em;
+    }
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.card p {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+.actions-btn {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* Small devices (portrait tablets and large phones) */
+@media (max-width: 768px) {
+    .card {
+        padding: 10px;
+    }
+
+    .card h3 {
+        font-size: 1em;
+    }
+
+    .card p {
+        font-size: 0.9em;
+    }
+
+    .actions-btn {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .actions-btn button {
+        margin: 5px 0;
+    }
+}
+
+/* Extra small devices (phones, 480px and smaller) */
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* Egyetlen oszlop */
+        gap: 10px;
+    }
+
+    .card {
+        padding: 8px;
+    }
+
+    .card h3 {
+        font-size: 0.9em;
+    }
+
+    .card p {
+        font-size: 0.8em;
+    }
+}
+
+
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 20px;
+}
+
+.card {
+	border: 1px solid #ddd;
+	padding: 15px;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+	margin-bottom: 10px;
+	font-size: 1.2em;
+}
+
+.card p {
+	margin: 5px 0;
+	font-size: 1.6em;
+}
+
+.actions-btn {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 10px;
+}
+
+.container h2 {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+	.container .buttons {
+		display: flex;
+		flex-direction: column;
 		text-align: center;
-	}
-	.buttons {
-		display: grid;
-		width: 20%;
-		margin: 0 auto;
+		width: 50%;
+		justify-self: center;
+
 	}
 	.buttons .btn {
 		display: inline-block;
