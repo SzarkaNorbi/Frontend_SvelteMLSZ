@@ -85,6 +85,11 @@
     gap: 20px; /* Adds space between cards */
     padding: 20px; /* Adds padding around the container */
 }
+@media (max-width: 480px) {
+    .card-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates flexible grid layout */
+    }
+}
 
 .card {
     background: #333;
