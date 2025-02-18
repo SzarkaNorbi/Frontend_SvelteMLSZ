@@ -99,8 +99,9 @@
 
 		<div class="card-container">
 			{#each jatekosok as jatekos}
-				<div class="csapat-card">
-					<h2 class="green-text">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
+				<div class="card">
+					<div class="card-content">
+						<h2 class="card-title">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
 					{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
 						<p class="white-text"><strong>Nemzetiség:</strong> {nemzetiseg}</p>
 					{/await}
@@ -110,6 +111,7 @@
 						<p class="white-text"><strong>Csapat:</strong> {csapat}</p>
 					{/await}
 					<p class="white-text"><strong>Státusz:</strong> {convertStatusz(jatekos.statuszId)}</p>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -117,66 +119,55 @@
 </section>
 
 <style>
-	.section-subtitle {
-		font-size: 2.5em;
-		color: #32cd32;
-		padding: 10px;
-		text-align: center;
-	}
-
-	.container {
-		padding-top: 80px;
-	}
-
-	.section-title-frame {
-		padding: 20px;
-		border-radius: 10px;
-		background-color: #333;
-	}
-
 	.card-container {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 20px;
-		margin-top: 30px;
-	}
-
-	.csapat-card {
-		background-color: #333;
-		border: 1px solid #32cd32;
-		border-radius: 12px;
-		padding: 20px;
-		color: #fff;
-		transition: transform 0.3s ease;
-	}
-
-	.csapat-card:hover {
-		transform: translateY(-10px);
-		box-shadow: 0 4px 8px rgba(50, 205, 50, 0.5);
-	}
-
-	.white-text {
-		color: #fff;
-	}
-
-	.green-text {
-		color: #32cd32;
-	}
-	.csapat-card {
-	font-size: 1.5em;
-	background-color: #333;
-	border: 1px solid #32cd32;
-	border-radius: 12px;
-	padding: 20px;
-	color: #fff;
-	transition: transform 0.3s ease;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
+    gap: 20px; /* Adds space between cards */
+    padding: 20px; /* Adds padding around the container */
 }
 
-.csapat-card h2 {
-	font-size: 1.5em; 
+.card {
+    background: #333;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Ensures content within card stacks vertically */
 }
 
-.csapat-card p {
-	font-size: 1.1em;
+.card:hover {
+    transform: translateY(-5px); /* Slightly lifts the card when hovered */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
 }
+
+.card-title {
+    font-size: 2.5rem;
+    color: #32cd32; /* Green color for titles */
+    margin-bottom: 10px;
+}
+
+.card-content p {
+    font-size: 1.6rem;
+    color: #ddd; /* Light text for readability */
+    margin: 5px 0;
+}
+
+.section-subtitle {
+    font-size: 2.5em;
+    color: #32cd32; /* Green color for subtitle */
+    padding: 10px;
+    text-align: center;
+}
+
+.container {
+    padding-top: 80px; /* Adds padding on top of the container */
+}
+
+.section-title-frame {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #333;
+}
+
 </style>

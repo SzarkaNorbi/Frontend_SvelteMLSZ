@@ -68,47 +68,49 @@
 </section>
 
 <style>
-.card-container {
+	.card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
+    gap: 20px; /* Adds space between cards */
+    padding: 20px; /* Adds padding around the container */
 }
 
 .card {
     background: #333;
     border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
     padding: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Ensures content within card stacks vertically */
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px); /* Slightly lifts the card when hovered */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
 }
 
 .card-title {
     font-size: 2.5rem;
-    color: #32cd32;
+    color: #32cd32; /* Green color for titles */
     margin-bottom: 10px;
 }
 
 .card-content p {
     font-size: 1.6rem;
-    color: #ddd;
+    color: #ddd; /* Light text for readability */
     margin: 5px 0;
 }
 
 .section-subtitle {
-    font-size: 2.5em; 
-    color: #32cd32;
+    font-size: 2.5em;
+    color: #32cd32; /* Green color for subtitle */
     padding: 10px;
     text-align: center;
 }
 
 .container {
-    padding-top: 80px;
+    padding-top: 80px; /* Adds padding on top of the container */
 }
 
 .section-title-frame {
@@ -116,5 +118,55 @@
     border-radius: 10px;
     background-color: #333;
 }
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
+    gap: 20px; /* Adds space between cards */
+    padding: 20px; /* Adds padding around the container */
+}
 
+.card {
+    background: #333;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Ensures content within card stacks vertically */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Slightly lifts the card when hovered */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
+}
+
+.card-title {
+    font-size: 2.5rem;
+    color: #32cd32; /* Green color for titles */
+    margin-bottom: 10px;
+}
+
+.card-content p {
+    font-size: 1.6rem;
+    color: #ddd; /* Light text for readability */
+    margin: 5px 0;
+}
+
+.section-subtitle {
+    font-size: 2.5em;
+    color: #32cd32; /* Green color for subtitle */
+    padding: 10px;
+    text-align: center;
+}
+
+.container {
+    padding-top: 80px; /* Adds padding on top of the container */
+}
+
+.section-title-frame {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #333;
+}
+	
 </style>

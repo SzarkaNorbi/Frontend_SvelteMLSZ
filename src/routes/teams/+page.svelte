@@ -62,14 +62,16 @@
 
         <div class="card-container">
             {#each csapatok as csapat}
-                <div class="csapat-card">
-                    <h2>{csapat.csapatNev}</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="card-title">{csapat.csapatNev}</h2>
                     <p class="white-text"><strong>Jelenlegi edző:</strong> {csapat.jelenlegiEdzo}</p>
                     <p class="white-text"><strong>Alapítási dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
                     {#await getStadionName(csapat.stadionId) then stadion}
                         <p class="white-text"><strong>Stadion:</strong> {stadion}</p>
                     {/await}
                     <p class="white-text"><strong>Státusz:</strong> {convertStatusz(csapat.statusz)}</p>
+                    </div>
                 </div>
             {/each}
         </div>
@@ -77,57 +79,55 @@
 </section>
 
 <style>
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
+    gap: 20px; /* Adds space between cards */
+    padding: 20px; /* Adds padding around the container */
+}
+
+.card {
+    background: #333;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Ensures content within card stacks vertically */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Slightly lifts the card when hovered */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
+}
+
+.card-title {
+    font-size: 2.5rem;
+    color: #32cd32; /* Green color for titles */
+    margin-bottom: 10px;
+}
+
+.card-content p {
+    font-size: 1.6rem;
+    color: #ddd; /* Light text for readability */
+    margin: 5px 0;
+}
+
 .section-subtitle {
-    font-size: 2.5em; 
-    color: #32cd32;
-    padding: 5px;
+    font-size: 2.5em;
+    color: #32cd32; /* Green color for subtitle */
+    padding: 10px;
     text-align: center;
 }
 
 .container {
-    padding-top: 80px;
+    padding-top: 80px; /* Adds padding on top of the container */
 }
 
 .section-title-frame {
     padding: 20px;
     border-radius: 10px;
     background-color: #333;
-}
-
-.card-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.csapat-card {
-    background-color: #333;
-    border: 1px solid #32cd32;
-    border-radius: 12px;
-    padding: 20px;
-    color: #fff;
-    transition: transform 0.3s ease;
-    font-size: 1.5em; 
-}
-
-.csapat-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 4px 8px rgba(50, 205, 50, 0.5);
-}
-
-.csapat-card h2 {
-    color: #32cd32;
-    font-size: 2rem; 
-}
-
-.csapat-card p {
-    font-size: 1.5rem; 
-    margin: 10px 0;
-}
-
-.white-text {
-    color: #fff;
 }
 
 </style>
