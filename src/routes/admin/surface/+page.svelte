@@ -190,13 +190,14 @@
 		switch (type) {
 			case 'Csapatok':
 				const csapatApi = new CsapatApi();
+				
 				const csapat = {
 					csapatId: 0,
 					csapatNev: team_name.value,
 					alapitasDatum: foundation_date.value,
 					jelenlegiEdzo: coach_name.value,
 					stadionId: stadium.value,
-					statusz: status.value,
+					statusz: +csapatStatus.value,
 					media_Id: 1
 				};
 				try {
@@ -227,7 +228,7 @@
 					nemzetisegId: nationality.value,
 					pozicio: +position.value,
 					csapatId: +team.value,
-					statuszId: status.value,
+					statuszId: +jatekosStatus.value,
 					media_Id: 1
 				};
 				try {
@@ -258,7 +259,7 @@
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
 					leiras: "",
-					aktualis: +statuss.value === 1 ? true : false
+					aktualis: +esemenyStatus.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -286,7 +287,6 @@
 	async function handleModify(modal) {
 		switch (modal.type) {
 			case "Csapatok":
-				console.log(modal.id)
 			const csapatApi = new CsapatApi();
 				const csapat = {
 					csapatId: 0,
@@ -294,7 +294,7 @@
 					alapitasDatum: foundation_date.value,
 					jelenlegiEdzo: coach_name.value,
 					stadionId: stadium.value,
-					statusz: status.value,
+					statusz: csapatStatus.value,
 					media_Id: 1
 				};
 				try {
@@ -325,7 +325,7 @@
 					nemzetisegId: nationality.value,
 					pozicio: +position.value,
 					csapatId: +team.value,
-					statuszId: status.value,
+					statuszId: +jatekosStatus.value,
 					media_Id: 1
 				};
 				try {
@@ -356,7 +356,7 @@
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
 					leiras: "",
-					aktualis: +statuss.value === 1 ? true : false
+					aktualis: +esemenyStatus.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -385,8 +385,99 @@
 		createModalType = type;
 	}
 
-	function openModifyModal(id, type) {
+	async function openModifyModal(id, type) {
 		modifyModal = { type, id };
+
+		switch (type) {
+			case 'Csapatok':
+				const csapat = await getCsapatById(id)
+
+				team_name.value = csapat.csapatNev
+				foundation_date.value = new Date(csapat.alapitasDatum).toISOString().split('T')[0];
+				coach_name.value = csapat.jelenlegiEdzo
+				stadium.value = csapat.stadionId
+				csapatStatus.value = +csapat.statusz
+				break;
+			case 'Játékosok':
+				const jatekos = await getJatekosById(id)
+
+				player_name.value = `${jatekos.vezeteknev} ${jatekos.keresztnev}`
+				birth_date.value = new Date(jatekos.szuletesiDatum).toISOString().split('T')[0];
+				nationality.value = jatekos.nemzetisegId
+				position.value = jatekos.pozicio
+				team.value = jatekos.csapatId
+				jatekosStatus.value = jatekos.statuszId
+				break;
+			case 'Események':
+				const esemeny = await getEsemenyById(id)
+
+				liga.value = esemeny.liga
+				round.value = esemeny.fordulo
+				stadium.value = esemeny.stadionId
+				starting_date.value = new Date(esemeny.kezdesDatum).toISOString().split('T')[0];
+				ending_date.value = new Date(esemeny.befejezesDatum).toISOString().split('T')[0];
+				esemenyStatus.value = esemeny.aktualis ? 1 : 0
+				break;
+			default:
+				break;
+		}
+	}
+
+	async function getCsapatById(id) {
+		const csapatApi = new CsapatApi();
+			try {
+			const response = await new Promise((resolve, reject) => {
+				csapatApi.apiCsapatIdGet(id, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data);
+					}
+				});
+			});
+			return response
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+	}	
+
+	async function getEsemenyById(id) {
+		const versenyApi = new VersenyApi();
+			try {
+			const response = await new Promise((resolve, reject) => {
+				versenyApi.versenyIdGet(id, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data);
+					}
+				});
+			});
+			return response
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
+	}
+
+	async function getJatekosById(id) {
+		const jatekosApi = new JatekosApi();
+			try {
+			const response = await new Promise((resolve, reject) => {
+				jatekosApi.jatekosIdGet(id, (error, data, response) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(data);
+					}
+				});
+			});
+			return response
+		} catch (error) {
+			console.error('Error fetching nemzetiseg:', error);
+			errorMessage = 'An error occurred while fetching the nemzetiseg.';
+		}
 	}
 
 	async function handleRemove(id, type) {
@@ -404,7 +495,6 @@
 					}
 				});
 			});
-			// console.log(response);
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
@@ -423,7 +513,6 @@
 					}
 				});
 			});
-			// console.log(response);
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
@@ -442,7 +531,6 @@
 					}
 				});
 			});
-			// console.log(response);
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
@@ -650,8 +738,8 @@
 						{/each}
 					</select>
 
-					<label for="status">Státusz:</label>
-					<select id="status">
+					<label for="csapatStatus">Státusz:</label>
+					<select id="csapatStatus">
 						<option value="0">Aktív</option>
 						<option value="1">Inaktív</option>
 						<option value="3">Felbomlott</option>
@@ -690,8 +778,8 @@
 						{/each}
 					</select>
 
-					<label for="status">Státusz:</label>
-					<select id="status">
+					<label for="jatekosStatus">Státusz:</label>
+					<select id="jatekosStatus">
 						<option value="0">Aktív</option>
 						<option value="1">Inaktív</option>
 						<option value="2">Sérült</option>
@@ -726,8 +814,8 @@
 					<label for="ending_date">Befejezés Dátuma:</label>
 					<input type="date" id="ending_date" />
 
-					<label for="statuss">Állapot:</label>
-					<select id="statuss">
+					<label for="esemenyStatus">Állapot:</label>
+					<select id="esemenyStatus">
 						<option value="1">Jelenleg fut</option>
 						<option value="0">Lezárult</option>
 					</select>
@@ -762,8 +850,8 @@
 							{/each}
 						</select>
 
-						<label for="status">Státusz:</label>
-						<select id="status">
+						<label for="csapatStatus">Státusz:</label>
+						<select id="csapatStatus">
 							<option value="0">Aktív</option>
 							<option value="1">Inaktív</option>
 							<option value="3">Felbomlott</option>
@@ -804,8 +892,8 @@
 							{/each}
 						</select>
 
-						<label for="status">Státusz:</label>
-						<select id="status">
+						<label for="jatekosStatus">Státusz:</label>
+						<select id="jatekosStatus">
 							<option value="0">Aktív</option>
 							<option value="1">Inaktív</option>
 							<option value="2">Sérült</option>
@@ -842,8 +930,8 @@
 						<label for="ending_date">Befejezés Dátuma:</label>
 						<input type="date" id="ending_date" />
 
-						<label for="status">Státusz:</label>
-						<select id="status">
+						<label for="esemenyStatus">Státusz:</label>
+						<select id="esemenyStatus">
 							<option value="0">Jelenleg fut</option>
 							<option value="1">Lezárult</option>
 						</select>
