@@ -32,7 +32,7 @@ class ApiClient {
      * Overrides the default value set in spec file if present
      * @param {String} basePath
      */
-    constructor(basePath = 'https://focistak.runasp.net/') {
+    constructor(basePath = 'https://focistak-test.runasp.net/') {
         /**
          * The base URL against which to resolve every API call's (relative) path.
          * @type {String}
