@@ -289,12 +289,12 @@
 			case "Csapatok":
 			const csapatApi = new CsapatApi();
 				const csapat = {
-					csapatId: 0,
+					csapatId: modal.id,
 					csapatNev: team_name.value,
 					alapitasDatum: foundation_date.value,
 					jelenlegiEdzo: coach_name.value,
 					stadionId: stadium.value,
-					statusz: csapatStatus.value,
+					statusz: +csapatStatus.value,
 					media_Id: 1
 				};
 				try {
@@ -318,7 +318,7 @@
 			case "Játékosok":
 			const jatekosApi = new JatekosApi();
 				const jatekos = {
-					jatekosId: 0,
+					jatekosId: modal.id,
 					vezeteknev: player_name.value.split(" ")[0],
 					keresztnev: player_name.value.split(" ")[1],
 					szuletesiDatum: birth_date.value,
@@ -1015,7 +1015,7 @@ button:hover {
 
 .card h3 {
     margin-bottom: 10px;
-    font-size: 1.1em;
+	color: #061738;
 }
 
 .card p {
@@ -1036,7 +1036,7 @@ button:hover {
     }
 
     .card h3 {
-        font-size: 1em;
+        font-size: 2em;
     }
 
     .card p {
@@ -1065,7 +1065,7 @@ button:hover {
     }
 
     .card h3 {
-        font-size: 0.9em;
+        font-size: 2em;
     }
 
     .card p {
@@ -1091,7 +1091,7 @@ button:hover {
 
 .card h3 {
 	margin-bottom: 10px;
-	font-size: 1.2em;
+	font-size: 2em;
 }
 
 .card p {
@@ -1152,45 +1152,6 @@ button:hover {
 	}
 	div button {
 		all: unset;
-	}
-
-	.table-container {
-		margin-top: 30px;
-		padding: 20px 0;
-		border-radius: 8px;
-		background-color: #333;
-	}
-
-	.csapat-table {
-		width: 100%;
-		border-collapse: collapse;
-		color: #fff;
-		font-size: 1.4rem;
-	}
-
-	.csapat-table th,
-	.csapat-table td {
-		text-align: left;
-		padding: 10px;
-		border-bottom: 1px solid #32cd32;
-	}
-
-	.csapat-table th {
-		background-color: #32cd32;
-		color: #fff;
-		font-weight: bold;
-	}
-
-	.csapat-table tr:nth-child(even) {
-		background-color: #555;
-	}
-
-	.csapat-table tr:hover {
-		background-color: #666;
-	}
-
-	.csapat-table td {
-		color: #ddd;
 	}
 
 	.modal {

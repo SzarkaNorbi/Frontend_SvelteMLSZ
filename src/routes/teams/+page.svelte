@@ -63,8 +63,12 @@
         <div class="card-container">
             {#each csapatok as csapat}
                 <div class="card">
+                    {console.log(csapat)}
                     <div class="card-content">
-                        <h2 class="card-title">{csapat.csapatNev}</h2>
+                    <div class="d-flex text-center justify-content-between ">
+                        <h2 class="card-title align-self-center">{csapat.csapatNev}</h2>
+                        <img style="width: 50px;" src={`https://focistak-test.runasp.net/Media/Files/${csapat.media_Id}`} alt="">
+                    </div>
                     <p class="white-text"><strong>Jelenlegi edző:</strong> {csapat.jelenlegiEdzo}</p>
                     <p class="white-text"><strong>Alapítási dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
                     {#await getStadionName(csapat.stadionId) then stadion}

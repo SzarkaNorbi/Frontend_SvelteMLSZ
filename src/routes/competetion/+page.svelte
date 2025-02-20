@@ -58,7 +58,6 @@
 						{/await}
 						<p><strong>Kezdés dátuma:</strong> {new Date(event.kezdesDatum).toLocaleDateString('hu-HU')}</p>
 						<p><strong>Befejezés dátuma:</strong> {new Date(event.befejezesDatum).toLocaleDateString('hu-HU')}</p>
-						<p><strong>Leírás:</strong> {event.leiras}</p>
 						<p><strong>Jelenleg:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
 					</div>
 				</div>

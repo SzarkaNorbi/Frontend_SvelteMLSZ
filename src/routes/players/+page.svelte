@@ -101,16 +101,19 @@
 			{#each jatekosok as jatekos}
 				<div class="card">
 					<div class="card-content">
-						<h2 class="card-title">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
-					{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
-						<p class="white-text"><strong>Nemzetiség:</strong> {nemzetiseg}</p>
-					{/await}
-					<p class="white-text"><strong>Születési dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
-					<p class="white-text"><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
-					{#await getCsapatName(jatekos.csapatId) then csapat}
-						<p class="white-text"><strong>Csapat:</strong> {csapat}</p>
-					{/await}
-					<p class="white-text"><strong>Státusz:</strong> {convertStatusz(jatekos.statuszId)}</p>
+						<div class="d-flex justify-content-between">
+							<h2 class="card-title align-self-center">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
+							<img style="width: 100px;" src={`https://focistak-test.runasp.net/Media/Files/${jatekos.media_Id}`} alt="">
+						</div>
+						{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
+							<p class="white-text"><strong>Nemzetiség:</strong> {nemzetiseg}</p>
+						{/await}
+						<p class="white-text"><strong>Születési dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
+						<p class="white-text"><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
+						{#await getCsapatName(jatekos.csapatId) then csapat}
+							<p class="white-text"><strong>Csapat:</strong> {csapat}</p>
+						{/await}
+						<p class="white-text"><strong>Státusz:</strong> {convertStatusz(jatekos.statuszId)}</p>
 					</div>
 				</div>
 			{/each}
