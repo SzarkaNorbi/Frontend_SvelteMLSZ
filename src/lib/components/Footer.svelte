@@ -36,81 +36,87 @@
 </footer>
 
 <style>
-    .footer {
-        background-color: #e2f6de;
-        color: black;
-        padding: 3rem 0;
-        width: 100%;
-        margin-top: auto;
-    }
+.footer {
+    background-color: #e2f6de;
+    color: black; /* Minden szöveg fekete lesz alapértelmezetten */
+    padding: 3rem 0;
+    width: 100%;
+    margin-top: auto;
+}
 
-    .footer-heading {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-        text-transform: uppercase;
-    }
+.footer-heading,
+.footer-description,
+.contact-list li,
+.back-to-top,
+.contact-list a {
+    color: black; /* Explicit fekete szín minden fontos elemre */
+}
 
-    .footer-description {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        line-height: 1.6;
-    }
+.footer-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
 
-    .contact-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+.footer-description {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
 
-    .contact-list li {
-        margin-bottom: 1rem;
-        font-size: 1.5rem;
-    }
+.contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-    .contact-list a {
-        color: black;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        transition: opacity 0.2s ease;
-    }
+.contact-list li {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
 
-    .contact-list a:hover {
-        opacity: 0.8;
-    }
+.contact-list a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease;
+}
 
-    .contact-list i {
-        margin-right: 0.75rem;
-        width: 20px;
-    }
+.contact-list a:hover {
+    opacity: 0.8;
+}
 
-    footer {
-        position: relative;
-    }
+.contact-list i {
+    margin-right: 0.75rem;
+    width: 20px;
+}
 
-    .back-to-top {
-        color: black;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        font-size: 1.5rem;
-        transition: opacity 0.2s ease;
-        position: absolute;
-        right: 2rem;
-        bottom: 2rem;
-    }
+footer {
+    position: relative;
+}
 
-    .back-to-top:hover {
-        opacity: 0.8;
-        color: black;
-    }
+.back-to-top {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.5rem;
+    transition: opacity 0.2s ease;
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+}
 
-    .back-to-top i {
-        margin-right: 0.5rem;
-    }
+.back-to-top:hover {
+    opacity: 0.8;
+}
 
-    .left-align {
-        text-align: left;
-    }
+.back-to-top i {
+    margin-right: 0.5rem;
+}
+
+.left-align {
+    text-align: left;
+}
+
 </style>
