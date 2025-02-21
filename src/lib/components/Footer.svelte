@@ -52,6 +52,11 @@
     color: black; /* Explicit fekete szín minden fontos elemre */
 }
 
+.footer, .footer p, .footer h5, .footer a {
+    color: black !important;
+}
+
+
 .footer-heading {
     font-size: 2.5rem;
     font-weight: bold;
