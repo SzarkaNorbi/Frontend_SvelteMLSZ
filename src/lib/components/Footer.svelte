@@ -56,7 +56,6 @@
     color: black !important;
 }
 
-
 .footer-heading {
     font-size: 2.5rem;
     font-weight: bold;
@@ -79,6 +78,9 @@
 .contact-list li {
     margin-bottom: 1rem;
     font-size: 1.5rem;
+    color: black !important; /* Kényszerített fekete szín */
+    -webkit-text-fill-color: black; /* Safari-specifikus beállítás */
+    -webkit-user-select: auto; /* Automatikus szövegkijelölés engedélyezése */
 }
 
 .contact-list a {
@@ -86,6 +88,7 @@
     display: flex;
     align-items: center;
     transition: opacity 0.2s ease;
+    color: black !important;
 }
 
 .contact-list a:hover {
@@ -95,6 +98,11 @@
 .contact-list i {
     margin-right: 0.75rem;
     width: 20px;
+}
+
+a[href^="tel"] {
+    color: black !important;
+    text-decoration: none;
 }
 
 footer {
@@ -110,6 +118,7 @@ footer {
     position: absolute;
     right: 2rem;
     bottom: 2rem;
+    color: black !important;
 }
 
 .back-to-top:hover {
@@ -123,5 +132,4 @@ footer {
 .left-align {
     text-align: left;
 }
-
 </style>
