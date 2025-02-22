@@ -668,7 +668,7 @@
 					
 					<label for="stadium">Stadion:</label>
 					<select id="stadium">
-						<option value="">Válassz stadiont</option>
+						<option value="">Válasszon stadiont</option>
 						{#each stadions as stadion}
 							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
 						{/each}
@@ -688,7 +688,7 @@
 
 					<label for="nationality">Nemzetiség:</label>
 					<select id="nationality">
-						<option value="">Válassz nemzetiséget</option>
+						<option value="">Válasszon nemzetiséget</option>
 						{#each nationalitys as nationality}
 							<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
 						{/each}
@@ -699,7 +699,7 @@
 
 					<label for="position">Pozíció:</label>
 					<select id="position">
-						<option value="">Válasszon csapatot!</option>
+						<option value="">Válasszon pozíciót</option>
 						<option value="0">Kapus</option>
 						<option value="1">Védő</option>
 						<option value="2">Középpályás</option>
@@ -708,7 +708,7 @@
 
 					<label for="team">Csapat:</label>
 					<select id="team">
-						<option value="">Válasszon csapatot!</option>
+						<option value="">Válasszon csapatot</option>
 						{#each teams as team}
 							<option value="{team.csapatId}">{team.csapatNev}</option>
 						{/each}
@@ -738,7 +738,7 @@
 
 					<label for="stadium">Stadion:</label>
 					<select id="stadium">
-						<option value="">Válassz stadiont</option>
+						<option value="">Válasszon stadiont</option>
 						{#each stadions as stadion}
 							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
 						{/each}
@@ -781,7 +781,7 @@
 						
 						<label for="stadium">Stadion:</label>
 							<select id="stadium">
-   							<option value="">Válassz stadiont</option>
+   							<option value="">Válasszon stadiont</option>
     						{#each stadions as stadion}
         					<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
     						{/each}
@@ -803,7 +803,7 @@
 
 						<label for="nationality">Nemzetiség:</label>
 						<select id="nationality">
-							<option value="">Válassz nemzetiséget</option>
+							<option value="">Válasszon nemzetiséget</option>
 							{#each nationalitys as nationality}
 								<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
 							{/each}
@@ -814,7 +814,7 @@
 
 						<label for="position">Pozíció:</label>
 						<select id="position">
-							<option value="">Válasszon csapatot!</option>
+							<option value="">Válasszon pozíciót</option>
 							<option value="0">Kapus</option>
 							<option value="1">Védő</option>
 							<option value="2">Középpályás</option>
@@ -823,7 +823,7 @@
 
 						<label for="team">Csapat:</label>
 						<select id="team">
-							<option value="">Válasszon csapatot!</option>
+							<option value="">Válasszon csapatot</option>
 							{#each teams as team}
 								<option value="{team.csapatId}">{team.csapatNev}</option>
 							{/each}
@@ -855,7 +855,7 @@
 
 						<label for="stadium">Stadion:</label>
 						<select id="stadium">
-							<option value="">Válassz stadiont</option>
+							<option value="">Válasszon stadiont</option>
 							{#each stadions as stadion}
 								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
 							{/each}
