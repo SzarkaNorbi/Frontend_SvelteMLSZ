@@ -102,8 +102,10 @@
 
 a[href^="tel"] {
     color: black !important;
-    text-decoration: none;
+    text-decoration: none !important;
+    -webkit-text-fill-color: black; 
 }
+
 
 footer {
     position: relative;
