@@ -736,13 +736,17 @@
 						max="38"
 					/>
 
-					<label for="stadium">Stadion:</label>
+					
+						<label for="stadium">Stadion:</label>
 					<select id="stadium">
 						<option value="">Válasszon stadiont</option>
 						{#each stadions as stadion}
 							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
 						{/each}
 					</select>
+					
+
+
 
 					<label for="starting_date">Kezdés Dátuma:</label>
 					<input type="date" id="starting_date" />
@@ -853,6 +857,7 @@
 							max="38"
 						/>
 
+							
 						<label for="stadium">Stadion:</label>
 						<select id="stadium">
 							<option value="">Válasszon stadiont</option>
@@ -860,6 +865,8 @@
 								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
 							{/each}
 						</select>
+						
+
 
 						<label for="starting_date">Kezdés Dátuma:</label>
 						<input type="date" id="starting_date" />
