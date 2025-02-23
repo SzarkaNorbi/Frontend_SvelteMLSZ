@@ -1,7 +1,7 @@
 <footer class="footer">
-    <div class="container px-5 px-lg-0">
+    <div class="container-fluid px-3 px-lg-5">
         <div class="row gy-4">
-            <div class="col-lg-4 col-md-6 left-align">
+            <div class="col-lg-4 col-md-6 d-flex flex-column justify-content-start text-md-center text-lg-start">
                 <h5 class="footer-heading">Elérhetőség</h5>
                 <p class="footer-description">Ha bármilyen kérdésed van, vagy szeretnél kapcsolatba lépni velünk, az alábbi elérhetőségeken érhetsz el minket:</p>
                 <ul class="contact-list">
@@ -25,7 +25,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-4 col-md-6 text-md-center">
                 <a href="#top" class="back-to-top">
                     <i class="fa fa-arrow-up"></i>
                     Az oldal tetejére
@@ -38,7 +38,7 @@
 <style>
 .footer {
     background-color: #e2f6de;
-    color: black; /* Minden szöveg fekete lesz alapértelmezetten */
+    color: black;
     padding: 3rem 0;
     width: 100%;
     margin-top: auto;
@@ -49,7 +49,7 @@
 .contact-list li,
 .back-to-top,
 .contact-list a {
-    color: black; /* Explicit fekete szín minden fontos elemre */
+    color: black; 
 }
 
 .footer, .footer p, .footer h5, .footer a {
@@ -78,9 +78,9 @@
 .contact-list li {
     margin-bottom: 1rem;
     font-size: 1.5rem;
-    color: black !important; /* Kényszerített fekete szín */
-    -webkit-text-fill-color: black; /* Safari-specifikus beállítás */
-    -webkit-user-select: auto; /* Automatikus szövegkijelölés engedélyezése */
+    color: black !important;
+    -webkit-text-fill-color: black;
+    -webkit-user-select: auto;
 }
 
 .contact-list a {
@@ -106,7 +106,6 @@ a[href^="tel"] {
     -webkit-text-fill-color: black; 
 }
 
-
 footer {
     position: relative;
 }
@@ -131,7 +130,10 @@ footer {
     margin-right: 0.5rem;
 }
 
-.left-align {
-    text-align: left;
+/* Biztosítsa, hogy a nagy kijelzőn balra igazított maradjon */
+@media (min-width: 992px) { 
+    .col-lg-4 {
+        align-self: flex-start;
+    }
 }
 </style>
