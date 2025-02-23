@@ -1,171 +1,128 @@
 <script>
-	import StadionApi from '../../../generated-client/src/api/StadionApi.js';
-	import VersenyApi from '../../../generated-client/src/api/VersenyApi.js';
-	import { onMount } from 'svelte';
+    import StadionApi from '../../../generated-client/src/api/StadionApi.js';
+    import VersenyApi from '../../../generated-client/src/api/VersenyApi.js';
+    import { onMount } from 'svelte';
 
-	let events = [];
+    let events = [];
 
-	function loadEvents() {
-		const apiInstance = new VersenyApi();
-		apiInstance.versenyGet((error, data, response) => {
-			if (error) {
-				console.error(error);
-			} else {
-				events = data;
-			}
-		});
-	}
+    function loadEvents() {
+        const apiInstance = new VersenyApi();
+        apiInstance.versenyGet((error, data, response) => {
+            if (error) {
+                console.error(error);
+            } else {
+                events = data;
+            }
+        });
+    }
 
-	onMount(loadEvents);
+    onMount(loadEvents);
 
-	async function getStadionName(stadionId) {
-		const stadionApi = new StadionApi();
-		try {
-			const response = await new Promise((resolve, reject) => {
-				stadionApi.stadionIdGet(stadionId, (error, data, response) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(data.stadionNeve);
-					}
-				});
-			});
-			return response;
-		} catch (error) {
-			console.error('Error fetching stadion:', error);
-		}
-	}
+    async function getStadionName(stadionId) {
+        const stadionApi = new StadionApi();
+        try {
+            const response = await new Promise((resolve, reject) => {
+                stadionApi.stadionIdGet(stadionId, (error, data, response) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(data.stadionNeve);
+                    }
+                });
+            });
+            return response;
+        } catch (error) {
+            console.error('Error fetching stadion:', error);
+        }
+    }
 </script>
 
 <section class="product_section">
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-12 text-center pb-5">
-				<div class="section-title-frame">
-					<p class="section-subtitle">Tekintse meg versenyeinket!</p>
-				</div>
-			</div>
-		</div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 text-center pb-5">
+                <div class="section-title-frame">
+                    <p class="section-subtitle">Tekintse meg versenyeinket!</p>
+                </div>
+            </div>
+        </div>
 
-		<div class="card-container">
-			{#each events as event}
-				<div class="card">
-					<div class="card-content">
-						<h2 class="card-title">{event.liga}</h2>
-						<p><strong>Forduló:</strong> {event.fordulo}</p>
-						{#await getStadionName(event.stadionId) then stadion}
-							<p><strong>Stadion:</strong> {stadion}</p>
-						{/await}
-						<p><strong>Kezdés dátuma:</strong> {new Date(event.kezdesDatum).toLocaleDateString('hu-HU')}</p>
-						<p><strong>Befejezés dátuma:</strong> {new Date(event.befejezesDatum).toLocaleDateString('hu-HU')}</p>
-						<p><strong>Jelenleg:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
-					</div>
-				</div>
-			{/each}
-		</div>
-	</div>
+        <div class="card-container">
+            {#each events as event}
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="card-title">{event.liga}</h2>
+                        <p><strong>Forduló:</strong> {event.fordulo}</p>
+                        {#await getStadionName(event.stadionId) then stadion}
+                            <p><strong>Stadion:</strong> {stadion}</p>
+                        {/await}
+                        <p><strong>Kezdés dátuma:</strong> {new Date(event.kezdesDatum).toLocaleDateString('hu-HU')}</p>
+                        <p><strong>Befejezés dátuma:</strong> {new Date(event.befejezesDatum).toLocaleDateString('hu-HU')}</p>
+                        <p><strong>Jelenleg:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    </div>
 </section>
 
 <style>
-	.card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
-    gap: 20px; /* Adds space between cards */
-    padding: 20px; /* Adds padding around the container */
-}
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
+        gap: 20px; /* Adds space between cards */
+        padding: 20px; /* Adds padding around the container */
+    }
 
-.card {
-    background: #333;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column; /* Ensures content within card stacks vertically */
-}
+    @media (max-width: 480px) {
+        .card-container {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjusts for smaller screens */
+        }
+    }
 
-.card:hover {
-    transform: translateY(-5px); /* Slightly lifts the card when hovered */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
-}
+    .card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #eaeaea;
+    }
 
-.card-title {
-    font-size: 2.5rem;
-    color: #32cd32; /* Green color for titles */
-    margin-bottom: 10px;
-}
+    .card:hover {
+        transform: translateY(-5px); /* Slightly lifts the card when hovered */
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Increases shadow for hover effect */
+    }
 
-.card-content p {
-    font-size: 1.6rem;
-    color: #ddd; /* Light text for readability */
-    margin: 5px 0;
-}
+    .card-title {
+        font-size: 2.2rem;
+        color: #28a745; /* Green color for titles */
+        margin-bottom: 10px;
+    }
 
-.section-subtitle {
-    font-size: 2.5em;
-    color: #32cd32; /* Green color for subtitle */
-    padding: 10px;
-    text-align: center;
-}
+    .card-content p {
+        font-size: 1.4rem;
+        color: #555; /* Light text for readability */
+        margin-bottom: 8px;
+    }
 
-.container {
-    padding-top: 80px; /* Adds padding on top of the container */
-}
+    .section-subtitle {
+        font-size: 2.5em;
+        color: #28a745; /* Green color for subtitle */
+        padding: 10px;
+        text-align: center;
+    }
 
-.section-title-frame {
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #333;
-}
-.card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
-    gap: 20px; /* Adds space between cards */
-    padding: 20px; /* Adds padding around the container */
-}
+    .container {
+        padding-top: 80px;
+    }
 
-.card {
-    background: #333;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column; /* Ensures content within card stacks vertically */
-}
-
-.card:hover {
-    transform: translateY(-5px); /* Slightly lifts the card when hovered */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
-}
-
-.card-title {
-    font-size: 2.5rem;
-    color: #32cd32; /* Green color for titles */
-    margin-bottom: 10px;
-}
-
-.card-content p {
-    font-size: 1.6rem;
-    color: #ddd; /* Light text for readability */
-    margin: 5px 0;
-}
-
-.section-subtitle {
-    font-size: 2.5em;
-    color: #32cd32; /* Green color for subtitle */
-    padding: 10px;
-    text-align: center;
-}
-
-.container {
-    padding-top: 80px; /* Adds padding on top of the container */
-}
-
-.section-title-frame {
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #333;
-}
-	
+    .section-title-frame {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+    }
 </style>
