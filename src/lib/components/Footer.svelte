@@ -42,7 +42,7 @@ body, html {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-direction: column; /* Segít abban, hogy a footer alul maradjon */
+    flex-direction: column; /* Flexbox segítségével az oldal aljára rögzítjük a footer-t */
 }
 
 .container-fluid {
@@ -55,10 +55,9 @@ body, html {
     padding: 3rem 0;
     width: 100%;
     position: relative;
-    margin-top: auto; /* Ez biztosítja, hogy mindig az oldal aljára kerüljön */
+    margin-top: auto; /* A footer biztosan az oldal alján lesz */
 }
 
-/* Footer tartalom beállítások */
 .footer-heading,
 .footer-description,
 .contact-list li,
@@ -151,6 +150,4 @@ footer {
         align-self: flex-start;
     }
 }
-
-
 </style>
