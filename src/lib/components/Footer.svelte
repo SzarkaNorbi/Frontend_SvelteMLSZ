@@ -36,12 +36,20 @@
 </footer>
 
 <style>
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .footer {
     background-color: #e2f6de;
     color: black;
     padding: 3rem 0;
     width: 100%;
-    margin-top: auto;
+    margin-top: auto; /* Ez biztosítja, hogy a footer az oldal alján legyen */
 }
 
 .footer-heading,
@@ -136,4 +144,5 @@ footer {
         align-self: flex-start;
     }
 }
+
 </style>

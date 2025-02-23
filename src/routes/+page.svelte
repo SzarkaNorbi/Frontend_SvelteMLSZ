@@ -154,112 +154,150 @@
 
 
 <style>
-    body,
-    html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        width: 100%;
-        background-color: white;
-    }
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
 
-    .row {
-        background-color: white;
-    }
+.row {
+    background-color: white;
+}
 
-    .section-subtitle {
-        font-size: 2.5rem;
-        color: grey;
-        line-height: 1.6;
-        max-width: 768px;
-        margin: 0 auto 40px;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 90%;
-        margin: 0 auto;
-    }
+.section-subtitle {
+    font-size: 2.5rem;
+    color: grey;
+    line-height: 1.6;
+    max-width: 768px;
+    margin: 0 auto 40px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    margin: 0 auto;
+}
 
+.about_section,
+.testimonial_section,
+.gallery_section {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.about_section {
+    padding-top: 200px;
+}
+
+.about-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    font-size: 1.4rem;
+    line-height: 1.8;
+}
+
+.carousel-item {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.carousel-item.active {
+    opacity: 1;
+}
+
+.carousel-indicators button {
+    background-color: #aaa;
+    border: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin: 0 4px;
+    transition: background-color 0.3s;
+}
+
+.carousel-indicators button.disabled {
+    pointer-events: none;
+}
+
+/* Galéria és tesztimóniák reszponzív stílusai */
+@media (max-width: 767px) {
     .about_section,
     .testimonial_section,
     .gallery_section {
-        padding: 80px 0;
-        background-color: white;
+        padding: 40px 0;
     }
 
-    .about_section {
-        padding-top: 200px;
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .section-subtitle {
+        font-size: 1.6rem;
     }
 
     .about-content {
-        background-color: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease;
-        font-size: 1.4rem;
+        padding: 15px;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .carousel-inner {
+        margin-top: 20px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+@media (min-width: 992px) {
+    /* Galéria */
+    .gallery_section .container .row {
+        margin: 0 auto;
+    }
+
+    .gallery_section .col-md-4 {
+        padding: 0 15px; /* Képek között több tér */
+    }
+
+    .section-title {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+
+    .section-subtitle {
+        font-size: 2rem;
+        max-width: 70%;
+        margin: 0 auto;
+    }
+
+    .about-content {
+        font-size: 1.5rem;
         line-height: 1.8;
+        padding: 40px;
     }
 
-    .carousel-item {
-        opacity: 0;
-        transition: opacity 1s ease-in-out;
+    .carousel-inner {
+        margin-top: 30px;
     }
 
-    .carousel-item.active {
-        opacity: 1;
+    .carousel-control-prev,
+    .carousel-control-next {
+        top: 50%;
+        transform: translateY(-50%);
     }
 
-    .carousel-indicators button {
-        background-color: #aaa;
-        border: none;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        margin: 0 4px;
-        transition: background-color 0.3s;
+    .col-lg-4 {
+        max-width: 33.333%; /* 3 kép egy sorban */
     }
+}
 
-    .carousel-indicators button.disabled {
-        pointer-events: none;
-    }
-
-    @media (max-width: 767px) {
-        .about_section,
-        .testimonial_section,
-        .gallery_section {
-            padding: 40px 0;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .section-subtitle {
-            font-size: 1.6rem;
-        }
-
-        .about-content {
-            padding: 15px;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-    }
-
-    @media (min-width: 992px) {
-        .carousel-inner {
-            margin-top: 30px;
-        }
-
-        .col-lg-3 {
-            max-width: 25%;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            top: 50%;
-            transform: translateY(-50%);
-        }
-    }
 </style>
