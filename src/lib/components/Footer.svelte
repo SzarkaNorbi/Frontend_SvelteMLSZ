@@ -36,12 +36,17 @@
 </footer>
 
 <style>
+/* Alapvető beállítások */
 body, html {
+    height: 100%;
     margin: 0;
     padding: 0;
-    height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Segít abban, hogy a footer alul maradjon */
+}
+
+.container-fluid {
+    flex: 1; /* Kitölti a fennmaradó teret */
 }
 
 .footer {
@@ -49,9 +54,11 @@ body, html {
     color: black;
     padding: 3rem 0;
     width: 100%;
-    margin-top: auto; /* Ez biztosítja, hogy a footer az oldal alján legyen */
+    position: relative;
+    margin-top: auto; /* Ez biztosítja, hogy mindig az oldal aljára kerüljön */
 }
 
+/* Footer tartalom beállítások */
 .footer-heading,
 .footer-description,
 .contact-list li,
@@ -138,11 +145,12 @@ footer {
     margin-right: 0.5rem;
 }
 
-/* Biztosítsa, hogy a nagy kijelzőn balra igazított maradjon */
+/* Biztosítja, hogy nagyobb kijelzőkön a footer balra igazítva maradjon */
 @media (min-width: 992px) { 
     .col-lg-4 {
         align-self: flex-start;
     }
 }
+
 
 </style>

@@ -259,8 +259,8 @@ html {
 }
 
 @media (min-width: 992px) {
-    /* Galéria */
-    .gallery_section .container .row {
+    /* Galéria: 3 kép egy sorban */
+    .gallery_section .container-fluid .row {
         margin: 0 auto;
     }
 
@@ -298,6 +298,14 @@ html {
     .col-lg-4 {
         max-width: 33.333%; /* 3 kép egy sorban */
     }
+
+    /* Ha az oldal szélesebb, a galéria és egyéb szekciók is jobban kihasználják a teret */
+    .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        width: 100%;
+    }
 }
+
 
 </style>
