@@ -31,7 +31,7 @@
             });
             return response;
         } catch (error) {
-            console.error('Error fetching nemzetiseg:', error);
+            console.error('Error fetching stadion name:', error);
             return 'Ismeretlen stadion';
         }
     }
@@ -63,18 +63,17 @@
         <div class="card-container">
             {#each csapatok as csapat}
                 <div class="card">
-                    {console.log(csapat)}
-                    <div class="card-content">
-                    <div class="d-flex text-center justify-content-between ">
-                        <h2 class="card-title align-self-center">{csapat.csapatNev}</h2>
-                        <img style="width: 50px;" src={`https://focistak-test.runasp.net/Media/Files/${csapat.media_Id}`} alt="">
+                    <div class="card-header">
+                        <h2 class="card-title">{csapat.csapatNev}</h2>
+                        <img class="team-logo" src={`https://focistak-test.runasp.net/Media/Files/${csapat.media_Id}`} alt="Team logo">
                     </div>
-                    <p class="white-text"><strong>Jelenlegi edző:</strong> {csapat.jelenlegiEdzo}</p>
-                    <p class="white-text"><strong>Alapítási dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
-                    {#await getStadionName(csapat.stadionId) then stadion}
-                        <p class="white-text"><strong>Stadion:</strong> {stadion}</p>
-                    {/await}
-                    <p class="white-text"><strong>Státusz:</strong> {convertStatusz(csapat.statusz)}</p>
+                    <div class="card-body">
+                        <p><strong>Jelenlegi edző:</strong> {csapat.jelenlegiEdzo}</p>
+                        <p><strong>Alapítási dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
+                        {#await getStadionName(csapat.stadionId) then stadion}
+                            <p><strong>Stadion:</strong> {stadion}</p>
+                        {/await}
+                        <p><strong>Státusz:</strong> {convertStatusz(csapat.statusz)}</p>
                     </div>
                 </div>
             {/each}
@@ -85,58 +84,73 @@
 <style>
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
-    gap: 20px; /* Adds space between cards */
-    padding: 20px; /* Adds padding around the container */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 20px;
+    padding: 20px;
 }
+
 @media (max-width: 480px) {
     .card-container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Creates flexible grid layout */
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
 }
 
 .card {
-    background: #333;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     padding: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
-    flex-direction: column; /* Ensures content within card stacks vertically */
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #eaeaea;
 }
 
 .card:hover {
-    transform: translateY(-5px); /* Slightly lifts the card when hovered */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5); /* Increases shadow for hover effect */
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .card-title {
-    font-size: 2.5rem;
-    color: #32cd32; /* Green color for titles */
-    margin-bottom: 10px;
+    font-size: 2.2rem;
+    color: #28a745;
 }
 
-.card-content p {
-    font-size: 1.6rem;
-    color: #ddd; /* Light text for readability */
-    margin: 5px 0;
+.team-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.card-body p {
+    font-size: 1.4rem;
+    color: #555;
+    margin-bottom: 8px;
 }
 
 .section-subtitle {
     font-size: 2.5em;
-    color: #32cd32; /* Green color for subtitle */
+    color: #28a745;
     padding: 10px;
     text-align: center;
 }
 
 .container {
-    padding-top: 80px; /* Adds padding on top of the container */
+    padding-top: 80px;
 }
 
 .section-title-frame {
     padding: 20px;
     border-radius: 10px;
-    background-color: #333;
+    background-color: #f8f9fa;
 }
-
 </style>
