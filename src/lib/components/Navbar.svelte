@@ -49,4 +49,14 @@
 	.active .nav-link {
 		color: red !important;
 	}
+
+	@media (min-width: 992px) {
+		.navbar-nav {
+			justify-content: center; 
+		}
+
+		.navbar {
+			padding: 20px 0; 
+		}
+	}
 </style>

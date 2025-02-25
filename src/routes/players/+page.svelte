@@ -5,10 +5,10 @@
 	import { onMount } from 'svelte';
 
 	let jatekosok = [];
+	let searchQuery = "";
 
 	onMount(() => {
 		const jatekosApi = new JatekosApi();
-
 		jatekosApi.jatekosGet((error, data, response) => {
 			if (error) {
 				console.error(error);
@@ -97,25 +97,22 @@
 			</div>
 		</div>
 
+		<input type="text" bind:value={searchQuery} placeholder="Keresés játékos neve alapján..." class="search-input" />
+
 		<div class="card-container">
-			{#each jatekosok as jatekos}
+			{#each jatekosok.filter(j => 
+				(`${j.vezeteknev} ${j.keresztnev}`.toLowerCase().includes(searchQuery.toLowerCase()))
+			) as jatekos}
 				<div class="card">
 					<div class="card-header">
 						<h2 class="card-title">{jatekos.vezeteknev} {jatekos.keresztnev}</h2>
-						<img
-							class="player-photo"
-							src={`https://focistak-test.runasp.net/Media/Files/${jatekos.media_Id}`}
-							alt="Player photo"
-						/>
+						<img class="player-photo" src={`https://focistak-test.runasp.net/Media/Files/${jatekos.media_Id}`} alt="Player photo" />
 					</div>
 					<div class="card-body">
 						{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
 							<p><strong>Nemzetiség:</strong> {nemzetiseg}</p>
 						{/await}
-						<p>
-							<strong>Születési dátum:</strong>
-							{new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}
-						</p>
+						<p><strong>Születési dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
 						<p><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
 						{#await getCsapatName(jatekos.csapatId) then csapat}
 							{#if convertStatusz(jatekos.statuszId) === 'Aktív'}
@@ -131,6 +128,17 @@
 </section>
 
 <style>
+	.search-input {
+    display: block;
+    width: 50%;
+    padding: 10px;
+    margin: 20px auto;
+    font-size: 1.2rem;
+    border: 2px solid #28a745;
+    border-radius: 5px;
+    outline: none;
+}
+
 	.card-container {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

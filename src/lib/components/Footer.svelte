@@ -13,9 +13,9 @@
                             6727 Szeged, Lidicei Tér 1.
                         </a>
                     </li>
-                    <li>
+                    <li class="phone">
                         <i class="fa fa-phone"></i>
-                        +36 30 123 4567
+                        <span class="phone-number">+36 30 123 4567</span>
                     </li>
                     <li>
                         <a href="mailto:focistak.sob@gmail.com">
@@ -96,6 +96,10 @@ body, html {
     color: black !important;
     -webkit-text-fill-color: black;
     -webkit-user-select: auto;
+    word-wrap: break-word; /* Törje meg a hosszú szöveget */
+    white-space: normal; /* Törjön, ha szükséges */
+    display: flex; /* Flexbox alkalmazása */
+    align-items: center; /* Igazítja a tartalmat a sorban */
 }
 
 .contact-list a {
@@ -152,4 +156,29 @@ footer {
     }
 }
 
+/* Kisebb képernyők esetén módosítja a font méretet */
+@media (max-width: 768px) {
+    .contact-list li {
+        font-size: 1.2rem; /* Csökkentett betűméret kisebb képernyőkön */
+    }
+
+    .phone-number {
+        word-wrap: break-word; /* Ha a telefonszám hosszú, törje meg */
+        display: inline-block; /* Biztosítja, hogy ne foglaljon túl sok helyet */
+        max-width: 100%; /* Ne foglaljon el többet, mint a rendelkezésre álló hely */
+    }
+
+    .contact-list li.phone {
+        display: block;
+        word-wrap: break-word; /* Erősítjük a törést */
+    }
+}
+
+/* A telefonszám ne kerüljön beljebb a többi adatnál */
+@media (max-width: 576px) {
+    .contact-list li.phone {
+        display: flex;
+        justify-content: flex-start; /* Igazítja a telefonszámot a bal szélére */
+    }
+}
 </style>

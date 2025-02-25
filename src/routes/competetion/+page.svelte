@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
 
     let events = [];
+    let searchQuery = '';
 
     function loadEvents() {
         const apiInstance = new VersenyApi();
@@ -16,6 +17,11 @@
     }
 
     onMount(loadEvents);
+
+    // Keresési logika
+    $: filteredEvents = events.filter(event => 
+        event.liga.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 </script>
 
 <section class="product_section">
@@ -28,8 +34,16 @@
             </div>
         </div>
 
+        <!-- Kereső mező -->
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-input" />
+            </div>
+        </div>
+
+        <!-- Események listája -->
         <div class="card-container">
-            {#each events as event}
+            {#each filteredEvents as event}
                 <div class="card">
                     <div class="card-content">
                         <h2 class="card-title">{event.liga}</h2>
@@ -47,14 +61,14 @@
 <style>
     .card-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates flexible grid layout */
-        gap: 20px; /* Adds space between cards */
-        padding: 20px; /* Adds padding around the container */
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
     }
 
     @media (max-width: 480px) {
         .card-container {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjusts for smaller screens */
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         }
     }
 
@@ -71,25 +85,25 @@
     }
 
     .card:hover {
-        transform: translateY(-5px); /* Slightly lifts the card when hovered */
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Increases shadow for hover effect */
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     }
 
     .card-title {
         font-size: 2.2rem;
-        color: #28a745; /* Green color for titles */
+        color: #28a745;
         margin-bottom: 10px;
     }
 
     .card-content p {
         font-size: 1.4rem;
-        color: #555; /* Light text for readability */
+        color: #555;
         margin-bottom: 8px;
     }
 
     .section-subtitle {
         font-size: 2.5em;
-        color: #28a745; /* Green color for subtitle */
+        color: #28a745;
         padding: 10px;
         text-align: center;
     }
@@ -103,4 +117,17 @@
         border-radius: 10px;
         background-color: #f8f9fa;
     }
+
+    /* Kereső mező stílus */
+    .search-input {
+    display: block;
+    width: 100%; /* Szélesebb lesz, 80%-os szélesség */
+    padding: 10px;
+    margin: 20px auto;
+    font-size: 1.2rem;
+    border: 2px solid #28a745; 
+    border-radius: 5px;
+    outline: none;
+}
+
 </style>

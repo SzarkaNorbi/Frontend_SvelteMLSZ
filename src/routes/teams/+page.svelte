@@ -6,6 +6,7 @@
 
     const apiInstance = new CsapatApi();
     let csapatok = [];
+    let searchQuery = "";
 
     onMount(() => {
         apiInstance.apiCsapatGet((error, data, response) => {
@@ -60,8 +61,12 @@
             </div>
         </div>
 
+        <div class="row justify-content-center">
+            <input type="text" bind:value={searchQuery} placeholder="Keresés csapatnév alapján..." class="search-box" />
+        </div>
+
         <div class="card-container">
-            {#each csapatok as csapat}
+            {#each csapatok.filter(csapat => csapat.csapatNev.toLowerCase().includes(searchQuery.toLowerCase())) as csapat}
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{csapat.csapatNev}</h2>
@@ -82,6 +87,16 @@
 </section>
 
 <style>
+.search-box {
+    width: 50%;
+    padding: 10px;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    border: 2px solid #28a745;
+    border-radius: 5px;
+    outline: none;
+}
+
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
