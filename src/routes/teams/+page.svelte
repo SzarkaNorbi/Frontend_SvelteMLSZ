@@ -69,7 +69,7 @@
                     </div>
                     <div class="card-body">
                         <p><strong>Jelenlegi edző:</strong> {csapat.jelenlegiEdzo}</p>
-                        <p><strong>Alapítási dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
+                        <p><strong>Alapítási év:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU').slice(0,4)}</p>
                         {#await getStadionName(csapat.stadionId) then stadion}
                             <p><strong>Stadion:</strong> {stadion}</p>
                         {/await}

@@ -1,5 +1,4 @@
 <script>
-    import StadionApi from '../../../generated-client/src/api/StadionApi.js';
     import VersenyApi from '../../../generated-client/src/api/VersenyApi.js';
     import { onMount } from 'svelte';
 
@@ -17,24 +16,6 @@
     }
 
     onMount(loadEvents);
-
-    async function getStadionName(stadionId) {
-        const stadionApi = new StadionApi();
-        try {
-            const response = await new Promise((resolve, reject) => {
-                stadionApi.stadionIdGet(stadionId, (error, data, response) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(data.stadionNeve);
-                    }
-                });
-            });
-            return response;
-        } catch (error) {
-            console.error('Error fetching stadion:', error);
-        }
-    }
 </script>
 
 <section class="product_section">
@@ -53,9 +34,6 @@
                     <div class="card-content">
                         <h2 class="card-title">{event.liga}</h2>
                         <p><strong>Forduló:</strong> {event.fordulo}</p>
-                        {#await getStadionName(event.stadionId) then stadion}
-                            <p><strong>Stadion:</strong> {stadion}</p>
-                        {/await}
                         <p><strong>Kezdés dátuma:</strong> {new Date(event.kezdesDatum).toLocaleDateString('hu-HU')}</p>
                         <p><strong>Befejezés dátuma:</strong> {new Date(event.befejezesDatum).toLocaleDateString('hu-HU')}</p>
                         <p><strong>Jelenleg:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>

@@ -18,7 +18,7 @@
 	let competetions = [];
 
 	let createModalType = null;
-	let modifyModal = { type: null, id: null};
+	let modifyModal = { type: null, id: null };
 	let modalType = null;
 	let showModal = false;
 	function openModal(type) {
@@ -190,7 +190,7 @@
 		switch (type) {
 			case 'Csapatok':
 				const csapatApi = new CsapatApi();
-				
+
 				const csapat = {
 					csapatId: 0,
 					csapatNev: team_name.value,
@@ -202,15 +202,18 @@
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						csapatApi.apiCsapatPost({ csapat, authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadTeams();
-								createModalType = null
+						csapatApi.apiCsapatPost(
+							{ csapat, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadTeams();
+									createModalType = null;
+								}
 							}
-						});
+						);
 					});
 					return response;
 				} catch (error) {
@@ -222,8 +225,8 @@
 				const jatekosApi = new JatekosApi();
 				const jatekos = {
 					jatekosId: 0,
-					vezeteknev: player_name.value.split(" ")[0],
-					keresztnev: player_name.value.split(" ")[1],
+					vezeteknev: player_name.value.split(' ')[0],
+					keresztnev: player_name.value.split(' ')[1],
 					szuletesiDatum: birth_date.value,
 					nemzetisegId: nationality.value,
 					pozicio: +position.value,
@@ -233,16 +236,19 @@
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						jatekosApi.jatekosPost({ jatekos, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadPlayers();
-								createModalType = null
+						jatekosApi.jatekosPost(
+							{ jatekos, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadPlayers();
+									createModalType = null;
+								}
 							}
-						})
-					})
+						);
+					});
 					return response;
 				} catch (error) {
 					console.error('Error fetching csapatok:', error);
@@ -255,29 +261,32 @@
 					versenyId: 0,
 					liga: liga.value,
 					fordulo: round.value,
-					stadionId: stadium.value,
+					stadionId: 1,
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
-					leiras: "",
+					leiras: '',
 					aktualis: +esemenyStatus.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						versenyApi.versenyPost({ verseny, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadCompetetions();
-								createModalType = null
+						versenyApi.versenyPost(
+							{ verseny, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadCompetetions();
+									createModalType = null;
+								}
 							}
-						})
-					})
+						);
+					});
 					return response;
 				} catch (error) {
 					console.error('Error fetching csapatok:', error);
 					errorMessage = 'An error occurred while fetching the csapatok.';
-				};
+				}
 				break;
 			default:
 				break;
@@ -286,8 +295,8 @@
 
 	async function handleModify(modal) {
 		switch (modal.type) {
-			case "Csapatok":
-			const csapatApi = new CsapatApi();
+			case 'Csapatok':
+				const csapatApi = new CsapatApi();
 				const csapat = {
 					csapatId: modal.id,
 					csapatNev: team_name.value,
@@ -299,15 +308,19 @@
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						csapatApi.apiCsapatIdPut(modal.id, { csapat, authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadTeams();
-								modifyModal.type = null
+						csapatApi.apiCsapatIdPut(
+							modal.id,
+							{ csapat, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadTeams();
+									modifyModal.type = null;
+								}
 							}
-						});
+						);
 					});
 					return response;
 				} catch (error) {
@@ -315,12 +328,12 @@
 					errorMessage = 'An error occurred while fetching the csapatok.';
 				}
 				break;
-			case "Játékosok":
-			const jatekosApi = new JatekosApi();
+			case 'Játékosok':
+				const jatekosApi = new JatekosApi();
 				const jatekos = {
 					jatekosId: modal.id,
-					vezeteknev: player_name.value.split(" ")[0],
-					keresztnev: player_name.value.split(" ")[1],
+					vezeteknev: player_name.value.split(' ')[0],
+					keresztnev: player_name.value.split(' ')[1],
 					szuletesiDatum: birth_date.value,
 					nemzetisegId: nationality.value,
 					pozicio: +position.value,
@@ -330,51 +343,59 @@
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						jatekosApi.jatekosIdPut(modal.id, { jatekos, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadPlayers();
-								modifyModal.type = null
+						jatekosApi.jatekosIdPut(
+							modal.id,
+							{ jatekos, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadPlayers();
+									modifyModal.type = null;
+								}
 							}
-						})
-					})
+						);
+					});
 					return response;
 				} catch (error) {
 					console.error('Error fetching csapatok:', error);
 					errorMessage = 'An error occurred while fetching the csapatok.';
 				}
 				break;
-			case "Események":
+			case 'Események':
 				const versenyApi = new VersenyApi();
 				const verseny = {
 					versenyId: modal.id,
 					liga: liga.value,
 					fordulo: round.value,
-					stadionId: stadium.value,
+					stadionId: 1,
 					kezdesDatum: starting_date.value,
 					befejezesDatum: ending_date.value,
-					leiras: "",
+					leiras: '',
 					aktualis: +esemenyStatus.value === 1 ? true : false
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
-						versenyApi.versenyIdPut(modal.id, { verseny, authToken: localStorage.getItem('AuthToken') }, (error, data, response) => {
-							if (error) {
-								reject(error);
-							} else {
-								resolve(data);
-								loadCompetetions();
-								modifyModal.type = null
+						versenyApi.versenyIdPut(
+							modal.id,
+							{ verseny, authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadCompetetions();
+									modifyModal.type = null;
+								}
 							}
-						})
-					})
+						);
+					});
 					return response;
 				} catch (error) {
 					console.error('Error fetching csapatok:', error);
 					errorMessage = 'An error occurred while fetching the csapatok.';
-				};
+				}
 				break;
 			default:
 				break;
@@ -390,33 +411,32 @@
 
 		switch (type) {
 			case 'Csapatok':
-				const csapat = await getCsapatById(id)
+				const csapat = await getCsapatById(id);
 
-				team_name.value = csapat.csapatNev
+				team_name.value = csapat.csapatNev;
 				foundation_date.value = new Date(csapat.alapitasDatum).toISOString().split('T')[0];
-				coach_name.value = csapat.jelenlegiEdzo
-				stadium.value = csapat.stadionId
-				csapatStatus.value = +csapat.statusz
+				coach_name.value = csapat.jelenlegiEdzo;
+				stadium.value = csapat.stadionId;
+				csapatStatus.value = +csapat.statusz;
 				break;
 			case 'Játékosok':
-				const jatekos = await getJatekosById(id)
+				const jatekos = await getJatekosById(id);
 
-				player_name.value = `${jatekos.vezeteknev} ${jatekos.keresztnev}`
+				player_name.value = `${jatekos.vezeteknev} ${jatekos.keresztnev}`;
 				birth_date.value = new Date(jatekos.szuletesiDatum).toISOString().split('T')[0];
-				nationality.value = jatekos.nemzetisegId
-				position.value = jatekos.pozicio
-				team.value = jatekos.csapatId
-				jatekosStatus.value = jatekos.statuszId
+				nationality.value = jatekos.nemzetisegId;
+				position.value = jatekos.pozicio;
+				team.value = jatekos.csapatId;
+				jatekosStatus.value = jatekos.statuszId;
 				break;
 			case 'Események':
-				const esemeny = await getEsemenyById(id)
+				const esemeny = await getEsemenyById(id);
 
-				liga.value = esemeny.liga
-				round.value = esemeny.fordulo
-				stadium.value = esemeny.stadionId
+				liga.value = esemeny.liga;
+				round.value = esemeny.fordulo;
 				starting_date.value = new Date(esemeny.kezdesDatum).toISOString().split('T')[0];
 				ending_date.value = new Date(esemeny.befejezesDatum).toISOString().split('T')[0];
-				esemenyStatus.value = esemeny.aktualis ? 1 : 0
+				esemenyStatus.value = esemeny.aktualis ? 1 : 0;
 				break;
 			default:
 				break;
@@ -425,7 +445,7 @@
 
 	async function getCsapatById(id) {
 		const csapatApi = new CsapatApi();
-			try {
+		try {
 			const response = await new Promise((resolve, reject) => {
 				csapatApi.apiCsapatIdGet(id, (error, data, response) => {
 					if (error) {
@@ -435,16 +455,16 @@
 					}
 				});
 			});
-			return response
+			return response;
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
 		}
-	}	
+	}
 
 	async function getEsemenyById(id) {
 		const versenyApi = new VersenyApi();
-			try {
+		try {
 			const response = await new Promise((resolve, reject) => {
 				versenyApi.versenyIdGet(id, (error, data, response) => {
 					if (error) {
@@ -454,7 +474,7 @@
 					}
 				});
 			});
-			return response
+			return response;
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
@@ -463,7 +483,7 @@
 
 	async function getJatekosById(id) {
 		const jatekosApi = new JatekosApi();
-			try {
+		try {
 			const response = await new Promise((resolve, reject) => {
 				jatekosApi.jatekosIdGet(id, (error, data, response) => {
 					if (error) {
@@ -473,7 +493,7 @@
 					}
 				});
 			});
-			return response
+			return response;
 		} catch (error) {
 			console.error('Error fetching nemzetiseg:', error);
 			errorMessage = 'An error occurred while fetching the nemzetiseg.';
@@ -483,58 +503,70 @@
 	async function handleRemove(id, type) {
 		switch (type) {
 			case 'Csapatok':
-			const csapatApi = new CsapatApi();
-		try {
-			const response = await new Promise((resolve, reject) => {
-				csapatApi.apiCsapatIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(data);
-						loadTeams();
-					}
-				});
-			});
-		} catch (error) {
-			console.error('Error fetching nemzetiseg:', error);
-			errorMessage = 'An error occurred while fetching the nemzetiseg.';
-		}
+				const csapatApi = new CsapatApi();
+				try {
+					const response = await new Promise((resolve, reject) => {
+						csapatApi.apiCsapatIdDelete(
+							id,
+							{ authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadTeams();
+								}
+							}
+						);
+					});
+				} catch (error) {
+					console.error('Error fetching nemzetiseg:', error);
+					errorMessage = 'An error occurred while fetching the nemzetiseg.';
+				}
 				break;
 			case 'Játékosok':
-			const jatekosApi = new JatekosApi();
-		try {
-			const response = await new Promise((resolve, reject) => {
-				jatekosApi.jatekosIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(data);
-						loadPlayers();
-					}
-				});
-			});
-		} catch (error) {
-			console.error('Error fetching nemzetiseg:', error);
-			errorMessage = 'An error occurred while fetching the nemzetiseg.';
-		}
+				const jatekosApi = new JatekosApi();
+				try {
+					const response = await new Promise((resolve, reject) => {
+						jatekosApi.jatekosIdDelete(
+							id,
+							{ authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadPlayers();
+								}
+							}
+						);
+					});
+				} catch (error) {
+					console.error('Error fetching nemzetiseg:', error);
+					errorMessage = 'An error occurred while fetching the nemzetiseg.';
+				}
 				break;
 			case 'Események':
-			const versenyApi = new VersenyApi();
-			try {
-			const response = await new Promise((resolve, reject) => {
-				versenyApi.versenyIdDelete(id, { authToken: localStorage.getItem("AuthToken") }, (error, data, response) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(data);
-						loadCompetetions();
-					}
-				});
-			});
-		} catch (error) {
-			console.error('Error fetching nemzetiseg:', error);
-			errorMessage = 'An error occurred while fetching the nemzetiseg.';
-		}
+				const versenyApi = new VersenyApi();
+				try {
+					const response = await new Promise((resolve, reject) => {
+						versenyApi.versenyIdDelete(
+							id,
+							{ authToken: localStorage.getItem('AuthToken') },
+							(error, data, response) => {
+								if (error) {
+									reject(error);
+								} else {
+									resolve(data);
+									loadCompetetions();
+								}
+							}
+						);
+					});
+				} catch (error) {
+					console.error('Error fetching nemzetiseg:', error);
+					errorMessage = 'An error occurred while fetching the nemzetiseg.';
+				}
 				break;
 			default:
 				break;
@@ -545,14 +577,14 @@
 	function navigateToHomePage() {
 		if (goto) {
 			goto('/'); // SvelteKit natív navigáció
-			showModal = false
-			modalType = null
-			createModalType = null
+			showModal = false;
+			modalType = null;
+			createModalType = null;
 		} else {
 			window.location.href = '/'; // Ha nem SvelteKit-et használsz
-			showModal = false
-			modalType = null
-			createModalType = null
+			showModal = false;
+			modalType = null;
+			createModalType = null;
 		}
 	}
 </script>
@@ -583,71 +615,96 @@
 	</div>
 
 	{#if showModal}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="modal" on:click={closeModal}>
-		<div class="modal-content" on:click|stopPropagation>
-			<span class="close" on:click={closeModal}>&times;</span>
-			<h2 class="modal-title">{modalType}</h2>
-			<button class="edit-btn" on:click={() => openCreateModal(modalType)}>Hozzáadás</button>
-			<div class="grid-container">
-				{#if modalType === 'Csapatok'}
-					{#each teams as csapat}
-						<div class="card">
-							<h3>{csapat.csapatNev}</h3>
-							<p><strong>Edző:</strong> {csapat.jelenlegiEdzo}</p>
-							<p><strong>Alapítási Dátum:</strong> {new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU')}</p>
-							{#await getStadionName(csapat.stadionId) then stadion}
-								<p><strong>Stadion:</strong> {stadion}</p>
-							{/await}
-							<p><strong>Státusz:</strong> {convertCsapatStatusz(csapat.statusz)}</p>
-							<div class="actions-btn">
-								<button on:click|preventDefault={() => openModifyModal(csapat.csapatId, modalType)}><Pencil class="me-2" /></button>
-								<button on:click={() => handleRemove(csapat.csapatId, modalType)}><Trash2 /></button>
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="modal" on:click={closeModal}>
+			<div class="modal-content" on:click|stopPropagation>
+				<span class="close" on:click={closeModal}>&times;</span>
+				<h2 class="modal-title">{modalType}</h2>
+				<button class="edit-btn" on:click={() => openCreateModal(modalType)}>Hozzáadás</button>
+				<div class="grid-container">
+					{#if modalType === 'Csapatok'}
+						{#each teams as csapat}
+							<div class="card">
+								<h3>{csapat.csapatNev}</h3>
+								<p><strong>Edző:</strong> {csapat.jelenlegiEdzo}</p>
+								<p>
+									<strong>Alapítási Év:</strong>
+									{new Date(csapat.alapitasDatum).toLocaleDateString('hu-HU').slice(0, 4)}
+								</p>
+								{#await getStadionName(csapat.stadionId) then stadion}
+									<p><strong>Stadion:</strong> {stadion}</p>
+								{/await}
+								<p><strong>Státusz:</strong> {convertCsapatStatusz(csapat.statusz)}</p>
+								<div class="actions-btn">
+									<button
+										on:click|preventDefault={() => openModifyModal(csapat.csapatId, modalType)}
+										><Pencil class="me-2" /></button
+									>
+									<button on:click={() => handleRemove(csapat.csapatId, modalType)}
+										><Trash2 /></button
+									>
+								</div>
 							</div>
-						</div>
-					{/each}
-				{:else if modalType === 'Játékosok'}
-					{#each players as jatekos}
-						<div class="card">
-							<h3>{jatekos.vezeteknev} {jatekos.keresztnev}</h3>
-							{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
-								<p><strong>Nemzetiség:</strong> {nemzetiseg}</p>
-							{/await}
-							<p><strong>Születési Dátum:</strong> {new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}</p>
-							<p><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
-							{#await getCsapatName(jatekos.csapatId) then csapat}
-								<p><strong>Csapat:</strong> {csapat}</p>
-							{/await}
-							<p><strong>Státusz:</strong> {convertJatekosStatusz(jatekos.statuszId)}</p>
-							<div class="actions-btn">
-								<button on:click|preventDefault={() => openModifyModal(jatekos.jatekosId, modalType)}><Pencil class="me-2" /></button>
-								<button on:click={() => handleRemove(jatekos.jatekosId, modalType)}><Trash2 /></button>
+						{/each}
+					{:else if modalType === 'Játékosok'}
+						{#each players as jatekos}
+							<div class="card">
+								<h3>{jatekos.vezeteknev} {jatekos.keresztnev}</h3>
+								{#await getNemzetisegName(jatekos.nemzetisegId) then nemzetiseg}
+									<p><strong>Nemzetiség:</strong> {nemzetiseg}</p>
+								{/await}
+								<p>
+									<strong>Születési Dátum:</strong>
+									{new Date(jatekos.szuletesiDatum).toLocaleDateString('hu-HU')}
+								</p>
+								<p><strong>Pozíció:</strong> {convertPozicio(jatekos.pozicio)}</p>
+								{#if convertPozicio(jatekos.pozicio) === 'Aktív'}
+									{#await getCsapatName(jatekos.csapatId) then csapat}
+										<p><strong>Csapat:</strong> {csapat}</p>
+									{/await}
+								{/if}
+								<p><strong>Státusz:</strong> {convertJatekosStatusz(jatekos.statuszId)}</p>
+								<div class="actions-btn">
+									<button
+										on:click|preventDefault={() => openModifyModal(jatekos.jatekosId, modalType)}
+										><Pencil class="me-2" /></button
+									>
+									<button on:click={() => handleRemove(jatekos.jatekosId, modalType)}
+										><Trash2 /></button
+									>
+								</div>
 							</div>
-						</div>
-					{/each}
-				{:else}
-					{#each competetions as verseny}
-						<div class="card">
-							<h3>{verseny.liga} - {verseny.fordulo}</h3>
-							{#await getStadionName(verseny.stadionId) then stadion}
-								<p><strong>Stadion:</strong> {stadion}</p>
-							{/await}
-							<p><strong>Kezdési Dátum:</strong> {new Date(verseny.kezdesDatum).toLocaleDateString('hu-HU')}</p>
-							<p><strong>Befejezési Dátum:</strong> {new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}</p>
-							<p><strong>Jelenleg:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
-							<div class="actions-btn">
-								<button on:click|preventDefault={() => openModifyModal(verseny.versenyId, modalType)}><Pencil class="me-2" /></button>
-								<button on:click={() => handleRemove(verseny.versenyId, modalType)}><Trash2 /></button>
+						{/each}
+					{:else}
+						{#each competetions as verseny}
+							<div class="card">
+								<h3>{verseny.liga} - {verseny.fordulo}</h3>
+								<p>
+									<strong>Kezdési Dátum:</strong>
+									{new Date(verseny.kezdesDatum).toLocaleDateString('hu-HU')}
+								</p>
+								<p>
+									<strong>Befejezési Dátum:</strong>
+									{new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}
+								</p>
+								<p><strong>Jelenleg:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
+								<div class="actions-btn">
+									<button
+										on:click|preventDefault={() => openModifyModal(verseny.versenyId, modalType)}
+										><Pencil class="me-2" /></button
+									>
+									<button on:click={() => handleRemove(verseny.versenyId, modalType)}
+										><Trash2 /></button
+									>
+								</div>
 							</div>
-						</div>
-					{/each}
-				{/if}
+						{/each}
+					{/if}
+				</div>
 			</div>
 		</div>
-	</div>
-{/if}
-
+	{/if}
 
 	{#if showModal && modifyModal.type !== null}
 		<div class="modal" on:click={() => (modifyModal.type = null)}>
@@ -656,109 +713,96 @@
 				<h2 class="modal-title">{modifyModal.type} módosítása</h2>
 				<div class="input-container">
 					{#if modifyModal.type === 'Csapatok'}
-					<label for="team_name">Csapatnév:</label>
-					<input type="text" id="team_name" placeholder="Írd be a csapat nevét" />
+						<label for="team_name">Csapatnév:</label>
+						<input type="text" id="team_name" placeholder="Írd be a csapat nevét" />
 
-					<label for="coach_name">Jelenlegi Edző:</label>
-					<input type="text" id="coach_name" placeholder="Írd be az edző nevét" />
+						<label for="coach_name">Jelenlegi Edző:</label>
+						<input type="text" id="coach_name" placeholder="Írd be az edző nevét" />
 
-					<label for="foundation_date">Alapítási Dátum:</label>
-					<input type="date" id="foundation_date" />
+						<label for="foundation_date">Alapítási Dátum:</label>
+						<input type="date" id="foundation_date" />
 
-					
-					<label for="stadium">Stadion:</label>
-					<select id="stadium">
-						<option value="">Válasszon stadiont</option>
-						{#each stadions as stadion}
-							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
-						{/each}
-					</select>
-					
-					<label for="csapatStatus">Státusz:</label>
-					<select id="csapatStatus">
-						<option value="0">Aktív</option>
-						<option value="1">Inaktív</option>
-						<option value="3">Felbomlott</option>
-					</select>
+						<label for="stadium">Stadion:</label>
+						<select id="stadium">
+							<option value="">Válasszon stadiont</option>
+							{#each stadions as stadion}
+								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
+							{/each}
+						</select>
+
+						<label for="csapatStatus">Státusz:</label>
+						<select id="csapatStatus">
+							<option value="0">Aktív</option>
+							<option value="1">Inaktív</option>
+							<option value="3">Felbomlott</option>
+						</select>
 
 						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
 					{:else if modifyModal.type === 'Játékosok'}
-					<label for="player_name">Játékos neve:</label>
-					<input type="text" id="player_name" placeholder="Írd be a játékos nevét" />
+						<label for="player_name">Játékos neve:</label>
+						<input type="text" id="player_name" placeholder="Írd be a játékos nevét" />
 
-					<label for="nationality">Nemzetiség:</label>
-					<select id="nationality">
-						<option value="">Válasszon nemzetiséget</option>
-						{#each nationalitys as nationality}
-							<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
-						{/each}
-					</select>
+						<label for="nationality">Nemzetiség:</label>
+						<select id="nationality">
+							<option value="">Válasszon nemzetiséget</option>
+							{#each nationalitys as nationality}
+								<option value={nationality.nemzetisegId}>{nationality.nemzetisegNev}</option>
+							{/each}
+						</select>
 
-					<label for="birth_date">Születési Dátum:</label>
-					<input type="date" id="birth_date" />
+						<label for="birth_date">Születési Dátum:</label>
+						<input type="date" id="birth_date" />
 
-					<label for="position">Pozíció:</label>
-					<select id="position">
-						<option value="">Válasszon pozíciót</option>
-						<option value="0">Kapus</option>
-						<option value="1">Védő</option>
-						<option value="2">Középpályás</option>
-						<option value="3">Csatár</option>
-					</select>
+						<label for="position">Pozíció:</label>
+						<select id="position">
+							<option value="">Válasszon pozíciót</option>
+							<option value="0">Kapus</option>
+							<option value="1">Védő</option>
+							<option value="2">Középpályás</option>
+							<option value="3">Csatár</option>
+						</select>
 
-					<label for="team">Csapat:</label>
-					<select id="team">
-						<option value="">Válasszon csapatot</option>
-						{#each teams as team}
-							<option value="{team.csapatId}">{team.csapatNev}</option>
-						{/each}
-					</select>
+						<label for="team">Csapat:</label>
+						<select id="team">
+							<option value="">Válasszon csapatot</option>
+							{#each teams as team}
+								<option value={team.csapatId}>{team.csapatNev}</option>
+							{/each}
+						</select>
 
-					<label for="jatekosStatus">Státusz:</label>
-					<select id="jatekosStatus">
-						<option value="0">Aktív</option>
-						<option value="1">Inaktív</option>
-						<option value="2">Sérült</option>
-						<option value="3">Visszavonult</option>
-					</select>
+						<label for="jatekosStatus">Státusz:</label>
+						<select id="jatekosStatus">
+							<option value="0">Aktív</option>
+							<option value="1">Inaktív</option>
+							<option value="2">Sérült</option>
+							<option value="3">Visszavonult</option>
+						</select>
 
 						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
-					{:else if modifyModal.type === "Események"}
-					<label for="liga">Liga:</label>
-					<input type="text" id="liga" placeholder="Írd be a liga nevét" />
+					{:else if modifyModal.type === 'Események'}
+						<label for="liga">Liga:</label>
+						<input type="text" id="liga" placeholder="Írd be a liga nevét" />
 
-					<label for="round">Forduló:</label>
-					<input
-						type="number"
-						id="round"
-						placeholder="Írd be a forduló számát"
-						min="1"
-						max="38"
-					/>
+						<label for="round">Forduló:</label>
+						<input
+							type="number"
+							id="round"
+							placeholder="Írd be a forduló számát"
+							min="1"
+							max="38"
+						/>
 
-					
-						<label for="stadium">Stadion:</label>
-					<select id="stadium">
-						<option value="">Válasszon stadiont</option>
-						{#each stadions as stadion}
-							<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
-						{/each}
-					</select>
-					
+						<label for="starting_date">Kezdés Dátuma:</label>
+						<input type="date" id="starting_date" />
 
+						<label for="ending_date">Befejezés Dátuma:</label>
+						<input type="date" id="ending_date" />
 
-
-					<label for="starting_date">Kezdés Dátuma:</label>
-					<input type="date" id="starting_date" />
-
-					<label for="ending_date">Befejezés Dátuma:</label>
-					<input type="date" id="ending_date" />
-
-					<label for="esemenyStatus">Állapot:</label>
-					<select id="esemenyStatus">
-						<option value="1">Jelenleg fut</option>
-						<option value="0">Lezárult</option>
-					</select>
+						<label for="esemenyStatus">Állapot:</label>
+						<select id="esemenyStatus">
+							<option value="1">Jelenleg fut</option>
+							<option value="0">Lezárult</option>
+						</select>
 
 						<button class="submit-btn" on:click={() => handleModify(modifyModal)}>Mentés</button>
 					{/if}
@@ -779,16 +823,15 @@
 						<label for="coach_name">Jelenlegi Edző:</label>
 						<input type="text" id="coach_name" placeholder="Írd be az edző nevét" />
 
-						<label for="foundation_date">Alapítási Dátum:</label>
+						<label for="foundation_date">Alapítási Év:</label>
 						<input type="date" id="foundation_date" />
-						
-						
+
 						<label for="stadium">Stadion:</label>
-							<select id="stadium">
-   							<option value="">Válasszon stadiont</option>
-    						{#each stadions as stadion}
-        					<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
-    						{/each}
+						<select id="stadium">
+							<option value="">Válasszon stadiont</option>
+							{#each stadions as stadion}
+								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
+							{/each}
 						</select>
 
 						<label for="csapatStatus">Státusz:</label>
@@ -829,7 +872,7 @@
 						<select id="team">
 							<option value="">Válasszon csapatot</option>
 							{#each teams as team}
-								<option value="{team.csapatId}">{team.csapatNev}</option>
+								<option value={team.csapatId}>{team.csapatNev}</option>
 							{/each}
 						</select>
 
@@ -844,7 +887,7 @@
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
 							>Létrehozás</button
 						>
-					{:else if createModalType === "Események"}
+					{:else if createModalType === 'Események'}
 						<label for="liga">Liga:</label>
 						<input type="text" id="liga" placeholder="Írd be a liga nevét" />
 
@@ -856,17 +899,6 @@
 							min="1"
 							max="38"
 						/>
-
-							
-						<label for="stadium">Stadion:</label>
-						<select id="stadium">
-							<option value="">Válasszon stadiont</option>
-							{#each stadions as stadion}
-								<option value={stadion.stadionId}>{stadion.stadionNeve}</option>
-							{/each}
-						</select>
-						
-
 
 						<label for="starting_date">Kezdés Dátuma:</label>
 						<input type="date" id="starting_date" />
@@ -891,236 +923,234 @@
 </main>
 
 <style>
+	/* Modal */
+	.modal {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 1000;
+	}
 
+	.modal-content {
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 10px;
+		width: 80%;
+		max-width: 600px;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
 
-/* Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+	.modal-title {
+		font-size: 1.5em;
+		margin-bottom: 20px;
+	}
 
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
+	.close {
+		position: absolute;
+		top: 10px;
+		right: 20px;
+		font-size: 1.5em;
+		cursor: pointer;
+	}
 
-.modal-title {
-    font-size: 1.5em;
-    margin-bottom: 20px;
-}
+	/* Responsív modal stílusok */
+	@media (max-width: 768px) {
+		.modal-content {
+			width: 90%;
+			padding: 15px;
+		}
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 1.5em;
-    cursor: pointer;
-}
+		.modal-title {
+			font-size: 1.2em;
+		}
 
-/* Responsív modal stílusok */
-@media (max-width: 768px) {
-    .modal-content {
-        width: 90%;
-        padding: 15px;
-    }
+		.close {
+			font-size: 1.3em;
+		}
+	}
 
-    .modal-title {
-        font-size: 1.2em;
-    }
+	@media (max-width: 480px) {
+		.modal-content {
+			width: 95%;
+			padding: 10px;
+		}
 
-    .close {
-        font-size: 1.3em;
-    }
-}
+		.modal-title {
+			font-size: 1em;
+		}
 
-@media (max-width: 480px) {
-    .modal-content {
-        width: 95%;
-        padding: 10px;
-    }
+		.close {
+			font-size: 1.2em;
+		}
+	}
 
-    .modal-title {
-        font-size: 1em;
-    }
+	/* Form input és gombok */
+	input,
+	select {
+		width: 100%;
+		padding: 10px;
+		margin: 10px 0;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		font-size: 1em;
+	}
 
-    .close {
-        font-size: 1.2em;
-    }
-}
+	button {
+		padding: 10px 20px;
+		background-color: #4caf50;
+		color: white;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+		font-size: 1em;
+		margin-top: 10px;
+	}
 
-/* Form input és gombok */
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-}
+	button:hover {
+		background-color: #45a049;
+	}
 
-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 10px;
-}
+	/* Akciógombok responsívan */
+	@media (max-width: 768px) {
+		button {
+			font-size: 0.9em;
+		}
 
-button:hover {
-    background-color: #45a049;
-}
+		input,
+		select {
+			font-size: 0.9em;
+		}
+	}
 
-/* Akciógombok responsívan */
-@media (max-width: 768px) {
-    button {
-        font-size: 0.9em;
-    }
+	@media (max-width: 480px) {
+		button {
+			font-size: 0.8em;
+		}
 
-    input, select {
-        font-size: 0.9em;
-    }
-}
+		input,
+		select {
+			font-size: 0.8em;
+		}
+	}
 
-@media (max-width: 480px) {
-    button {
-        font-size: 0.8em;
-    }
+	.grid-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 15px;
+	}
 
-    input, select {
-        font-size: 0.8em;
-    }
-}
+	.card {
+		border: 1px solid #ddd;
+		padding: 15px;
+		border-radius: 8px;
+		background-color: #fff;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		word-wrap: break-word;
+		overflow: hidden;
+	}
 
+	.card h3 {
+		margin-bottom: 10px;
+		color: #061738;
+	}
 
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-}
+	.card p {
+		margin: 5px 0;
+		font-size: 1em;
+	}
 
-.card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    word-wrap: break-word;
-    overflow: hidden;
-}
+	.actions-btn {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 10px;
+	}
 
-.card h3 {
-    margin-bottom: 10px;
-	color: #061738;
-}
+	/* Small devices (portrait tablets and large phones) */
+	@media (max-width: 768px) {
+		.card {
+			padding: 10px;
+		}
 
-.card p {
-    margin: 5px 0;
-    font-size: 1em;
-}
+		.card h3 {
+			font-size: 2em;
+		}
 
-.actions-btn {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
+		.card p {
+			font-size: 0.9em;
+		}
 
-/* Small devices (portrait tablets and large phones) */
-@media (max-width: 768px) {
-    .card {
-        padding: 10px;
-    }
+		.actions-btn {
+			flex-direction: column;
+			align-items: center;
+		}
 
-    .card h3 {
-        font-size: 2em;
-    }
+		.actions-btn button {
+			margin: 5px 0;
+		}
+	}
 
-    .card p {
-        font-size: 0.9em;
-    }
+	/* Extra small devices (phones, 480px and smaller) */
+	@media (max-width: 480px) {
+		.grid-container {
+			grid-template-columns: 1fr; /* Egyetlen oszlop */
+			gap: 10px;
+		}
 
-    .actions-btn {
-        flex-direction: column;
-        align-items: center;
-    }
+		.card {
+			padding: 8px;
+		}
 
-    .actions-btn button {
-        margin: 5px 0;
-    }
-}
+		.card h3 {
+			font-size: 2em;
+		}
 
-/* Extra small devices (phones, 480px and smaller) */
-@media (max-width: 480px) {
-    .grid-container {
-        grid-template-columns: 1fr; /* Egyetlen oszlop */
-        gap: 10px;
-    }
+		.card p {
+			font-size: 0.8em;
+		}
+	}
 
-    .card {
-        padding: 8px;
-    }
+	.grid-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 20px;
+	}
 
-    .card h3 {
-        font-size: 2em;
-    }
+	.card {
+		border: 1px solid #ddd;
+		padding: 15px;
+		border-radius: 8px;
+		background-color: #fff;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
 
-    .card p {
-        font-size: 0.8em;
-    }
-}
+	.card h3 {
+		margin-bottom: 10px;
+		font-size: 2em;
+	}
 
+	.card p {
+		margin: 5px 0;
+		font-size: 1.6em;
+	}
 
+	.actions-btn {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 10px;
+	}
 
-.grid-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 20px;
-}
-
-.card {
-	border: 1px solid #ddd;
-	padding: 15px;
-	border-radius: 8px;
-	background-color: #fff;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card h3 {
-	margin-bottom: 10px;
-	font-size: 2em;
-}
-
-.card p {
-	margin: 5px 0;
-	font-size: 1.6em;
-}
-
-.actions-btn {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 10px;
-}
-
-.container h2 {
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-}
+	.container h2 {
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+	}
 	.container .buttons {
 		display: flex;
 		flex-direction: column;
@@ -1128,7 +1158,6 @@ button:hover {
 		width: 50%;
 		margin: 0 auto; /* Biztosítja a középre igazítást minden böngészőben */
 		justify-self: center;
-
 	}
 	.buttons .btn {
 		display: inline-block;
