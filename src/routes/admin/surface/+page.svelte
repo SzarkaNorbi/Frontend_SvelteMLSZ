@@ -16,6 +16,8 @@
 	let teams = [];
 	let players = [];
 	let competetions = [];
+	let jatekosMediaId = 0;
+	let csapatMediaId = 0;
 
 	let createModalType = null;
 	let modifyModal = { type: null, id: null };
@@ -304,7 +306,7 @@
 					jelenlegiEdzo: coach_name.value,
 					stadionId: stadium.value,
 					statusz: +csapatStatus.value,
-					media_Id: 1
+					media_Id: csapatMediaId
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -339,7 +341,7 @@
 					pozicio: +position.value,
 					csapatId: +team.value,
 					statuszId: +jatekosStatus.value,
-					media_Id: 1
+					media_Id: jatekosMediaId
 				};
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -418,6 +420,7 @@
 				coach_name.value = csapat.jelenlegiEdzo;
 				stadium.value = csapat.stadionId;
 				csapatStatus.value = +csapat.statusz;
+				csapatMediaId = csapat.media_Id
 				break;
 			case 'Játékosok':
 				const jatekos = await getJatekosById(id);
@@ -428,6 +431,7 @@
 				position.value = jatekos.pozicio;
 				team.value = jatekos.csapatId;
 				jatekosStatus.value = jatekos.statuszId;
+				jatekosMediaId = jatekos.media_Id;
 				break;
 			case 'Események':
 				const esemeny = await getEsemenyById(id);
