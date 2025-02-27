@@ -185,11 +185,11 @@
 	}
 
 	.player-photo {
-		width: 100px;
-		height: 100px;
-		object-fit: cover;
-		border-radius: 50%;
-	}
+    width: 60px; /* Csökkentett méret */
+    height: 60px; /* Csökkentett méret */
+    object-fit: cover;
+    border-radius: 50%;
+}
 
 	.card-body p {
 		font-size: 1.4rem;

@@ -35,11 +35,10 @@
         </div>
 
         <!-- Kereső mező -->
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6">
-                <input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-input" />
-            </div>
-        </div>
+		<div class="row justify-content-center search-sort-container">
+			<input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-box" />
+		</div>
+		
 
         <!-- Események listája -->
         <div class="card-container">
@@ -119,15 +118,22 @@
     }
 
     /* Kereső mező stílus */
-    .search-input {
-    display: block;
-    width: 100%; /* Szélesebb lesz, 80%-os szélesség */
+	.search-sort-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    margin: 10px auto;
+}
+
+.search-box {
+    flex: 1;
     padding: 10px;
-    margin: 20px auto;
     font-size: 1.2rem;
-    border: 2px solid #28a745; 
+    border: 2px solid #28a745;
     border-radius: 5px;
     outline: none;
 }
+
 
 </style>
