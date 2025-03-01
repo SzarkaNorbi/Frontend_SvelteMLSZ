@@ -1,5 +1,5 @@
 <script>
-	import { goto } from '$app/navigation'; // SvelteKit navigációhoz
+	import { goto } from '$app/navigation'; 
 	import { Pencil, Trash2 } from 'lucide-svelte';
 	import CsapatApi from '../../../../generated-client/src/api/CsapatApi';
 	import JatekosApi from '../../../../generated-client/src/api/JatekosApi';
@@ -577,15 +577,14 @@
 		}
 	}
 
-	// Navigáció a /about oldalra
 	function navigateToHomePage() {
 		if (goto) {
-			goto('/'); // SvelteKit natív navigáció
+			goto('/');
 			showModal = false;
 			modalType = null;
 			createModalType = null;
 		} else {
-			window.location.href = '/'; // Ha nem SvelteKit-et használsz
+			window.location.href = '/'; 
 			showModal = false;
 			modalType = null;
 			createModalType = null;
@@ -692,7 +691,7 @@
 									<strong>Befejezési Dátum:</strong>
 									{new Date(verseny.befejezesDatum).toLocaleDateString('hu-HU')}
 								</p>
-								<p><strong>Jelenleg:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
+								<p><strong>Státusz:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
 								<div class="actions-btn">
 									<button
 										on:click|preventDefault={() => openModifyModal(verseny.versenyId, modalType)}
@@ -802,7 +801,7 @@
 						<label for="ending_date">Befejezés Dátuma:</label>
 						<input type="date" id="ending_date" />
 
-						<label for="esemenyStatus">Állapot:</label>
+						<label for="esemenyStatus">Státusz:</label>
 						<select id="esemenyStatus">
 							<option value="1">Jelenleg fut</option>
 							<option value="0">Lezárult</option>
@@ -927,7 +926,6 @@
 </main>
 
 <style>
-	/* Modal */
 	.modal {
 		position: fixed;
 		top: 0;
@@ -964,7 +962,6 @@
 		cursor: pointer;
 	}
 
-	/* Responsív modal stílusok */
 	@media (max-width: 768px) {
 		.modal-content {
 			width: 90%;
@@ -995,7 +992,6 @@
 		}
 	}
 
-	/* Form input és gombok */
 	input,
 	select {
 		width: 100%;
@@ -1021,7 +1017,6 @@
 		background-color: #45a049;
 	}
 
-	/* Akciógombok responsívan */
 	@media (max-width: 768px) {
 		button {
 			font-size: 0.9em;
@@ -1076,7 +1071,6 @@
 		margin-top: 10px;
 	}
 
-	/* Small devices (portrait tablets and large phones) */
 	@media (max-width: 768px) {
 		.card {
 			padding: 10px;
@@ -1100,10 +1094,9 @@
 		}
 	}
 
-	/* Extra small devices (phones, 480px and smaller) */
 	@media (max-width: 480px) {
 		.grid-container {
-			grid-template-columns: 1fr; /* Egyetlen oszlop */
+			grid-template-columns: 1fr;
 			gap: 10px;
 		}
 
@@ -1160,7 +1153,7 @@
 		flex-direction: column;
 		text-align: center;
 		width: 50%;
-		margin: 0 auto; /* Biztosítja a középre igazítást minden böngészőben */
+		margin: 0 auto;
 		justify-self: center;
 	}
 	.buttons .btn {

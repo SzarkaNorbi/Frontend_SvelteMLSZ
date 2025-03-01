@@ -4,6 +4,7 @@
 
     let events = [];
     let searchQuery = '';
+    let sortBy = "abc"; 
 
     function loadEvents() {
         const apiInstance = new VersenyApi();
@@ -18,10 +19,18 @@
 
     onMount(loadEvents);
 
-    // Keresési logika
-    $: filteredEvents = events.filter(event => 
-        event.liga.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    $: filteredEvents = events
+        .filter(event => event.liga.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => {
+            if (sortBy === "abc") {
+                return a.liga.localeCompare(b.liga);
+            } else if (sortBy === "statusz") {
+                return a.aktualis - b.aktualis; 
+            } else if (sortBy === "fordulo") {
+                return a.fordulo - b.fordulo; 
+            }
+            return 0;
+        });
 </script>
 
 <section class="product_section">
@@ -34,13 +43,15 @@
             </div>
         </div>
 
-        <!-- Kereső mező -->
 		<div class="row justify-content-center search-sort-container">
-			<input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-box" />
-		</div>
-		
+            <input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-box" />
+            <select bind:value={sortBy} class="filter-dropdown">
+                <option value="abc">ABC sorrend</option>
+                <option value="statusz">Státusz</option>
+                <option value="fordulo">Forduló szerint</option>
+            </select>
+        </div>
 
-        <!-- Események listája -->
         <div class="card-container">
             {#each filteredEvents as event}
                 <div class="card">
@@ -65,9 +76,53 @@
         padding: 20px;
     }
 
+    @media (max-width: 768px) {
+        .card-container {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+        }
+
+        .search-sort-container {
+            width: 80%; 
+        }
+
+        .search-box, .filter-dropdown {
+            width: 100%;
+        }
+
+        .search-box {
+            font-size: 1.2rem;
+            padding: 12px; 
+        }
+
+        .filter-dropdown {
+            font-size: 1rem;
+            padding: 10px; 
+        }
+    }
+
     @media (max-width: 480px) {
         .card-container {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+        }
+
+        .section-subtitle {
+            font-size: 2rem; 
+        }
+
+        .card-title {
+            font-size: 1.6rem;
+        }
+
+        .card-content p {
+            font-size: 1.2rem; 
+        }
+
+        .search-box {
+            font-size: 1rem; 
+        }
+
+        .filter-dropdown {
+            font-size: 0.9rem; 
         }
     }
 
@@ -117,23 +172,32 @@
         background-color: #f8f9fa;
     }
 
-    /* Kereső mező stílus */
-	.search-sort-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 50%;
-    margin: 10px auto;
-}
+    .search-sort-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 50%;
+        margin: 10px auto;
+        gap: 10px;
+        flex-wrap: wrap; 
+    }
 
-.search-box {
-    flex: 1;
-    padding: 10px;
-    font-size: 1.2rem;
-    border: 2px solid #28a745;
-    border-radius: 5px;
-    outline: none;
-}
+    .search-box {
+        flex: 1;
+        width: 100%; 
+        padding: 10px;
+        font-size: 1.2rem;
+        border: 2px solid #28a745;
+        border-radius: 5px;
+        outline: none;
+    }
 
-
+    .filter-dropdown {
+        padding: 8px;
+        font-size: 1rem;
+        border: 2px solid #28a745;
+        border-radius: 5px;
+        width: 180px;
+    }
 </style>
+

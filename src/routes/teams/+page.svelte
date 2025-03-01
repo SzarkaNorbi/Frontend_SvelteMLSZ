@@ -7,6 +7,7 @@
     const apiInstance = new CsapatApi();
     let csapatok = [];
     let searchQuery = "";
+    let sortBy = "abc";
 
     onMount(() => {
         apiInstance.apiCsapatGet((error, data, response) => {
@@ -49,6 +50,16 @@
                 return 'Ismeretlen';
         }
     }
+
+    function sortTeams(a, b) {
+        if (sortBy === "abc") {
+            return a.csapatNev.localeCompare(b.csapatNev);
+        } else if (sortBy === "alapitas") {
+            return new Date(a.alapitasDatum) - new Date(b.alapitasDatum);
+        } else if (sortBy === "statusz") {
+            return a.statusz - b.statusz;
+        }
+    }
 </script>
 
 <section class="product_section">
@@ -61,12 +72,17 @@
             </div>
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center search-container">
             <input type="text" bind:value={searchQuery} placeholder="Keresés csapatnév alapján..." class="search-box" />
+            <select bind:value={sortBy} class="sort-dropdown">
+                <option value="abc">ABC sorrend</option>
+                <option value="alapitas">Alapítás</option>
+                <option value="statusz">Státusz</option>
+            </select>
         </div>
 
         <div class="card-container">
-            {#each csapatok.filter(csapat => csapat.csapatNev.toLowerCase().includes(searchQuery.toLowerCase())) as csapat}
+            {#each csapatok.filter(csapat => csapat.csapatNev.toLowerCase().includes(searchQuery.toLowerCase())).sort(sortTeams) as csapat}
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">{csapat.csapatNev}</h2>
@@ -87,26 +103,72 @@
 </section>
 
 <style>
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; 
+}
+
 .search-box {
-    width: 50%;
+    width: 100%;
+    max-width: 300px; 
     padding: 10px;
-    margin: 20px 0;
     font-size: 1.2rem;
     border: 2px solid #28a745;
     border-radius: 5px;
     outline: none;
 }
 
+.sort-dropdown {
+    padding: 8px;
+    font-size: 1rem;
+    border: 2px solid #28a745;
+    border-radius: 5px;
+    width: 180px;
+    min-width: 150px; 
+}
+
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 20px;
     padding: 20px;
 }
 
+@media (max-width: 768px) {
+    .search-box {
+        width: 80%;
+    }
+
+    .sort-dropdown {
+        width: 100%;
+    }
+}
+
 @media (max-width: 480px) {
+    .search-box {
+        width: 100%;
+        font-size: 1rem; 
+    }
+
+    .sort-dropdown {
+        width: 100%;
+        font-size: 1rem;
+    }
+
     .card-container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: 1fr; 
+    }
+
+    .card {
+        padding: 15px; 
+    }
+
+    .card-title {
+        font-size: 1.8rem; 
     }
 }
 
@@ -135,7 +197,7 @@
 }
 
 .card-title {
-    font-size: 2.2rem;
+    font-size: 2rem;
     color: #28a745;
 }
 
