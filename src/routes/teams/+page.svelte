@@ -102,8 +102,7 @@
     </div>
 </section>
 
-<style>
-.search-container {
+<style>.search-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,6 +144,7 @@
 
     .sort-dropdown {
         width: 100%;
+        max-width: 250px; /* Maximum szélesség kisebb képernyőkön */
     }
 }
 
@@ -156,7 +156,9 @@
 
     .sort-dropdown {
         width: 100%;
-        font-size: 1rem;
+        max-width: 200px; /* Maximum szélesség nagyon kis képernyőkön */
+        font-size: 0.9rem;  /* Csökkentett betűméret */
+        padding: 6px; /* Csökkentett padding */
     }
 
     .card-container {
