@@ -45,7 +45,7 @@
 
     setInterval(() => {
         changeTestimonial('next');
-    }, 4000); // 4 másodpercenként változtat
+    }, 4000);
 </script>
 
 <section class="about_section">
@@ -225,7 +225,6 @@ html {
     pointer-events: none;
 }
 
-/* Galéria és tesztimóniák reszponzív stílusai */
 @media (max-width: 767px) {
     .about_section,
     .testimonial_section,
@@ -259,13 +258,12 @@ html {
 }
 
 @media (min-width: 992px) {
-    /* Galéria: 3 kép egy sorban */
     .gallery_section .container-fluid .row {
         margin: 0 auto;
     }
 
     .gallery_section .col-md-4 {
-        padding: 0 15px; /* Képek között több tér */
+        padding: 0 15px; 
     }
 
     .section-title {
@@ -296,16 +294,13 @@ html {
     }
 
     .col-lg-4 {
-        max-width: 33.333%; /* 3 kép egy sorban */
+        max-width: 33.333%;
     }
 
-    /* Ha az oldal szélesebb, a galéria és egyéb szekciók is jobban kihasználják a teret */
     .container-fluid {
         padding-left: 0;
         padding-right: 0;
         width: 100%;
     }
 }
-
-
 </style>

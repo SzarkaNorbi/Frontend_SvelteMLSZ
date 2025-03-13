@@ -67,18 +67,23 @@
         <div class="row justify-content-center">
             <div class="col-12 text-center pb-5">
                 <div class="section-title-frame">
-                    <p class="section-subtitle">Ismerjen meg magyar csapatokat!</p>
+                    <p class="section-subtitle">Tekintsen meg magyar csapatokat!</p>
                 </div>
             </div>
         </div>
 
-        <div class="row justify-content-center search-container">
-            <input type="text" bind:value={searchQuery} placeholder="Keresés csapatnév alapján..." class="search-box" />
-            <select bind:value={sortBy} class="sort-dropdown">
-                <option value="abc">ABC sorrend</option>
-                <option value="alapitas">Alapítás</option>
-                <option value="statusz">Státusz</option>
-            </select>
+        <div class="row justify-content-between align-items-center search-container">
+            <div class="col-6 search-column">
+                <input type="text" bind:value={searchQuery} placeholder="Keresés csapatnév alapján..." class="search-box" />
+            </div>
+            <div class="col-6 sort-column">
+                <h1 class="sort-text">Rendezés:</h1>
+                <select bind:value={sortBy} class="sort-dropdown">
+                    <option value="abc">ABC sorrend</option>
+                    <option value="alapitas">Alapítási év</option>
+                    <option value="statusz">Státusz</option>
+                </select>
+            </div>
         </div>
 
         <div class="card-container">
@@ -102,20 +107,26 @@
     </div>
 </section>
 
-<style>.search-container {
+<style>
+.search-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
     flex-wrap: wrap; 
 }
 
+.search-column, .sort-column {
+    display: flex;
+    align-items: center;
+}
+
 .search-box {
     width: 100%;
     max-width: 300px; 
     padding: 10px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     border: 2px solid #28a745;
     border-radius: 5px;
     outline: none;
@@ -123,11 +134,16 @@
 
 .sort-dropdown {
     padding: 8px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     border: 2px solid #28a745;
     border-radius: 5px;
     width: 180px;
     min-width: 150px; 
+}
+
+.sort-text {
+    font-size: 1.3rem;
+    margin-right: 10px;
 }
 
 .card-container {
@@ -144,7 +160,11 @@
 
     .sort-dropdown {
         width: 100%;
-        max-width: 250px; /* Maximum szélesség kisebb képernyőkön */
+        max-width: 250px; 
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -156,9 +176,9 @@
 
     .sort-dropdown {
         width: 100%;
-        max-width: 200px; /* Maximum szélesség nagyon kis képernyőkön */
-        font-size: 0.9rem;  /* Csökkentett betűméret */
-        padding: 6px; /* Csökkentett padding */
+        max-width: 200px; 
+        font-size: 0.9rem;  
+        padding: 6px; 
     }
 
     .card-container {

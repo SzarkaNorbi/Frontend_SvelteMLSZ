@@ -38,18 +38,22 @@
         <div class="row justify-content-center">
             <div class="col-12 text-center pb-5">
                 <div class="section-title-frame">
-                    <p class="section-subtitle">Tekintse meg versenyeinket!</p>
+                    <p class="section-subtitle">Tekintsen meg versenyeket!</p>
                 </div>
             </div>
         </div>
-
-		<div class="row justify-content-center search-sort-container">
-            <input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-box" />
-            <select bind:value={sortBy} class="filter-dropdown">
-                <option value="abc">ABC sorrend</option>
-                <option value="statusz">Státusz</option>
-                <option value="fordulo">Forduló szerint</option>
-            </select>
+        <div class="row justify-content-center search-sort-container">
+            <div class="col-12 col-md-6 search-column">
+                <input type="text" bind:value={searchQuery} placeholder="Keresés verseny alapján..." class="search-box" />
+            </div>
+            <div class="col-12 col-md-6 sort-column">
+                <h1 class="sort-text">Rendezés:</h1>
+                <select bind:value={sortBy} class="filter-dropdown">
+                    <option value="abc">ABC sorrend</option>
+                    <option value="statusz">Státusz</option>
+                    <option value="fordulo">Forduló szerint</option>
+                </select>
+            </div>
         </div>
 
         <div class="card-container">
@@ -60,7 +64,7 @@
                         <p><strong>Forduló:</strong> {event.fordulo}</p>
                         <p><strong>Kezdés dátuma:</strong> {new Date(event.kezdesDatum).toLocaleDateString('hu-HU')}</p>
                         <p><strong>Befejezés dátuma:</strong> {new Date(event.befejezesDatum).toLocaleDateString('hu-HU')}</p>
-                        <p><strong>Jelenleg:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
+                        <p><strong>Státusz:</strong> {event.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
                     </div>
                 </div>
             {/each}
@@ -82,7 +86,7 @@
         }
 
         .search-sort-container {
-            width: 80%; 
+            width: 80%;
         }
 
         .search-box, .filter-dropdown {
@@ -174,30 +178,41 @@
 
     .search-sort-container {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
         align-items: center;
-        width: 50%;
-        margin: 10px auto;
-        gap: 10px;
-        flex-wrap: wrap; 
+        gap: 20px;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .search-column, .sort-column {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        width: 100%;
     }
 
     .search-box {
-        flex: 1;
-        width: 100%; 
         padding: 10px;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         border: 2px solid #28a745;
         border-radius: 5px;
         outline: none;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .sort-text {
+        font-size: 1.3rem;
+        margin-right: 10px;
     }
 
     .filter-dropdown {
         padding: 8px;
-        font-size: 1rem;
+        font-size: 1.2rem;
         border: 2px solid #28a745;
         border-radius: 5px;
         width: 180px;
+    min-width: 150px; 
     }
 </style>
-

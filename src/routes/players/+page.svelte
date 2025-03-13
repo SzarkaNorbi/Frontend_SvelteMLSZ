@@ -116,13 +116,18 @@
             </div>
         </div>
 
-        <div class="row justify-content-center search-container">
-            <input type="text" bind:value={searchQuery} placeholder="Keresés játékos neve alapján..." class="search-box" />
-            <select bind:value={sortBy} class="sort-dropdown">
-                <option value="abc">ABC sorrend</option>
-                <option value="szuldatum">Születési dátum</option>
-                <option value="statusz">Státusz</option>
-            </select>
+        <div class="row justify-content-between align-items-center search-container">
+            <div class="col-12 col-md-6 search-column">
+                <input type="text" bind:value={searchQuery} placeholder="Keresés játékos neve alapján..." class="search-box" />
+            </div>
+            <div class="col-12 col-md-6 sort-column">
+                <h1 class="sort-text">Rendezés:</h1>
+                <select bind:value={sortBy} class="sort-dropdown">
+                    <option value="abc">ABC sorrend</option>
+                    <option value="szuldatum">Születési dátum</option>
+                    <option value="statusz">Státusz</option>
+                </select>
+            </div>
         </div>
 
         <div class="card-container">
@@ -152,18 +157,23 @@
 <style>
     .search-container {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
         flex-wrap: wrap;
     }
 
+    .search-column, .sort-column {
+        display: flex;
+        align-items: center;
+    }
+
     .search-box {
         width: 100%; 
         max-width: 300px;
         padding: 10px;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         border: 2px solid #28a745;
         border-radius: 5px;
         outline: none;
@@ -173,10 +183,15 @@
         width: 100%;
         max-width: 180px;
         padding: 8px;
-        font-size: 1rem;
+        font-size: 1.2rem;
         border: 2px solid #28a745;
         border-radius: 5px;
     }
+
+    .sort-text {
+    font-size: 1.3rem;
+    margin-right: 10px;
+}
 
     .card-container {
         display: grid;
@@ -268,4 +283,3 @@
         background-color: #f8f9fa;
     }
 </style>
-
