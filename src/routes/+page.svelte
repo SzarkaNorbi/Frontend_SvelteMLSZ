@@ -225,6 +225,13 @@ html {
     pointer-events: none;
 }
 
+@media (min-width: 768px) and (max-width: 1000px) {
+    .about_section {
+        padding-top: 320px;
+    }
+}
+
+
 @media (max-width: 767px) {
     .about_section,
     .testimonial_section,
@@ -244,6 +251,10 @@ html {
         padding: 15px;
         font-size: 1rem;
         line-height: 1.6;
+    }
+
+    .about_section {
+        padding-top: 250px;
     }
 
     .carousel-inner {

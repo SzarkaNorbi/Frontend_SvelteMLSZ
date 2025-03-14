@@ -241,6 +241,11 @@
         border: 1px solid #eaeaea;
     }
 
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
     .card-header {
         display: flex;
         justify-content: space-between;

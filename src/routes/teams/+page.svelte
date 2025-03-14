@@ -204,6 +204,7 @@
     flex-direction: column;
     overflow: hidden;
     border: 1px solid #eaeaea;
+    position: relative;
 }
 
 .card:hover {
@@ -228,6 +229,11 @@
     height: 50px;
     object-fit: cover;
     border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .team-logo {
+    transform: scale(1.1); 
 }
 
 .card-body p {

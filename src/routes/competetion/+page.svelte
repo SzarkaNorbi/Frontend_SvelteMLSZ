@@ -80,6 +80,14 @@
         padding: 20px;
     }
 
+
+    @media (min-width: 577px) and (max-width: 990px) {
+    .search-box {
+        margin-top: 40px;
+    }
+}
+
+
     @media (max-width: 768px) {
         .card-container {
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
@@ -162,7 +170,7 @@
     .section-subtitle {
         font-size: 2.5em;
         color: #28a745;
-        padding: 10px;
+        padding: 5px;
         text-align: center;
     }
 
@@ -213,6 +221,6 @@
         border: 2px solid #28a745;
         border-radius: 5px;
         width: 180px;
-    min-width: 150px; 
+        min-width: 150px; 
     }
 </style>
