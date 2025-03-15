@@ -1,5 +1,4 @@
 <script>
-	// You can add any necessary JavaScript here
 	import { page } from '$app/stores';
 	import '../css/style.css';
 	import '../css/responsive-style.css';

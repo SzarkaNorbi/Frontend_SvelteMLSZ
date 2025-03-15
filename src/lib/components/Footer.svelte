@@ -36,17 +36,16 @@
 </footer>
 
 <style>
-/* Alapvető beállítások */
 body, html {
     height: 100%;
     margin: 0;
     padding: 0;
     display: flex;
-    flex-direction: column; /* Segít abban, hogy a footer alul maradjon */
+    flex-direction: column;
 }
 
 .container-fluid {
-    flex: 1; /* Kitölti a fennmaradó teret */
+    flex: 1;
 }
 
 .footer {
@@ -55,10 +54,9 @@ body, html {
     padding: 3rem 0;
     width: 100%;
     position: relative;
-    margin-top: auto; /* Ez biztosítja, hogy mindig az oldal aljára kerüljön */
+    margin-top: auto;
 }
 
-/* Footer tartalom beállítások */
 .footer-heading,
 .footer-description,
 .contact-list li,
@@ -96,10 +94,10 @@ body, html {
     color: black !important;
     -webkit-text-fill-color: black;
     -webkit-user-select: auto;
-    word-wrap: break-word; /* Törje meg a hosszú szöveget */
-    white-space: normal; /* Törjön, ha szükséges */
-    display: flex; /* Flexbox alkalmazása */
-    align-items: center; /* Igazítja a tartalmat a sorban */
+    word-wrap: break-word; 
+    white-space: normal;
+    display: flex;
+    align-items: center;
 }
 
 .contact-list a {
@@ -149,36 +147,33 @@ footer {
     margin-right: 0.5rem;
 }
 
-/* Biztosítja, hogy nagyobb kijelzőkön a footer balra igazítva maradjon */
 @media (min-width: 992px) { 
     .col-lg-4 {
         align-self: flex-start;
     }
 }
 
-/* Kisebb képernyők esetén módosítja a font méretet */
 @media (max-width: 768px) {
     .contact-list li {
-        font-size: 1.2rem; /* Csökkentett betűméret kisebb képernyőkön */
+        font-size: 1.2rem;
     }
 
     .phone-number {
-        word-wrap: break-word; /* Ha a telefonszám hosszú, törje meg */
-        display: inline-block; /* Biztosítja, hogy ne foglaljon túl sok helyet */
-        max-width: 100%; /* Ne foglaljon el többet, mint a rendelkezésre álló hely */
+        word-wrap: break-word;
+        display: inline-block;
+        max-width: 100%;
     }
 
     .contact-list li.phone {
         display: block;
-        word-wrap: break-word; /* Erősítjük a törést */
+        word-wrap: break-word;
     }
 }
 
-/* A telefonszám ne kerüljön beljebb a többi adatnál */
 @media (max-width: 576px) {
     .contact-list li.phone {
         display: flex;
-        justify-content: flex-start; /* Igazítja a telefonszámot a bal szélére */
+        justify-content: flex-start;
     }
 }
 </style>

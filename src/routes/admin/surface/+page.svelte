@@ -845,7 +845,7 @@
 						</select>
 
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
-							>Létrehozás</button
+							>Hozzáadás</button
 						>
 					{:else if createModalType === 'Játékosok'}
 						<label for="player_name">Játékos neve:</label>
@@ -888,7 +888,7 @@
 						</select>
 
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
-							>Létrehozás</button
+							>Hozzáadás</button
 						>
 					{:else if createModalType === 'Események'}
 						<label for="liga">Liga:</label>
@@ -916,7 +916,7 @@
 						</select>
 
 						<button class="submit-btn" on:click={() => handleCreate(createModalType)}
-							>Létrehozás</button
+							>Hozzáadás</button
 						>
 					{/if}
 				</div>
@@ -1012,6 +1012,8 @@
 		font-size: 1em;
 		margin-top: 10px;
 	}
+
+
 
 	button:hover {
 		background-color: #45a049;
