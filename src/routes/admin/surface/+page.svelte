@@ -507,6 +507,9 @@
 	async function handleRemove(id, type) {
 		switch (type) {
 			case 'Csapatok':
+				if (!confirm("Biztos vagy benne hogy ki szeretnéd törölni?"))
+					return
+				
 				const csapatApi = new CsapatApi();
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -529,6 +532,9 @@
 				}
 				break;
 			case 'Játékosok':
+				if (!confirm("Biztos vagy benne hogy ki szeretnéd törölni?"))
+					return
+
 				const jatekosApi = new JatekosApi();
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -551,6 +557,9 @@
 				}
 				break;
 			case 'Események':
+				if (!confirm("Biztos vagy benne hogy ki szeretnéd törölni?"))
+					return
+
 				const versenyApi = new VersenyApi();
 				try {
 					const response = await new Promise((resolve, reject) => {
@@ -641,10 +650,11 @@
 								<p><strong>Státusz:</strong> {convertCsapatStatusz(csapat.statusz)}</p>
 								<div class="actions-btn">
 									<button
+									class="add-button"
 										on:click|preventDefault={() => openModifyModal(csapat.csapatId, modalType)}
 										><Pencil class="me-2" /></button
 									>
-									<button on:click={() => handleRemove(csapat.csapatId, modalType)}
+									<button class="delete-button" on:click={() => handleRemove(csapat.csapatId, modalType)}
 										><Trash2 /></button
 									>
 								</div>
@@ -670,10 +680,11 @@
 								<p><strong>Státusz:</strong> {convertJatekosStatusz(jatekos.statuszId)}</p>
 								<div class="actions-btn">
 									<button
+										class="add-button"
 										on:click|preventDefault={() => openModifyModal(jatekos.jatekosId, modalType)}
 										><Pencil class="me-2" /></button
 									>
-									<button on:click={() => handleRemove(jatekos.jatekosId, modalType)}
+									<button class="delete-button" on:click={() => handleRemove(jatekos.jatekosId, modalType)}
 										><Trash2 /></button
 									>
 								</div>
@@ -694,10 +705,11 @@
 								<p><strong>Státusz:</strong> {verseny.aktualis ? 'Jelenleg fut' : 'Lezárult'}</p>
 								<div class="actions-btn">
 									<button
+									class="add-button"
 										on:click|preventDefault={() => openModifyModal(verseny.versenyId, modalType)}
 										><Pencil class="me-2" /></button
 									>
-									<button on:click={() => handleRemove(verseny.versenyId, modalType)}
+									<button class="delete-button" on:click={() => handleRemove(verseny.versenyId, modalType)}
 										><Trash2 /></button
 									>
 								</div>
@@ -1013,10 +1025,12 @@
 		margin-top: 10px;
 	}
 
+	.add-button:hover {
+		color: #45a049;
+	}
 
-
-	button:hover {
-		background-color: #45a049;
+	.delete-button:hover {
+		color: red;
 	}
 
 	@media (max-width: 768px) {
