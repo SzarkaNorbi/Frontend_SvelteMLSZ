@@ -1,6 +1,6 @@
 <script>
-    import { onMount } from 'svelte';
-    import { fade, fly } from 'svelte/transition';
+    import { onMount, tick } from 'svelte';
+    import { fade, fly, scale } from 'svelte/transition';
     
     // Import images
     // Note: In a real implementation, you would need to adjust these paths
@@ -18,6 +18,10 @@
     import gallery6 from '$lib/images/gallery/g-6.jpg';
 
     const galleryImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
+
+    // Background images for about section
+    // Using gallery images for demonstration, but you can use different images
+    const backgroundImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
 
     // Testimonials data
     const testimonials = [
@@ -41,18 +45,46 @@
         }
     ];
 
+    // About carousel slides data
+    const aboutSlides = [
+        {
+            title: "Ismerje meg a Focisták platformot",
+            content: "A Focisták egy olyan platform, amely a magyar labdarúgás szerelmeseinek szól. Célunk, hogy összehozzuk a sportágban tevékenykedő játékosokat, edzőket és rajongókat, valamint támogassuk a labdarúgáshoz kapcsolódó közösségek munkáját."
+        },
+        {
+            title: "Közösségünk",
+            content: "Az oldal segíti a sportág fejlődését, támogatja a tehetségek kibontakozását, és hozzájárul ahhoz, hogy a labdarúgás mindenki számára elérhető és élvezetes legyen. Csatlakozz te is a magyar futball közösségéhez a Focisták oldalán!"
+        },
+        {
+            title: "Versenyek és események",
+            content: "Rendszeresen szervezünk versenyeket és eseményeket, ahol a játékosok megmutathatják tehetségüket. Kövess minket, hogy ne maradj le a legújabb eseményekről és versenyekről a magyar labdarúgás világában."
+        },
+        {
+            title: "Csapatok és játékosok",
+            content: "Böngéssz a magyar csapatok és játékosok között, ismerkedj meg a tehetségekkel, és kövess nyomon karrierjüket. A Focisták platformon minden információt megtalálsz a magyar labdarúgás szereplőiről."
+        }
+    ];
+
     // State
     let currentTestimonialIndex = 0;
-    let isTransitioning = false;
-    let autoplayInterval;
+    let currentAboutIndex = 0;
+    let currentBackgroundIndex = 0;
+    let isTestimonialTransitioning = false;
+    let isAboutTransitioning = false;
+    let isBackgroundTransitioning = false;
+    let testimonialAutoplayInterval;
+    let aboutAutoplayInterval;
+    let backgroundAutoplayInterval;
     let activeImage = null;
     let isLightboxOpen = false;
+    let touchStartX = 0;
+    let touchEndX = 0;
     
     // Change testimonial
     function changeTestimonial(direction) {
-        if (isTransitioning) return;
+        if (isTestimonialTransitioning) return;
         
-        isTransitioning = true;
+        isTestimonialTransitioning = true;
         
         if (direction === 'next') {
             currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonials.length;
@@ -61,23 +93,134 @@
         }
         
         setTimeout(() => {
-            isTransitioning = false;
+            isTestimonialTransitioning = false;
         }, 500);
     }
     
-    // Start autoplay
-    function startAutoplay() {
-        stopAutoplay(); // Clear any existing interval
-        autoplayInterval = setInterval(() => {
+    // Change about slide
+    async function changeAboutSlide(direction) {
+        if (isAboutTransitioning) return;
+        
+        isAboutTransitioning = true;
+        stopAboutAutoplay();
+        
+        if (direction === 'next') {
+            currentAboutIndex = (currentAboutIndex + 1) % aboutSlides.length;
+        } else {
+            currentAboutIndex = (currentAboutIndex - 1 + aboutSlides.length) % aboutSlides.length;
+        }
+        
+        await tick();
+        setTimeout(() => {
+            isAboutTransitioning = false;
+            startAboutAutoplay();
+        }, 500);
+    }
+    
+    // Change background image
+    async function changeBackgroundImage() {
+        if (isBackgroundTransitioning) return;
+        
+        isBackgroundTransitioning = true;
+        
+        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+        
+        await tick();
+        setTimeout(() => {
+            isBackgroundTransitioning = false;
+        }, 1000);
+    }
+    
+    // Go to specific about slide
+    function goToAboutSlide(index) {
+        if (isAboutTransitioning || index === currentAboutIndex) return;
+        
+        isAboutTransitioning = true;
+        stopAboutAutoplay();
+        
+        currentAboutIndex = index;
+        
+        setTimeout(() => {
+            isAboutTransitioning = false;
+            startAboutAutoplay();
+        }, 500);
+    }
+    
+    // Start testimonial autoplay
+    function startTestimonialAutoplay() {
+        stopTestimonialAutoplay(); // Clear any existing interval
+        testimonialAutoplayInterval = setInterval(() => {
             changeTestimonial('next');
         }, 5000);
     }
     
-    // Stop autoplay
-    function stopAutoplay() {
-        if (autoplayInterval) {
-            clearInterval(autoplayInterval);
+    // Stop testimonial autoplay
+    function stopTestimonialAutoplay() {
+        if (testimonialAutoplayInterval) {
+            clearInterval(testimonialAutoplayInterval);
         }
+    }
+    
+    // Start about autoplay
+    function startAboutAutoplay() {
+        stopAboutAutoplay(); // Clear any existing interval
+        aboutAutoplayInterval = setInterval(() => {
+            changeAboutSlide('next');
+        }, 6000); // Slightly different timing to avoid synchronization
+    }
+    
+    // Stop about autoplay
+    function stopAboutAutoplay() {
+        if (aboutAutoplayInterval) {
+            clearInterval(aboutAutoplayInterval);
+        }
+    }
+    
+    // Start background autoplay
+    function startBackgroundAutoplay() {
+        stopBackgroundAutoplay(); // Clear any existing interval
+        backgroundAutoplayInterval = setInterval(() => {
+            changeBackgroundImage();
+        }, 4000); // Faster than the content carousel for visual interest
+    }
+    
+    // Stop background autoplay
+    function stopBackgroundAutoplay() {
+        if (backgroundAutoplayInterval) {
+            clearInterval(backgroundAutoplayInterval);
+        }
+    }
+    
+    // Touch events for about carousel
+    function handleAboutTouchStart(e) {
+        touchStartX = e.touches[0].clientX;
+        stopAboutAutoplay();
+    }
+    
+    function handleAboutTouchMove(e) {
+        touchEndX = e.touches[0].clientX;
+    }
+    
+    function handleAboutTouchEnd() {
+        if (!touchStartX || !touchEndX) return;
+        
+        const diff = touchStartX - touchEndX;
+        const threshold = 50; // Minimum swipe distance
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe left, go to next slide
+                changeAboutSlide('next');
+            } else {
+                // Swipe right, go to previous slide
+                changeAboutSlide('prev');
+            }
+        }
+        
+        // Reset touch coordinates
+        touchStartX = 0;
+        touchEndX = 0;
+        startAboutAutoplay();
     }
     
     // Open lightbox
@@ -95,11 +238,15 @@
     
     // Initialize on mount
     onMount(() => {
-        startAutoplay();
+        startTestimonialAutoplay();
+        startAboutAutoplay();
+        startBackgroundAutoplay();
         
         // Clean up on component destruction
         return () => {
-            stopAutoplay();
+            stopTestimonialAutoplay();
+            stopAboutAutoplay();
+            stopBackgroundAutoplay();
         };
     });
 </script>
@@ -108,18 +255,63 @@
 <section class="about-section">
     <div class="container">
         <header class="section-header">
-            <p class="section-subtitle">Ismerje meg a Focisták platformot</p>
+            <p class="section-subtitle">{aboutSlides[currentAboutIndex].title}</p>
         </header>
         
-        <div class="about-content" in:fade={{ duration: 500, delay: 200 }}>
-            <p>
-                A Focisták egy olyan platform, amely a magyar labdarúgás szerelmeseinek szól. Célunk,
-                hogy összehozzuk a sportágban tevékenykedő játékosokat, edzőket és rajongókat, valamint
-                támogassuk a labdarúgáshoz kapcsolódó közösségek munkáját. Az oldal segíti a sportág
-                fejlődését, támogatja a tehetségek kibontakozását, és hozzájárul ahhoz, hogy a
-                labdarúgás mindenki számára elérhető és élvezetes legyen. Csatlakozz te is a magyar
-                futball közösségéhez a Focisták oldalán!
-            </p>
+        <div class="about-carousel-wrapper">
+            <!-- Background Image Carousel -->
+            <div class="background-carousel">
+                {#each backgroundImages as bgImage, i}
+                    {#if i === currentBackgroundIndex}
+                        <div 
+                            class="background-image" 
+                            in:fade={{ duration: 1000 }}
+                            style="background-image: url({bgImage || '/placeholder.svg?height=800&width=1200'});"
+                        ></div>
+                    {/if}
+                {/each}
+                <div class="background-overlay"></div>
+            </div>
+            
+            <!-- Content Carousel -->
+            <div class="about-carousel"
+                 on:touchstart={handleAboutTouchStart}
+                 on:touchmove={handleAboutTouchMove}
+                 on:touchend={handleAboutTouchEnd}
+                 on:mouseenter={stopAboutAutoplay}
+                 on:mouseleave={startAboutAutoplay}>
+                
+                <button class="carousel-arrow carousel-prev about-arrow" on:click={() => changeAboutSlide('prev')}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                
+                <div class="about-content" in:fade={{ duration: 500 }}>
+                    <div class="about-image-container">
+                        <div class="about-image" style="background-image: url({backgroundImages[currentBackgroundIndex] || '/placeholder.svg?height=400&width=600'});"></div>
+                    </div>
+                    <div class="about-text">
+                        <p>{aboutSlides[currentAboutIndex].content}</p>
+                    </div>
+                </div>
+                
+                <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeAboutSlide('next')}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="carousel-indicators about-indicators">
+            {#each aboutSlides as _, index}
+                <button 
+                    class="indicator-dot {currentAboutIndex === index ? 'active' : ''}"
+                    on:click={() => goToAboutSlide(index)}
+                    aria-label={`About slide ${index + 1}`}
+                ></button>
+            {/each}
         </div>
     </div>
 </section>
@@ -135,8 +327,8 @@
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div class="testimonial-container" 
                  in:fade={{ duration: 300 }}
-                 on:mouseenter={stopAutoplay}
-                 on:mouseleave={startAutoplay}>
+                 on:mouseenter={stopTestimonialAutoplay}
+                 on:mouseleave={startTestimonialAutoplay}>
                 
                 <button class="carousel-arrow carousel-prev" on:click={() => changeTestimonial('prev')}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -329,22 +521,125 @@
         padding-top: 50px;
     }
 
-    /* About Section */
-    .about-content {
-        background-color: white;
-        border-radius: var(--radius-lg);
-        padding: 3rem;
-        box-shadow: var(--shadow);
-        max-width: 900px;
-        margin: 0 auto;
-        text-align: center;
+    .section-subtitle::after {
+        content: '';
+        position: absolute;
+        bottom: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--accent);
+        border-radius: 2px;
     }
 
-    .about-content p {
+    /* About Section */
+    .about-carousel-wrapper {
+        position: relative;
+        max-width: 900px;
+        margin: 0 auto;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Background Carousel */
+    .background-carousel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .background-overlay {
+        position: flex;
+        top: auto;
+        left: auto;
+        width: auto;
+        height: auto;
+        background-color: rgba(29, 53, 87, 0.7);
+        background-size: auto;
+        z-index: 2;
+    }
+
+    /* Content Carousel */
+    .about-carousel {
+        position: relative;
+        z-index: 3;
+    }
+
+    .about-content {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: var(--radius-lg);
+        padding: 3rem;
+        margin: 2rem;
+        min-height: 200px;
+        display: flex;
+        align-items: stretch;
+        backdrop-filter: blur(5px);
+        box-shadow: var(--shadow);
+        gap: 2rem;
+    }
+
+    /* New styles for the about-image-container and about-image */
+    .about-image-container {
+        flex: 0 0 50%;
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        background: url();
+    }
+
+    .about-image {
+        width: 100%;
+        height: 200%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: transform 0.5s ease;
+    }
+
+    .about-image-container:hover .about-image {
+        transform: scale(1.05);
+    }
+
+    .about-text {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .about-text p {
         font-size: 1.25rem;
         line-height: 1.8;
-        color: var(--gray-700);
+        color: var(--gray-800);
         margin: 0;
+        font-weight: 500;
+    }
+
+    .about-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+    }
+
+    .about-indicators {
+        margin-top: 2rem;
     }
 
     /* Testimonials Section */
@@ -560,6 +855,7 @@
         z-index: 1000;
     }
 
+    
     .lightbox-close {
         position: absolute;
         top: 2rem;
@@ -595,6 +891,7 @@
         
         .about-content {
             padding: 2.5rem;
+            margin: 1.5rem;
         }
         
         .about-content p {
@@ -621,7 +918,15 @@
     }
 
     @media (max-width: 768px) {
-        .about-section,
+        .about-content {
+            flex-direction: column;
+        }
+
+        .about-image {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+        }
         .testimonials-section,
         .gallery-section {
             padding: 5.5rem 1rem 3rem;
@@ -633,6 +938,7 @@
         
         .about-content {
             padding: 2rem;
+            margin: 1rem;
         }
         
         .about-content p {
@@ -685,6 +991,7 @@
         
         .about-content {
             padding: 1.5rem;
+            margin: 0.75rem;
         }
         
         .testimonial-content {
@@ -715,4 +1022,5 @@
             height: 1rem;
         }
     }
+
 </style>

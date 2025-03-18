@@ -114,7 +114,7 @@
                         
                         <div class="card-header">
                             <h2 class="event-name">{event.liga}</h2>
-                            <div class="round-badge">
+                            <div class="round-badge ms-2">
                                 <span>{event.fordulo}. forduló</span>
                             </div>
                         </div>
