@@ -253,24 +253,24 @@
 
 <!-- About Section -->
 <section class="about-section">
-    <div class="container">
+    <div class="container about-container">
+        <!-- Background Image Carousel -->
+        {#each backgroundImages as bgImage, i}
+            {#if i === currentBackgroundIndex}
+                <div 
+                    class="background-image" 
+                    in:fade={{ duration: 1000 }}
+                    style="background-image: url({bgImage || '/placeholder.svg?height=800&width=1200'});"
+                ></div>
+            {/if}
+        {/each}
+        
         <header class="section-header">
             <p class="section-subtitle">{aboutSlides[currentAboutIndex].title}</p>
         </header>
         
+        <!-- Content Carousel -->
         <div class="about-carousel-wrapper">
-            <!-- Background Image Carousel -->
-            {#each backgroundImages as bgImage, i}
-                {#if i === currentBackgroundIndex}
-                    <div 
-                        class="background-image" 
-                        in:fade={{ duration: 1000 }}
-                        style="background-image: url({bgImage || '/placeholder.svg?height=800&width=1200'});"
-                    ></div>
-                {/if}
-            {/each}
-            
-            <!-- Content Carousel -->
             <div class="about-carousel"
                  on:touchstart={handleAboutTouchStart}
                  on:touchmove={handleAboutTouchMove}
@@ -312,7 +312,7 @@
 <section class="testimonials-section">
     <div class="container">
         <header class="section-header">
-            <p class="section-subtitle">Amit ügyfeleink mondanak rólunk</p>
+            <p class="section-subtitle" style="color: black;">Amit ügyfeleink mondanak rólunk</p>
         </header>
         
         <div class="testimonials-carousel">
@@ -485,10 +485,49 @@
         padding: 0 1rem;
     }
 
+    /* About Container with Background Image */
+    .about-container {
+        position: relative;
+        padding-bottom: 4rem;
+        min-height: 600px;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Background Image */
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 1;
+        transform: scale(1.05); /* Slightly scale up to avoid any potential gaps */
+    }
+
+    /* Add a dark overlay to make text more readable */
+    .about-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 2;
+    }
+
     /* Section Header */
     .section-header {
         text-align: center;
-        margin-bottom: 3.5rem;
+        margin-bottom: 2rem;
         position: relative;
         padding-top: 1.5rem;
         z-index: 10;
@@ -506,12 +545,13 @@
     .section-subtitle {
         font-size: 2.75rem;
         font-weight: 700;
-        color: var(--primary);
+        color: white; /* Keeping white for better contrast on the background image */
         margin: 0;
         position: relative;
         display: inline-block;
         line-height: 1.2;
         padding-top: 50px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Keeping text shadow for better readability */
     }
 
     .section-subtitle::after {
@@ -526,49 +566,37 @@
         border-radius: 2px;
     }
 
-    /* About Section */
+    /* About Carousel */
     .about-carousel-wrapper {
         position: relative;
         max-width: 900px;
         margin: 0 auto;
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        box-shadow: var(--shadow-lg);
-        height: 400px; /* Fixed height for the carousel */
-    }
-
-    /* Background Image Carousel */
-    .background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
+        z-index: 5;
         width: 100%;
         height: 100%;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* Content Carousel */
     .about-carousel {
         position: relative;
-        z-index: 3;
-        height: 100%;
+        z-index: 5;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 0 1rem;
+        width: 100%;
     }
 
     .about-content {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: rgba(255, 255, 255, 0.85);
         border-radius: var(--radius-lg);
         padding: 2rem;
-        margin: 0 3rem;
-        width: calc(100% - 6rem);
+        width: 100%;
         backdrop-filter: blur(5px);
-        box-shadow: var(--shadow);
-        z-index: 5;
+        box-shadow: var(--shadow-lg);
+        text-align: center;
     }
 
     .about-content p {
@@ -585,26 +613,6 @@
         top: 50%;
         transform: translateY(-50%);
         z-index: 10;
-    }
-
-    .about-indicators {
-        margin-top: 2rem;
-        position: relative;
-        z-index: 10;
-    }
-
-    /* Testimonials Section */
-    .testimonials-carousel {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .testimonial-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 0;
     }
 
     .carousel-arrow {
@@ -641,6 +649,26 @@
 
     .carousel-next {
         right: 0;
+    }
+
+    .about-indicators {
+        margin-top: 2rem;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Testimonials Section */
+    .testimonials-carousel {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .testimonial-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
     }
 
     .testimonial-card {
@@ -842,8 +870,6 @@
         
         .about-content {
             padding: 2rem;
-            margin: 0 2rem;
-            width: calc(100% - 4rem);
         }
         
         .about-content p {
@@ -882,8 +908,6 @@
         
         .about-content {
             padding: 1.5rem;
-            margin: 0 1.5rem;
-            width: calc(100% - 3rem);
         }
         
         .about-content p {
@@ -936,8 +960,6 @@
         
         .about-content {
             padding: 1.25rem;
-            margin: 0 1rem;
-            width: calc(100% - 2rem);
         }
         
         .testimonial-content {
