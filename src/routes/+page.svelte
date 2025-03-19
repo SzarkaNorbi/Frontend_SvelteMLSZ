@@ -260,18 +260,15 @@
         
         <div class="about-carousel-wrapper">
             <!-- Background Image Carousel -->
-            <div class="background-carousel">
-                {#each backgroundImages as bgImage, i}
-                    {#if i === currentBackgroundIndex}
-                        <div 
-                            class="background-image" 
-                            in:fade={{ duration: 1000 }}
-                            style="background-image: url({bgImage || '/placeholder.svg?height=800&width=1200'});"
-                        ></div>
-                    {/if}
-                {/each}
-                <div class="background-overlay"></div>
-            </div>
+            {#each backgroundImages as bgImage, i}
+                {#if i === currentBackgroundIndex}
+                    <div 
+                        class="background-image" 
+                        in:fade={{ duration: 1000 }}
+                        style="background-image: url({bgImage || '/placeholder.svg?height=800&width=1200'});"
+                    ></div>
+                {/if}
+            {/each}
             
             <!-- Content Carousel -->
             <div class="about-carousel"
@@ -288,12 +285,7 @@
                 </button>
                 
                 <div class="about-content" in:fade={{ duration: 500 }}>
-                    <div class="about-image-container">
-                        <div class="about-image" style="background-image: url({backgroundImages[currentBackgroundIndex] || '/placeholder.svg?height=400&width=600'});"></div>
-                    </div>
-                    <div class="about-text">
-                        <p>{aboutSlides[currentAboutIndex].content}</p>
-                    </div>
+                    <p>{aboutSlides[currentAboutIndex].content}</p>
                 </div>
                 
                 <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeAboutSlide('next')}>
@@ -499,6 +491,7 @@
         margin-bottom: 3.5rem;
         position: relative;
         padding-top: 1.5rem;
+        z-index: 10;
     }
 
     .section-title {
@@ -541,18 +534,10 @@
         border-radius: var(--radius-lg);
         overflow: hidden;
         box-shadow: var(--shadow-lg);
+        height: 400px; /* Fixed height for the carousel */
     }
 
-    /* Background Carousel */
-    .background-carousel {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
-
+    /* Background Image Carousel */
     .background-image {
         position: absolute;
         top: 0;
@@ -562,73 +547,37 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-    }
-
-    .background-overlay {
-        position: flex;
-        top: auto;
-        left: auto;
-        width: auto;
-        height: auto;
-        background-color: rgba(29, 53, 87, 0.7);
-        background-size: auto;
-        z-index: 2;
+        z-index: 1;
     }
 
     /* Content Carousel */
     .about-carousel {
         position: relative;
         z-index: 3;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .about-content {
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 0.8);
         border-radius: var(--radius-lg);
-        padding: 3rem;
-        margin: 2rem;
-        min-height: 200px;
-        display: flex;
-        align-items: stretch;
+        padding: 2rem;
+        margin: 0 3rem;
+        width: calc(100% - 6rem);
         backdrop-filter: blur(5px);
         box-shadow: var(--shadow);
-        gap: 2rem;
+        z-index: 5;
     }
 
-    /* New styles for the about-image-container and about-image */
-    .about-image-container {
-        flex: 0 0 50%;
-        position: relative;
-        overflow: hidden;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        background: url();
-    }
-
-    .about-image {
-        width: 100%;
-        height: 200%;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        transition: transform 0.5s ease;
-    }
-
-    .about-image-container:hover .about-image {
-        transform: scale(1.05);
-    }
-
-    .about-text {
-        flex: 1;
-        display: flex;
-        align-items: center;
-    }
-
-    .about-text p {
+    .about-content p {
         font-size: 1.25rem;
         line-height: 1.8;
         color: var(--gray-800);
         margin: 0;
         font-weight: 500;
+        text-align: center;
     }
 
     .about-arrow {
@@ -640,6 +589,8 @@
 
     .about-indicators {
         margin-top: 2rem;
+        position: relative;
+        z-index: 10;
     }
 
     /* Testimonials Section */
@@ -890,8 +841,9 @@
         }
         
         .about-content {
-            padding: 2.5rem;
-            margin: 1.5rem;
+            padding: 2rem;
+            margin: 0 2rem;
+            width: calc(100% - 4rem);
         }
         
         .about-content p {
@@ -918,15 +870,7 @@
     }
 
     @media (max-width: 768px) {
-        .about-content {
-            flex-direction: column;
-        }
-
-        .about-image {
-            flex: 0 0 100%;
-            max-width: 100%;
-            margin-bottom: 1rem;
-        }
+        .about-section,
         .testimonials-section,
         .gallery-section {
             padding: 5.5rem 1rem 3rem;
@@ -937,8 +881,9 @@
         }
         
         .about-content {
-            padding: 2rem;
-            margin: 1rem;
+            padding: 1.5rem;
+            margin: 0 1.5rem;
+            width: calc(100% - 3rem);
         }
         
         .about-content p {
@@ -990,8 +935,9 @@
         }
         
         .about-content {
-            padding: 1.5rem;
-            margin: 0.75rem;
+            padding: 1.25rem;
+            margin: 0 1rem;
+            width: calc(100% - 2rem);
         }
         
         .testimonial-content {
@@ -1022,5 +968,4 @@
             height: 1rem;
         }
     }
-
 </style>

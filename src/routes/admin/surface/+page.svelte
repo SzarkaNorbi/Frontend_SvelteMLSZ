@@ -268,7 +268,8 @@
             0: 'Aktív',
             1: 'Inaktív',
             2: 'Sérült',
-            3: 'Visszavonult'
+            3: 'Visszavonult',
+            4: 'Átigazolás Alatt'
         };
         return statuses[id] || 'Ismeretlen';
     }
@@ -985,7 +986,6 @@
                         <select id="csapatStatus" bind:value={csapatStatus.value}>
                             <option value="0">Aktív</option>
                             <option value="1">Inaktív</option>
-                            <option value="2">Átigazolás Alatt</option>
                             <option value="3">Felbomlott</option>
                         </select>
                     </div>
@@ -1038,6 +1038,7 @@
                             <option value="1">Inaktív</option>
                             <option value="2">Sérült</option>
                             <option value="3">Visszavonult</option>
+                            <option value="4">Átigazolás Alatt</option>
                         </select>
                     </div>
                 {:else if createModalType === 'Események'}
@@ -1135,7 +1136,6 @@
                             <select id="csapatStatus" bind:value={csapatStatus.value}>
                                 <option value="0">Aktív</option>
                                 <option value="1">Inaktív</option>
-                                <option value="2">Átigazolás Alatt</option>
                                 <option value="3">Felbomlott</option>
                             </select>
                         </div>
@@ -1188,6 +1188,7 @@
                                 <option value="1">Inaktív</option>
                                 <option value="2">Sérült</option>
                                 <option value="3">Visszavonult</option>
+                                <option value="4">Átigazolás Alatt</option>
                             </select>
                         </div>
                     {:else if modifyModal.type === 'Események'}
@@ -1875,6 +1876,11 @@
         
         .admin-title {
             font-size: 1.75rem;
+        }
+        
+        .home-button {
+            width: 2.25rem;
+            height: 2.25rem;
         }
     }
     
