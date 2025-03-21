@@ -253,8 +253,8 @@
 
 <!-- About Section -->
 <section class="about-section">
-    <div class="container about-container">
-        <!-- Background Image Carousel -->
+    <!-- Full-width background container -->
+    <div class="about-background-container">
         {#each backgroundImages as bgImage, i}
             {#if i === currentBackgroundIndex}
                 <div 
@@ -264,7 +264,11 @@
                 ></div>
             {/if}
         {/each}
-        
+        <!-- Dark overlay for better text readability -->
+        <div class="background-overlay"></div>
+    </div>
+    
+    <div class="container about-content-container">
         <header class="section-header">
             <p class="section-subtitle">{aboutSlides[currentAboutIndex].title}</p>
         </header>
@@ -469,7 +473,7 @@
     .about-section,
     .testimonials-section,
     .gallery-section {
-        padding: 7.5rem 1rem 4rem;
+        padding: 7.5rem 0 4rem;
         background-color: var(--gray-100);
         min-height: 50vh;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -485,20 +489,16 @@
         padding: 0 1rem;
     }
 
-    /* About Container with Background Image */
-    .about-container {
-        position: relative;
-        padding-bottom: 4rem;
-        min-height: 600px;
-        border-radius: var(--radius-lg);
+    /* About Section with Full-Width Background */
+    .about-background-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
     }
 
-    /* Background Image */
     .background-image {
         position: absolute;
         top: 0;
@@ -506,22 +506,29 @@
         width: 100%;
         height: 100%;
         background-size: cover;
-        background-position: center;
+        background-position: center top;
         background-repeat: no-repeat;
-        z-index: 1;
-        transform: scale(1.05); /* Slightly scale up to avoid any potential gaps */
+        transform: scale(1.05);
     }
 
-    /* Add a dark overlay to make text more readable */
-    .about-container::after {
-        content: '';
+    .background-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.4);
-        z-index: 2;
+    }
+
+    .about-content-container {
+        position: relative;
+        z-index: 10;
+        padding: 4rem 1rem;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Section Header */
@@ -545,13 +552,13 @@
     .section-subtitle {
         font-size: 2.75rem;
         font-weight: 700;
-        color: white; /* Keeping white for better contrast on the background image */
+        color: white;
         margin: 0;
         position: relative;
         display: inline-block;
         line-height: 1.2;
         padding-top: 50px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Keeping text shadow for better readability */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .section-subtitle::after {
@@ -658,6 +665,10 @@
     }
 
     /* Testimonials Section */
+    .testimonials-section {
+        padding-top: 5rem;
+    }
+
     .testimonials-carousel {
         max-width: 900px;
         margin: 0 auto;
@@ -793,6 +804,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center top;
         transition: var(--transition);
     }
 
@@ -899,7 +911,7 @@
         .about-section,
         .testimonials-section,
         .gallery-section {
-            padding: 5.5rem 1rem 3rem;
+            padding: 5.5rem 0 3rem;
         }
         
         .section-subtitle {

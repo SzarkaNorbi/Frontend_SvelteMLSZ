@@ -300,6 +300,31 @@
         esemenyStatus.value = '1';
     }
     
+    // Form validation functions
+    function validateTeamForm() {
+        if (!team_name.value || !coach_name.value || !foundation_date.value || !stadium.value) {
+            showError("Kérem töltse ki a hiányzó adatot");
+            return false;
+        }
+        return true;
+    }
+    
+    function validatePlayerForm() {
+        if (!player_name.value || !birth_date.value || !nationality.value || !position.value || !team.value) {
+            showError("Kérem töltse ki a hiányzó adatot");
+            return false;
+        }
+        return true;
+    }
+    
+    function validateEventForm() {
+        if (!liga.value || !round.value || !starting_date.value || !ending_date.value) {
+            showError("Kérem töltse ki a hiányzó adatot");
+            return false;
+        }
+        return true;
+    }
+    
     // CRUD operations
     async function handleCreate(type) {
         isLoading = true;
@@ -307,6 +332,11 @@
         try {
             switch (type) {
                 case 'Csapatok':
+                    if (!validateTeamForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const csapatApi = new CsapatApi();
                     const csapat = {
                         csapatId: 0,
@@ -331,8 +361,8 @@
                         );
                     });
                     
-                    // Don't reload the teams data to avoid showing the latest modified data
-                    // await loadTeams();
+                    // Reload the teams data to show the latest added data
+                    await loadTeams();
                     
                     // Reset form fields
                     resetTeamForm();
@@ -341,6 +371,11 @@
                     break;
                     
                 case 'Játékosok':
+                    if (!validatePlayerForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const jatekosApi = new JatekosApi();
                     const nameParts = player_name.value.split(' ');
                     const jatekos = {
@@ -368,8 +403,8 @@
                         );
                     });
                     
-                    // Don't reload the players data to avoid showing the latest modified data
-                    // await loadPlayers();
+                    // Reload the players data to show the latest added data
+                    await loadPlayers();
                     
                     // Reset form fields
                     resetPlayerForm();
@@ -378,6 +413,11 @@
                     break;
                     
                 case 'Események':
+                    if (!validateEventForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const versenyApi = new VersenyApi();
                     const verseny = {
                         versenyId: 0,
@@ -403,8 +443,8 @@
                         );
                     });
                     
-                    // Don't reload the competitions data to avoid showing the latest modified data
-                    // await loadCompetetions();
+                    // Reload the competitions data to show the latest added data
+                    await loadCompetetions();
                     
                     // Reset form fields
                     resetEventForm();
@@ -428,6 +468,11 @@
         try {
             switch (modal.type) {
                 case 'Csapatok':
+                    if (!validateTeamForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const csapatApi = new CsapatApi();
                     const csapat = {
                         csapatId: modal.id,
@@ -458,6 +503,11 @@
                     break;
                     
                 case 'Játékosok':
+                    if (!validatePlayerForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const jatekosApi = new JatekosApi();
                     const nameParts = player_name.value.split(' ');
                     const jatekos = {
@@ -491,6 +541,11 @@
                     break;
                     
                 case 'Események':
+                    if (!validateEventForm()) {
+                        isLoading = false;
+                        return;
+                    }
+                    
                     const versenyApi = new VersenyApi();
                     const verseny = {
                         versenyId: modal.id,
