@@ -6,37 +6,30 @@
     import logo from '$lib/images/logo.png';
     import AuthApi from "../../../generated-client/src/api/AuthApi.js";
 
-    // State variables
     let email = '';
     let password = '';
     let isLoading = false;
     let errorMessage = '';
     let showPassword = false;
     
-    // Initialize API
     const loginInstance = new AuthApi();
     
-    // Handle form submission
     async function handleLogin(event) {
         event.preventDefault();
         
-        // Validate form
         if (!email || !password) {
             errorMessage = "Kérlek, add meg az e-mail címedet és a jelszavadat!";
             return;
         }
         
-        // Set loading state
         isLoading = true;
         errorMessage = '';
         
-        // Create login model
         const loginModel = {
             email,
             password
         };
         
-        // Attempt login
         try {
             loginInstance.apiAuthLoginPost({ loginModel }, (error, data, response) => {
                 if (error) {
@@ -45,10 +38,9 @@
                     isLoading = false;
                 } else {
                     console.log("Login successful");
-                    // Store token and redirect
+                   
                     localStorage.setItem("AuthToken", JSON.parse(response.text).token);
                     
-                    // Use goto if available, otherwise fallback to window.location
                     if (typeof goto === 'function') {
                         goto('/admin/surface');
                     } else {
@@ -63,12 +55,10 @@
         }
     }
     
-    // Toggle password visibility
     function togglePasswordVisibility() {
         showPassword = !showPassword;
     }
     
-    // Navigate back to home page
     function navigateToHome() {
         if (typeof goto === 'function') {
             goto('/');
@@ -77,14 +67,12 @@
         }
     }
     
-    // Focus on email input on mount
     onMount(() => {
         const emailInput = document.getElementById('email');
         if (emailInput) emailInput.focus();
     });
 </script>
 
-<!-- Main Content -->
 <main class="main">
     <div class="container">
         <div class="login-container" in:fade={{ duration: 300, delay: 150 }}>
@@ -151,10 +139,7 @@
                                 {showPassword ? 'Elrejt' : 'Mutat'}
                             </button>
                         </div>
-                    </div>
-                    
-                    
-                    
+                    </div>           
                     <button 
                         type="submit" 
                         class="submit-button" 
@@ -175,7 +160,6 @@
 </main>
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -207,7 +191,6 @@
         --transition: all 0.3s ease;
     }
     
-    /* Global Styles */
     * {
         box-sizing: border-box;
         margin: 0;
@@ -228,7 +211,6 @@
         padding: 0 1rem;
     }
     
-    /* Main Content */
     .main {
         min-height: 100vh;
         padding: 3rem 0;
@@ -312,7 +294,6 @@
         font-size: 0.95rem;
     }
     
-    /* Form Styles */
     .login-form {
         display: flex;
         flex-direction: column;
@@ -420,7 +401,6 @@
         cursor: not-allowed;
     }
     
-    /* Error Alert */
     .error-alert {
         display: flex;
         align-items: center;
@@ -433,7 +413,6 @@
         margin-bottom: 1.5rem;
     }
     
-    /* Loading Spinner */
     .spinner {
         width: 18px;
         height: 18px;
@@ -449,7 +428,6 @@
         }
     }
     
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
         .login-card {
             padding: 2rem;

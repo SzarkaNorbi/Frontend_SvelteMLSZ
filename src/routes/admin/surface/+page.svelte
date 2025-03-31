@@ -4,14 +4,12 @@
     import { fade, fly, scale } from 'svelte/transition';
     import { onMount } from 'svelte';
     
-    // Import API clients
     import CsapatApi from '../../../../generated-client/src/api/CsapatApi';
     import JatekosApi from '../../../../generated-client/src/api/JatekosApi';
     import NemzetisegApi from '../../../../generated-client/src/api/NemzetisegApi';
     import StadionApi from '../../../../generated-client/src/api/StadionApi';
     import VersenyApi from '../../../../generated-client/src/api/VersenyApi';
     
-    // State variables
     let stadions = [];
     let nationalitys = [];
     let teams = [];
@@ -20,7 +18,6 @@
     let jatekosMediaId = 0;
     let csapatMediaId = 0;
     
-    // Form data state variables
     let team_name = { value: '' };
     let coach_name = { value: '' };
     let foundation_date = { value: '' };
@@ -40,7 +37,6 @@
     let ending_date = { value: '' };
     let esemenyStatus = { value: '1' };
     
-    // Modal state
     let createModalType = null;
     let modifyModal = { type: null, id: null };
     let modalType = null;
@@ -50,7 +46,6 @@
     let successMessage = null;
     let errorMessage = null;
     
-    // Helper function to get the correct singular form
     function getSingularForm(type) {
         const singularForms = {
             'Csapatok': 'Csapat',
@@ -61,12 +56,10 @@
         return singularForms[type] || type.slice(0, -1);
     }
     
-    // Open main category modal
     function openModal(type) {
         modalType = type;
         isLoading = true;
-        
-        // Load relevant data based on modal type
+ 
         Promise.all([
             loadTeams(),
             loadPlayers(),
@@ -82,7 +75,6 @@
         showModal = true;
     }
     
-    // Close modal
     function closeModal() {
         showModal = false;
         setTimeout(() => {
@@ -92,7 +84,6 @@
         }, 300);
     }
     
-    // Show success message with auto-dismiss
     function showSuccess(message) {
         successMessage = message;
         setTimeout(() => {
@@ -100,7 +91,6 @@
         }, 3000);
     }
     
-    // Show error message with auto-dismiss
     function showError(message) {
         errorMessage = message;
         setTimeout(() => {
@@ -108,7 +98,6 @@
         }, 5000);
     }
     
-    // Load data functions
     function loadStadions() {
         const stadionApi = new StadionApi();
         return new Promise((resolve, reject) => {
@@ -184,7 +173,6 @@
         });
     }
     
-    // Helper functions for data display
     async function getStadionName(stadionId) {
         const stadionApi = new StadionApi();
         try {
@@ -242,7 +230,6 @@
         }
     }
     
-    // Status conversion functions
     function convertCsapatStatusz(id) {
         const statuses = {
             0: 'Aktív',
@@ -274,7 +261,6 @@
         return statuses[id] || 'Ismeretlen';
     }
     
-    // Reset form functions
     function resetTeamForm() {
         team_name.value = '';
         coach_name.value = '';
@@ -300,7 +286,6 @@
         esemenyStatus.value = '1';
     }
     
-    // Form validation functions
     function validateTeamForm() {
         if (!team_name.value || !coach_name.value || !foundation_date.value || !stadium.value) {
             showError("Kérem töltse ki a hiányzó adatot");
@@ -325,7 +310,6 @@
         return true;
     }
     
-    // CRUD operations
     async function handleCreate(type) {
         isLoading = true;
         
@@ -361,10 +345,8 @@
                         );
                     });
                     
-                    // Reload the teams data to show the latest added data
                     await loadTeams();
                     
-                    // Reset form fields
                     resetTeamForm();
                     
                     showSuccess("Csapat sikeresen létrehozva!");
@@ -403,10 +385,8 @@
                         );
                     });
                     
-                    // Reload the players data to show the latest added data
                     await loadPlayers();
                     
-                    // Reset form fields
                     resetPlayerForm();
                     
                     showSuccess("Játékos sikeresen létrehozva!");
@@ -443,10 +423,8 @@
                         );
                     });
                     
-                    // Reload the competitions data to show the latest added data
                     await loadCompetetions();
                     
-                    // Reset form fields
                     resetEventForm();
                     
                     showSuccess("Esemény sikeresen létrehozva!");
@@ -587,7 +565,6 @@
     }
     
     function openCreateModal(type) {
-        // Reset form fields when opening create modal
         switch (type) {
             case 'Csapatok':
                 resetTeamForm();
@@ -689,7 +666,6 @@
         });
     }
     
-    // Show delete confirmation modal
     async function showDeleteConfirmation(id, type) {
         let name = "";
         
@@ -716,7 +692,6 @@
         confirmDeleteModal = { show: true, type, id, name };
     }
     
-    // Handle delete operation
     async function handleRemove() {
         if (!confirmDeleteModal.show) return;
         
@@ -805,7 +780,6 @@
         createModalType = null;
     }
     
-    // Initialize data on component mount
     onMount(async () => {
         try {
             await Promise.all([
@@ -818,7 +792,6 @@
     });
 </script>
 
-<!-- Main Content -->
 <main class="main">
     <div class="container">
         <div class="admin-header">
@@ -855,7 +828,6 @@
     </div>
 </main>
 
-<!-- Notification Messages -->
 {#if successMessage}
     <div class="notification success" transition:fly={{ y: 50, duration: 300 }}>
         <span class="notification-icon">✓</span>
@@ -1337,7 +1309,6 @@
 {/if}
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -1369,7 +1340,6 @@
         --transition: all 0.3s ease;
     }
     
-    /* Global Styles */
     * {
         box-sizing: border-box;
         margin: 0;
@@ -1390,7 +1360,6 @@
         padding: 0 1rem;
     }
     
-    /* Main Content */
     .main {
         padding: 2rem 0;
     }
@@ -1446,7 +1415,6 @@
         color: var(--gray-600);
     }
     
-    /* Admin Menu */
     .admin-menu {
         display: flex;
         flex-direction: column;
@@ -1484,7 +1452,6 @@
         color: var(--primary);
     }
     
-    /* Modal */
     .modal-backdrop {
         position: fixed;
         top: 0;
@@ -1584,7 +1551,6 @@
         background-color: darken(var(--success), 10%);
     }
     
-    /* Items Grid */
     .items-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1701,7 +1667,6 @@
         color: var(--accent-hover);
     }
     
-    /* Form Styles */
     .form-container {
         display: flex;
         flex-direction: column;
@@ -1779,7 +1744,6 @@
         cursor: not-allowed;
     }
     
-    /* Confirm Modal */
     .confirm-icon {
         color: var(--warning);
         margin-bottom: 1rem;
@@ -1838,7 +1802,6 @@
         cursor: not-allowed;
     }
     
-    /* Loading Indicators */
     .loading-container {
         display: flex;
         flex-direction: column;
@@ -1872,7 +1835,6 @@
         100% { transform: rotate(360deg); }
     }
     
-    /* Notifications */
     .notification {
         position: fixed;
         bottom: 2rem;
@@ -1904,7 +1866,6 @@
         font-weight: 500;
     }
     
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
         .items-grid {
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

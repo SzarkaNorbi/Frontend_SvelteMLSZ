@@ -8,6 +8,7 @@
     let searchQuery = '';
     let sortBy = "abc";
     let isLoading = true;
+    let viewportWidth;
     
     // Load events on mount
     onMount(() => {
@@ -40,6 +41,22 @@
             : { text: 'Lezárult', class: 'status-inactive' };
     }
     
+    // Calculate progress percentage
+    function calculateProgress(startDate, endDate) {
+        const start = new Date(startDate).getTime();
+        const end = new Date(endDate).getTime();
+        const now = new Date().getTime();
+        
+        if (now <= start) return 0;
+        if (now >= end) return 100;
+        
+        const total = end - start;
+        const elapsed = now - start;
+        const percentage = Math.round((elapsed / total) * 100);
+        
+        return percentage;
+    }
+    
     // Reactive filtered and sorted events
     $: filteredEvents = events
         .filter(event => event.liga.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -55,6 +72,8 @@
         });
 </script>
 
+<svelte:window bind:innerWidth={viewportWidth} />
+
 <section class="events-section">
     <div class="container">
         <header class="section-header">
@@ -67,7 +86,8 @@
                     type="text" 
                     bind:value={searchQuery} 
                     placeholder="Keresés verseny alapján..." 
-                    class="search-input" 
+                    class="search-input"
+                    aria-label="Keresés verseny alapján"
                 />
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -114,7 +134,7 @@
                         
                         <div class="card-header">
                             <h2 class="event-name">{event.liga}</h2>
-                            <div class="round-badge ms-2">
+                            <div class="round-badge">
                                 <span>{event.fordulo}. forduló</span>
                             </div>
                         </div>
@@ -156,6 +176,10 @@
                                         class="progress-fill" 
                                         class:completed={!event.aktualis}
                                         style={`width: ${event.aktualis ? calculateProgress(event.kezdesDatum, event.befejezesDatum) : '100'}%`}
+                                        aria-valuenow={event.aktualis ? calculateProgress(event.kezdesDatum, event.befejezesDatum) : 100}
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        role="progressbar"
                                     ></div>
                                 </div>
                                 <div class="progress-text">
@@ -171,24 +195,6 @@
         {/if}
     </div>
 </section>
-
-<script context="module">
-    // Calculate progress percentage
-    function calculateProgress(startDate, endDate) {
-        const start = new Date(startDate).getTime();
-        const end = new Date(endDate).getTime();
-        const now = new Date().getTime();
-        
-        if (now <= start) return 0;
-        if (now >= end) return 100;
-        
-        const total = end - start;
-        const elapsed = now - start;
-        const percentage = Math.round((elapsed / total) * 100);
-        
-        return percentage;
-    }
-</script>
 
 <style>
     /* Variables */
@@ -268,6 +274,18 @@
         display: inline-block;
         line-height: 1.2;
         padding-top: 50px;
+    }
+
+    .section-subtitle::after {
+        content: '';
+        position: absolute;
+        bottom: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background-color: var(--accent);
+        border-radius: 2px;
     }
 
     /* Controls */
@@ -451,13 +469,16 @@
 
     .card-header {
         padding: 2rem 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
     }
 
     .event-name {
         font-size: 1.75rem;
         font-weight: 700;
         color: var(--primary-dark);
-        margin: 0 0 1rem 0;
+        margin: 0;
         line-height: 1.2;
     }
 
@@ -469,6 +490,7 @@
         font-weight: 600;
         background-color: var(--primary-light);
         color: white;
+        align-self: flex-start;
     }
 
     .card-body {
@@ -552,10 +574,25 @@
     }
 
     /* Enhanced Responsive Adjustments */
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
         .events-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .events-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem;
+        }
+        
+        .card-header {
+            padding: 1.75rem 1.75rem 0.875rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem 1.75rem 1.75rem;
         }
     }
 
@@ -570,6 +607,7 @@
         
         .events-grid {
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
         
         .event-name {
@@ -578,6 +616,11 @@
         
         .info-value {
             font-size: 1.125rem;
+        }
+        
+        .round-badge {
+            padding: 0.4rem 0.85rem;
+            font-size: 0.95rem;
         }
     }
 
@@ -632,15 +675,21 @@
         
         .section-subtitle {
             font-size: 1.75rem;
+            padding-top: 30px;
         }
         
         .section-subtitle::after {
             width: 80px;
+            height: 3px;
+        }
+        
+        .card-header {
+            align-items: flex-start;
+            gap: 0.5rem;
         }
         
         .event-name {
             font-size: 1.35rem;
-            margin-bottom: 0.75rem;
         }
         
         .round-badge {
@@ -660,6 +709,14 @@
         .info-icon svg {
             width: 1.25rem;
             height: 1.25rem;
+        }
+        
+        .progress-bar {
+            height: 0.625rem;
+        }
+        
+        .progress-text {
+            font-size: 0.8125rem;
         }
     }
 
@@ -687,6 +744,50 @@
         .card-badge {
             font-size: 0.8rem;
             padding: 0.25rem 0.75rem;
+            top: 1rem;
+            right: 1rem;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 360px) {
+        .section-subtitle {
+            font-size: 1.35rem;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+        }
+        
+        .card-body {
+            padding: 0.875rem 1.25rem 1.25rem;
+        }
+        
+        .event-name {
+            font-size: 1.25rem;
+        }
+        
+        .round-badge {
+            padding: 0.3rem 0.65rem;
+            font-size: 0.8125rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+        }
+        
+        .info-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        .info-icon svg {
+            width: 1.125rem;
+            height: 1.125rem;
         }
     }
 

@@ -12,6 +12,7 @@
     let sortBy = "abc";
     let isLoading = true;
     let stadionCache = new Map();
+    let viewportWidth;
     
     onMount(() => {
         loadTeams();
@@ -86,6 +87,8 @@
         });
 </script>
 
+<svelte:window bind:innerWidth={viewportWidth} />
+
 <section class="teams-section">
     <div class="container">
         <header class="section-header">
@@ -99,6 +102,7 @@
                     bind:value={searchQuery} 
                     placeholder="Keresés csapatnév alapján..." 
                     class="search-input" 
+                    aria-label="Keresés csapatnév alapján"
                 />
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -149,6 +153,7 @@
                                     class="team-logo" 
                                     src={`https://focistak-test.runasp.net/Media/Files/${csapat.media_Id}`} 
                                     alt={`${csapat.csapatNev} logo`}
+                                    loading="lazy"
                                 />
                             </div>
                             <div class="team-info">
@@ -293,7 +298,7 @@
         transform: translateX(-50%);
         width: 100px;
         height: 4px;
-        
+        background-color: var(--accent);
         border-radius: 2px;
     }
 
@@ -595,20 +600,37 @@
     }
 
     /* Enhanced Responsive Adjustments */
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
         .teams-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
         }
     }
 
+    @media (max-width: 1200px) {
+        .teams-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem;
+        }
+        
+        .card-header {
+            padding: 1.75rem 1.75rem 0.875rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem 1.75rem 1.75rem;
+        }
+    }
+
     @media (max-width: 992px) {
         .section-subtitle {
             font-size: 2.25rem;
+            padding-top: 60px;
         }
         
         .teams-grid {
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
         
         .team-name {
@@ -617,6 +639,11 @@
         
         .info-value {
             font-size: 1.125rem;
+        }
+        
+        .logo-container {
+            width: 90px;
+            height: 90px;
         }
     }
 
@@ -627,6 +654,7 @@
         
         .section-subtitle {
             font-size: 2rem;
+            padding-top: 50px;
         }
         
         .controls {
@@ -672,10 +700,12 @@
         
         .section-subtitle {
             font-size: 1.75rem;
+            padding-top: 40px;
         }
         
         .section-subtitle::after {
             width: 80px;
+            height: 3px;
         }
         
         .card-header {
@@ -718,6 +748,7 @@
     @media (max-width: 480px) {
         .section-subtitle {
             font-size: 1.5rem;
+            padding-top: 30px;
         }
         
         .search-input, .sort-select {
@@ -758,6 +789,44 @@
         
         .sort-select {
             width: 100%;
+        }
+    }
+
+    /* Extra small devices */
+    @media (max-width: 360px) {
+        .section-subtitle {
+            font-size: 1.35rem;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+        }
+        
+        .card-body {
+            padding: 0.875rem 1.25rem 1.25rem;
+        }
+        
+        .logo-container {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .team-name {
+            font-size: 1.25rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+        }
+        
+        .info-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        .info-icon svg {
+            width: 1.125rem;
+            height: 1.125rem;
         }
     }
 </style>

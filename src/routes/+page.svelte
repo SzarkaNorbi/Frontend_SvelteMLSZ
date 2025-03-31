@@ -2,9 +2,6 @@
     import { onMount, tick } from 'svelte';
     import { fade, fly, scale } from 'svelte/transition';
     
-    // Import images
-    // Note: In a real implementation, you would need to adjust these paths
-    // to match your project structure
     import velemeny1 from '$lib/images/testimonial/velemeny.jpg';
     import quotes from '$lib/images/testimonial/qoutes.svg';
     import velemeny2 from '$lib/images/testimonial/velemeny2.jpg';
@@ -18,12 +15,8 @@
     import gallery6 from '$lib/images/gallery/g-6.jpg';
 
     const galleryImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
-
-    // Background images for about section
-    // Using gallery images for demonstration, but you can use different images
     const backgroundImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
 
-    // Testimonials data
     const testimonials = [
         {
             image: velemeny1,
@@ -45,7 +38,6 @@
         }
     ];
 
-    // About carousel slides data
     const aboutSlides = [
         {
             title: "Ismerje meg a Focisták platformot",
@@ -65,7 +57,6 @@
         }
     ];
 
-    // State
     let currentTestimonialIndex = 0;
     let currentAboutIndex = 0;
     let currentBackgroundIndex = 0;
@@ -79,8 +70,8 @@
     let isLightboxOpen = false;
     let touchStartX = 0;
     let touchEndX = 0;
+    let viewportWidth;
     
-    // Change testimonial
     function changeTestimonial(direction) {
         if (isTestimonialTransitioning) return;
         
@@ -97,7 +88,6 @@
         }, 500);
     }
     
-    // Change about slide
     async function changeAboutSlide(direction) {
         if (isAboutTransitioning) return;
         
@@ -117,7 +107,6 @@
         }, 500);
     }
     
-    // Change background image
     async function changeBackgroundImage() {
         if (isBackgroundTransitioning) return;
         
@@ -131,7 +120,6 @@
         }, 1000);
     }
     
-    // Go to specific about slide
     function goToAboutSlide(index) {
         if (isAboutTransitioning || index === currentAboutIndex) return;
         
@@ -146,45 +134,39 @@
         }, 500);
     }
     
-    // Start testimonial autoplay
     function startTestimonialAutoplay() {
-        stopTestimonialAutoplay(); // Clear any existing interval
+        stopTestimonialAutoplay();
         testimonialAutoplayInterval = setInterval(() => {
             changeTestimonial('next');
         }, 5000);
     }
     
-    // Stop testimonial autoplay
     function stopTestimonialAutoplay() {
         if (testimonialAutoplayInterval) {
             clearInterval(testimonialAutoplayInterval);
         }
     }
     
-    // Start about autoplay
     function startAboutAutoplay() {
-        stopAboutAutoplay(); // Clear any existing interval
+        stopAboutAutoplay();
         aboutAutoplayInterval = setInterval(() => {
             changeAboutSlide('next');
-        }, 6000); // Slightly different timing to avoid synchronization
+        }, 6000); 
     }
     
-    // Stop about autoplay
     function stopAboutAutoplay() {
         if (aboutAutoplayInterval) {
             clearInterval(aboutAutoplayInterval);
         }
     }
     
-    // Start background autoplay
     function startBackgroundAutoplay() {
-        stopBackgroundAutoplay(); // Clear any existing interval
+        stopBackgroundAutoplay();
         backgroundAutoplayInterval = setInterval(() => {
             changeBackgroundImage();
-        }, 4000); // Faster than the content carousel for visual interest
+        }, 4000); 
     }
     
-    // Stop background autoplay
     function stopBackgroundAutoplay() {
         if (backgroundAutoplayInterval) {
             clearInterval(backgroundAutoplayInterval);
@@ -223,6 +205,38 @@
         startAboutAutoplay();
     }
     
+    // Touch events for testimonial carousel
+    function handleTestimonialTouchStart(e) {
+        touchStartX = e.touches[0].clientX;
+        stopTestimonialAutoplay();
+    }
+    
+    function handleTestimonialTouchMove(e) {
+        touchEndX = e.touches[0].clientX;
+    }
+    
+    function handleTestimonialTouchEnd() {
+        if (!touchStartX || !touchEndX) return;
+        
+        const diff = touchStartX - touchEndX;
+        const threshold = 50; // Minimum swipe distance
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe left, go to next slide
+                changeTestimonial('next');
+            } else {
+                // Swipe right, go to previous slide
+                changeTestimonial('prev');
+            }
+        }
+        
+        // Reset touch coordinates
+        touchStartX = 0;
+        touchEndX = 0;
+        startTestimonialAutoplay();
+    }
+    
     // Open lightbox
     function openLightbox(image) {
         activeImage = image;
@@ -250,6 +264,8 @@
         };
     });
 </script>
+
+<svelte:window bind:innerWidth={viewportWidth} />
 
 <!-- About Section -->
 <section class="about-section">
@@ -282,7 +298,7 @@
                  on:mouseenter={stopAboutAutoplay}
                  on:mouseleave={startAboutAutoplay}>
                 
-                <button class="carousel-arrow carousel-prev about-arrow" on:click={() => changeAboutSlide('prev')}>
+                <button class="carousel-arrow carousel-prev about-arrow" on:click={() => changeAboutSlide('prev')} aria-label="Previous slide">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -292,7 +308,7 @@
                     <p>{aboutSlides[currentAboutIndex].content}</p>
                 </div>
                 
-                <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeAboutSlide('next')}>
+                <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeAboutSlide('next')} aria-label="Next slide">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -320,13 +336,15 @@
         </header>
         
         <div class="testimonials-carousel">
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div class="testimonial-container" 
                  in:fade={{ duration: 300 }}
+                 on:touchstart={handleTestimonialTouchStart}
+                 on:touchmove={handleTestimonialTouchMove}
+                 on:touchend={handleTestimonialTouchEnd}
                  on:mouseenter={stopTestimonialAutoplay}
                  on:mouseleave={startTestimonialAutoplay}>
                 
-                <button class="carousel-arrow carousel-prev" on:click={() => changeTestimonial('prev')}>
+                <button class="carousel-arrow carousel-prev" on:click={() => changeTestimonial('prev')} aria-label="Previous testimonial">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -335,15 +353,16 @@
                 <div class="testimonial-card">
                     <div class="testimonial-image-container">
                         <img 
-                            src={testimonials[currentTestimonialIndex].image || "/placeholder.svg"} 
+                            src={testimonials[currentTestimonialIndex].image || "/placeholder.svg"}
                             alt={testimonials[currentTestimonialIndex].name}
                             class="testimonial-image"
+                            loading="lazy"
                         />
                     </div>
                     
                     <div class="testimonial-content">
                         <div class="quote-icon">
-                            <img src={quotes || "/placeholder.svg"} alt="Idézet" />
+                            <img src={quotes || "/placeholder.svg"} alt="Idézet" loading="lazy" />
                         </div>
                         
                         <p class="testimonial-text">
@@ -357,7 +376,7 @@
                     </div>
                 </div>
                 
-                <button class="carousel-arrow carousel-next" on:click={() => changeTestimonial('next')}>
+                <button class="carousel-arrow carousel-next" on:click={() => changeTestimonial('next')} aria-label="Next testimonial">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -398,7 +417,7 @@
                     aria-label="Galéria kép megnyitása"
                 >
                     <div class="gallery-image-container">
-                        <img src={image || "/placeholder.svg"} alt="Galéria kép" class="gallery-image" />
+                        <img src={image || "/placeholder.svg"} alt="Galéria kép" class="gallery-image" loading="lazy" />
                         <div class="gallery-overlay">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -422,7 +441,7 @@
          on:keydown={(e) => e.key === 'Escape' && closeLightbox()}
          tabindex="0"
     >
-        <button class="lightbox-close" on:click={closeLightbox}>
+        <button class="lightbox-close" on:click={closeLightbox} aria-label="Close lightbox">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -486,7 +505,7 @@
         width: 100%;
         max-width: 1400px;
         margin: 0 auto;
-        padding: 0 1rem;
+        padding: 0 1.25rem;
     }
 
     /* About Section with Full-Width Background */
@@ -523,7 +542,7 @@
     .about-content-container {
         position: relative;
         z-index: 10;
-        padding: 4rem 1rem;
+        padding: 4rem 1.25rem;
         min-height: 600px;
         display: flex;
         flex-direction: column;
@@ -541,7 +560,7 @@
     }
 
     .section-title {
-        font-size: 1rem;
+        font-size: 1.125rem;
         font-weight: 600;
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -550,7 +569,7 @@
     }
 
     .section-subtitle {
-        font-size: 2.75rem;
+        font-size: 2.25rem;
         font-weight: 700;
         color: white;
         margin: 0;
@@ -592,7 +611,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0 1rem;
+        padding: 0 1.25rem;
         width: 100%;
     }
 
@@ -607,7 +626,7 @@
     }
 
     .about-content p {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         line-height: 1.8;
         color: var(--gray-800);
         margin: 0;
@@ -638,6 +657,7 @@
         cursor: pointer;
         z-index: 10;
         transition: var(--transition);
+        touch-action: manipulation;
     }
 
     .carousel-arrow:hover {
@@ -689,12 +709,14 @@
         overflow: hidden;
         box-shadow: var(--shadow);
         width: 100%;
+        flex-direction: column;
     }
 
     .testimonial-image-container {
-        flex: 0 0 40%;
+        flex: 0 0 auto;
         position: relative;
         overflow: hidden;
+        height: 250px;
     }
 
     .testimonial-image {
@@ -705,8 +727,8 @@
     }
 
     .testimonial-content {
-        flex: 0 0 60%;
-        padding: 3rem;
+        flex: 1;
+        padding: 2rem;
         position: relative;
     }
 
@@ -718,15 +740,15 @@
     }
 
     .quote-icon img {
-        width: 3rem;
+        width: 2.5rem;
         height: auto;
     }
 
     .testimonial-text {
-        font-size: 1.25rem;
-        line-height: 1.8;
+        font-size: 1.125rem;
+        line-height: 1.7;
         color: var(--gray-700);
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         font-style: italic;
     }
 
@@ -735,7 +757,7 @@
     }
 
     .author-name {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--primary);
         margin: 0 0 0.5rem 0;
@@ -751,7 +773,7 @@
         display: flex;
         justify-content: center;
         gap: 0.75rem;
-        margin-top: 2rem;
+        margin-top: 1.5rem;
     }
 
     .indicator-dot {
@@ -762,6 +784,7 @@
         border: none;
         cursor: pointer;
         transition: var(--transition);
+        padding: 0;
     }
 
     .indicator-dot.active {
@@ -772,8 +795,8 @@
     /* Gallery Section */
     .gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1.5rem;
     }
 
     .gallery-item {
@@ -827,8 +850,8 @@
     }
 
     .gallery-overlay svg {
-        width: 3rem;
-        height: 3rem;
+        width: 2.5rem;
+        height: 2.5rem;
         color: white;
     }
 
@@ -846,76 +869,139 @@
         z-index: 1000;
     }
 
-    
     .lightbox-close {
         position: absolute;
-        top: 2rem;
-        right: 2rem;
+        top: 1.5rem;
+        right: 1.5rem;
         background: none;
         border: none;
         color: white;
         cursor: pointer;
         z-index: 1001;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        transition: var(--transition);
+    }
+
+    .lightbox-close:hover {
+        background-color: rgba(255, 255, 255, 0.2);
     }
 
     .lightbox-close svg {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 2rem;
+        height: 2rem;
     }
 
     .lightbox-content {
         max-width: 90%;
         max-height: 90%;
+        position: relative;
     }
 
     .lightbox-image {
         max-width: 100%;
         max-height: 90vh;
         object-fit: contain;
+        border-radius: var(--radius);
     }
 
     /* Responsive Adjustments */
-    @media (max-width: 992px) {
+    @media (min-width: 576px) {
         .section-subtitle {
-            font-size: 2.25rem;
-        }
-        
-        .about-content {
-            padding: 2rem;
+            font-size: 2.5rem;
         }
         
         .about-content p {
-            font-size: 1.125rem;
-        }
-        
-        .testimonial-card {
-            flex-direction: column;
-        }
-        
-        .testimonial-image-container {
-            flex: 0 0 200px;
-            width: 100%;
-        }
-        
-        .testimonial-content {
-            flex: 1;
-            padding: 2rem;
+            font-size: 1.25rem;
         }
         
         .gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.75rem;
+        }
+        
+        .testimonial-text {
+            font-size: 1.25rem;
         }
     }
 
-    @media (max-width: 768px) {
-        .about-section,
-        .testimonials-section,
-        .gallery-section {
-            padding: 5.5rem 0 3rem;
+    @media (min-width: 768px) {
+        .container {
+            padding: 0 2rem;
         }
         
         .section-subtitle {
-            font-size: 2rem;
+            font-size: 2.75rem;
+        }
+        
+        .testimonial-card {
+            flex-direction: row;
+        }
+        
+        .testimonial-image-container {
+            flex: 0 0 40%;
+            height: auto;
+        }
+        
+        .testimonial-content {
+            flex: 0 0 60%;
+            padding: 3rem;
+        }
+        
+        .quote-icon img {
+            width: 3rem;
+        }
+        
+        .author-name {
+            font-size: 1.5rem;
+        }
+        
+        .carousel-arrow {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+        
+        .carousel-arrow svg {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .gallery-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .about-content {
+            padding: 2.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .about-section,
+        .testimonials-section,
+        .gallery-section {
+            padding: 5rem 0 3rem;
+        }
+        
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.75rem;
+            padding-top: 30px;
+        }
+        
+        .section-subtitle::after {
+            width: 80px;
+            height: 3px;
         }
         
         .about-content {
@@ -927,60 +1013,14 @@
             line-height: 1.6;
         }
         
-        .testimonial-text {
-            font-size: 1.125rem;
-        }
-        
-        .author-name {
-            font-size: 1.25rem;
-        }
-        
-        .carousel-arrow {
-            width: 2.5rem;
-            height: 2.5rem;
-        }
-        
-        .carousel-arrow svg {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-        
-        .gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-            gap: 1.5rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .about-section,
-        .testimonials-section,
-        .gallery-section {
-            padding-top: 5rem;
-        }
-        
-        .section-header {
-            margin-bottom: 2.5rem;
-        }
-        
-        .section-subtitle {
-            font-size: 1.75rem;
-        }
-        
-        .section-subtitle::after {
-            width: 80px;
-        }
-        
-        .about-content {
-            padding: 1.25rem;
-        }
-        
         .testimonial-content {
             padding: 1.5rem;
         }
         
         .testimonial-text {
             font-size: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
         }
         
         .quote-icon {
@@ -993,13 +1033,67 @@
         }
         
         .carousel-arrow {
-            width: 2rem;
-            height: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
         }
         
         .carousel-arrow svg {
-            width: 1rem;
-            height: 1rem;
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .testimonial-image-container {
+            height: 200px;
+        }
+        
+        .author-name {
+            font-size: 1.125rem;
+        }
+        
+        .author-role {
+            font-size: 0.875rem;
+        }
+        
+        .indicator-dot {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+    }
+
+    /* Small phone optimizations */
+    @media (max-width: 360px) {
+        .section-subtitle {
+            font-size: 1.5rem;
+        }
+        
+        .about-content {
+            padding: 1.25rem;
+        }
+        
+        .about-content p {
+            font-size: 0.9375rem;
+        }
+        
+        .testimonial-content {
+            padding: 1.25rem;
+        }
+        
+        .testimonial-text {
+            font-size: 0.9375rem;
+        }
+        
+        .carousel-arrow {
+            width: 2.25rem;
+            height: 2.25rem;
+        }
+        
+        .carousel-arrow svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+        
+        .testimonial-image-container {
+            height: 180px;
         }
     }
 </style>

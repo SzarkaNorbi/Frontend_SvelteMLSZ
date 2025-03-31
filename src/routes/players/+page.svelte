@@ -17,6 +17,7 @@
     let isLoading = true;
     let nemzetisegCache = new Map();
     let csapatCache = new Map();
+    let viewportWidth;
     
     // Load players on mount
     onMount(() => {
@@ -148,6 +149,8 @@
         });
 </script>
 
+<svelte:window bind:innerWidth={viewportWidth} />
+
 <section class="players-section">
     <div class="container">
         <header class="section-header">
@@ -160,7 +163,8 @@
                     type="text" 
                     bind:value={searchQuery} 
                     placeholder="Keresés játékos neve alapján..." 
-                    class="search-input" 
+                    class="search-input"
+                    aria-label="Keresés játékos neve alapján"
                 />
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -211,6 +215,7 @@
                                     class="player-photo" 
                                     src={`https://focistak-test.runasp.net/Media/Files/${jatekos.media_Id}`} 
                                     alt={`${jatekos.vezeteknev} ${jatekos.keresztnev}`}
+                                    loading="lazy"
                                 />
                             </div>
                             <div class="player-info">
@@ -382,7 +387,17 @@
         padding-top: 30px;
     }
 
- 
+    .section-subtitle::after {
+        content: '';
+        position: absolute;
+        bottom: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background-color: var(--accent);
+        border-radius: 2px;
+    }
 
     /* Controls */
     .controls {
@@ -723,10 +738,25 @@
     }
 
     /* Enhanced Responsive Adjustments */
-    @media (max-width: 1200px) {
+    @media (max-width: 1400px) {
         .players-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .players-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem;
+        }
+        
+        .card-header {
+            padding: 1.75rem 1.75rem 0.875rem;
+        }
+        
+        .card-body {
+            padding: 1.25rem 1.75rem 1.75rem;
         }
     }
 
@@ -741,6 +771,7 @@
         
         .players-grid {
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
         
         .player-name {
@@ -749,6 +780,11 @@
         
         .info-value {
             font-size: 1.125rem;
+        }
+        
+        .photo-container {
+            width: 90px;
+            height: 90px;
         }
     }
 
@@ -812,6 +848,7 @@
         
         .section-subtitle::after {
             width: 80px;
+            height: 3px;
         }
         
         .card-header {
@@ -845,6 +882,48 @@
             width: 1.25rem;
             height: 1.25rem;
         }
+        
+        .age-badge {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .section-subtitle {
+            font-size: 1.5rem;
+            padding-top: 20px;
+        }
+        
+        .search-input, .sort-select {
+            font-size: 0.95rem;
+        }
+        
+        .sort-container {
+            min-width: 100%;
+        }
+        
+        .sort-label {
+            font-size: 0.95rem;
+        }
+        
+        .player-name {
+            font-size: 1.35rem;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+        }
+        
+        .card-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+        }
+        
+        .position-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.65rem;
+        }
     }
 
     /* Ensure touch targets are large enough on mobile */
@@ -859,6 +938,44 @@
         
         .sort-select {
             width: 100%;
+        }
+    }
+    
+    /* Extra small devices */
+    @media (max-width: 360px) {
+        .section-subtitle {
+            font-size: 1.35rem;
+        }
+        
+        .card-header {
+            padding: 1.25rem 1.25rem 0.75rem;
+        }
+        
+        .card-body {
+            padding: 0.875rem 1.25rem 1.25rem;
+        }
+        
+        .photo-container {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .player-name {
+            font-size: 1.25rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+        }
+        
+        .info-icon {
+            width: 2rem;
+            height: 2rem;
+        }
+        
+        .info-icon svg {
+            width: 1.125rem;
+            height: 1.125rem;
         }
     }
 </style>
