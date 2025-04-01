@@ -78,9 +78,22 @@
 				'env(safe-area-inset-top)'
 			);
 		}
+        
+        // Apply navbar height to body padding
+        const navbarHeight = document.querySelector('.navbar-wrapper').offsetHeight;
+        document.body.style.paddingTop = `${navbarHeight}px`;
+        
+        // Update padding when window resizes
+        const updateBodyPadding = () => {
+            const currentNavHeight = document.querySelector('.navbar-wrapper').offsetHeight;
+            document.body.style.paddingTop = `${currentNavHeight}px`;
+        };
+        
+        window.addEventListener('resize', updateBodyPadding);
 
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', updateBodyPadding);
 		};
 	});
 </script>
@@ -120,7 +133,11 @@
 				aria-expanded={isMenuOpen}
 				on:click={toggleMenu}
 			>
-				<span class="menu-bar" class:open={isMenuOpen}></span>
+				<div class="hamburger-menu" class:open={isMenuOpen}>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
 			</button>
 
 			<div class="navbar-menu" class:open={isMenuOpen}>
@@ -182,7 +199,20 @@
 		--transition: all 0.3s ease;
 		--font-base: 1.125rem;
 		--navbar-height: 70px;
+		--navbar-height-mobile: 60px;
 		--safe-area-inset-top: 0px;
+	}
+
+	/* Apply this globally */
+	:global(body) {
+		/* This will be set dynamically in JS, but provide a fallback */
+		padding-top: var(--navbar-height);
+	}
+
+	@media (max-width: 576px) {
+		:global(body) {
+			padding-top: var(--navbar-height-mobile);
+		}
 	}
 
 	.notch-background {
@@ -265,8 +295,11 @@
 		}
 	}
 
+	/* New hamburger menu styling */
 	.menu-toggle {
-		display: block;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		width: 3rem;
 		height: 3rem;
 		background: none;
@@ -277,18 +310,30 @@
 		margin-right: -0.5rem;
 	}
 
-	.menu-bar {
-		position: relative;
+	.hamburger-menu {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 4px;
+		width: auto;
+		height: 24px;
+	}
+
+	.hamburger-menu span {
 		display: block;
-		width: 1.75rem;
-		height: 2px;
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
 		background-color: var(--primary);
-		margin: 0 auto;
 		transition: var(--transition);
 	}
 
-	.menu-bar::before,
-	.menu-bar::after {
+	.hamburger-menu.open span {
+		background-color: transparent;
+	}
+
+	.hamburger-menu.open::before,
+	.hamburger-menu.open::after {
 		content: '';
 		position: absolute;
 		width: 1.75rem;
@@ -297,23 +342,11 @@
 		transition: var(--transition);
 	}
 
-	.menu-bar::before {
-		transform: translateY(-8px);
-	}
-
-	.menu-bar::after {
-		transform: translateY(8px);
-	}
-
-	.menu-bar.open {
-		background-color: transparent;
-	}
-
-	.menu-bar.open::before {
+	.hamburger-menu.open::before {
 		transform: rotate(45deg);
 	}
 
-	.menu-bar.open::after {
+	.hamburger-menu.open::after {
 		transform: rotate(-45deg);
 	}
 
@@ -373,10 +406,12 @@
 
 	.nav-item {
 		position: relative;
+		line-height: 1;
 	}
 
 	.nav-link {
-		display: block;
+		position: relative;
+		display: inline-block;
 		font-size: 1.375rem;
 		font-weight: 600;
 		color: var(--gray-700);
@@ -393,12 +428,13 @@
 		color: var(--accent);
 	}
 
-	.nav-item.active::after {
+	/* Active indicator using pseudo-element for better control */
+	.nav-item.active .nav-link::after {
 		content: '';
 		position: absolute;
 		bottom: 0;
 		left: 0;
-		width: 2.5rem;
+		width: 100%;
 		height: 3px;
 		background-color: var(--accent);
 	}
@@ -433,10 +469,10 @@
 			padding: 0.5rem 0;
 		}
 
-		.nav-item.active::after {
-			bottom: -0.25rem;
-			width: 100%;
+		/* For desktop, adjust the indicator position */
+		.nav-item.active .nav-link::after {
 			height: 2px;
+			bottom: -2px;
 		}
 	}
 
@@ -447,6 +483,22 @@
 
 		.navbar-menu {
 			padding-top: var(--safe-area-inset-top);
+		}
+		
+		:global(body) {
+			padding-top: calc(var(--navbar-height) + var(--safe-area-inset-top));
+		}
+		
+		@media (max-width: 576px) {
+			:global(body) {
+				padding-top: calc(var(--navbar-height-mobile) + var(--safe-area-inset-top));
+			}
+		}
+	}
+
+	@media (max-width: 576px) {
+		.navbar-wrapper {
+			height: var(--navbar-height-mobile);
 		}
 	}
 
@@ -466,6 +518,13 @@
 		.logo-icon {
 			width: 2rem;
 			height: 2rem;
+		}
+	}
+	
+	/* Fix for iOS Safari 100vh issue */
+	@supports (-webkit-touch-callout: none) {
+		.navbar-menu {
+			height: -webkit-fill-available;
 		}
 	}
 </style>
