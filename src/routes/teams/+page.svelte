@@ -14,9 +14,13 @@
     let stadionCache = new Map();
     let viewportWidth;
     
-    onMount(() => {
-        loadTeams();
-    });
+    const statusMap = {
+        0: { text: 'Aktív', class: 'status-active' },
+        1: { text: 'Inaktív', class: 'status-inactive' },
+        3: { text: 'Felbomlott', class: 'status-dissolved' }
+    };
+    
+    onMount(loadTeams);
     
     function loadTeams() {
         isLoading = true;
@@ -38,11 +42,8 @@
         try {
             const stadionName = await new Promise((resolve, reject) => {
                 stadionApi.stadionIdGet(stadionId, (error, data, response) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(data.stadionNeve);
-                    }
+                    if (error) reject(error);
+                    else resolve(data.stadionNeve);
                 });
             });
             
@@ -55,18 +56,15 @@
     }
     
     function convertStatusz(id) {
-        const statusMap = {
-            0: { text: 'Aktív', class: 'status-active' },
-            1: { text: 'Inaktív', class: 'status-inactive' },
-            3: { text: 'Felbomlott', class: 'status-dissolved' }
-        };
-        
         return statusMap[id] || { text: 'Ismeretlen', class: 'status-unknown' };
     }
     
     function formatFoundingDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
+        return new Date(dateString).toLocaleDateString('hu-HU', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
     }
     
     function getFoundingYear(dateString) {
@@ -224,7 +222,6 @@
 </section>
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -256,7 +253,6 @@
         --font-base: 1.125rem;
     }
 
-    /* Base Styles */
     .teams-section {
         padding: 4rem 1rem;
         background-color: var(--gray-100);
@@ -272,7 +268,6 @@
         padding: 0 1rem;
     }
 
-    /* Section Header */
     .section-header {
         text-align: center;
         margin-bottom: 3.5rem;
@@ -302,7 +297,6 @@
         border-radius: 2px;
     }
 
-    /* Controls */
     .controls {
         display: flex;
         flex-direction: column;
@@ -406,7 +400,6 @@
         pointer-events: none;
     }
 
-    /* Loading & No Results */
     .loading, .no-results {
         display: flex;
         flex-direction: column;
@@ -441,14 +434,12 @@
         max-width: 350px;
     }
 
-    /* Teams Grid */
     .teams-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
         gap: 2.5rem;
     }
 
-    /* Team Card */
     .team-card {
         background-color: white;
         border-radius: var(--radius-lg);
@@ -599,7 +590,6 @@
         color: var(--danger);
     }
 
-    /* Enhanced Responsive Adjustments */
     @media (max-width: 1400px) {
         .teams-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -777,7 +767,6 @@
         }
     }
 
-    /* Ensure touch targets are large enough on mobile */
     @media (max-width: 768px) {
         .search-input, .sort-select {
             min-height: 3rem;
@@ -792,7 +781,6 @@
         }
     }
 
-    /* Extra small devices */
     @media (max-width: 360px) {
         .section-subtitle {
             font-size: 1.35rem;

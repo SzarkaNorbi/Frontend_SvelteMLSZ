@@ -3,17 +3,18 @@
     import { onMount } from 'svelte';
     import { fade, fly } from 'svelte/transition';
     
-    // State
     let events = [];
     let searchQuery = '';
     let sortBy = "abc";
     let isLoading = true;
     let viewportWidth;
     
-    // Load events on mount
-    onMount(() => {
-        loadEvents();
-    });
+    const statusMap = {
+        true: { text: 'Jelenleg fut', class: 'status-active' },
+        false: { text: 'Lezárult', class: 'status-inactive' }
+    };
+    
+    onMount(loadEvents);
     
     function loadEvents() {
         isLoading = true;
@@ -28,20 +29,18 @@
         });
     }
     
-    // Format date
     function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
+        return new Date(dateString).toLocaleDateString('hu-HU', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
     }
     
-    // Get status with class
     function getStatus(isActive) {
-        return isActive 
-            ? { text: 'Jelenleg fut', class: 'status-active' }
-            : { text: 'Lezárult', class: 'status-inactive' };
+        return statusMap[isActive] || statusMap[false];
     }
     
-    // Calculate progress percentage
     function calculateProgress(startDate, endDate) {
         const start = new Date(startDate).getTime();
         const end = new Date(endDate).getTime();
@@ -50,14 +49,9 @@
         if (now <= start) return 0;
         if (now >= end) return 100;
         
-        const total = end - start;
-        const elapsed = now - start;
-        const percentage = Math.round((elapsed / total) * 100);
-        
-        return percentage;
+        return Math.round(((now - start) / (end - start)) * 100);
     }
     
-    // Reactive filtered and sorted events
     $: filteredEvents = events
         .filter(event => event.liga.toLowerCase().includes(searchQuery.toLowerCase()))
         .sort((a, b) => {
@@ -183,9 +177,11 @@
                                     ></div>
                                 </div>
                                 <div class="progress-text">
-                                    {event.aktualis 
-                                        ? `Folyamatban (${calculateProgress(event.kezdesDatum, event.befejezesDatum)}%)` 
-                                        : 'Befejezve (100%)'}
+                                    {#if event.aktualis}
+                                        Folyamatban ({calculateProgress(event.kezdesDatum, event.befejezesDatum)}%)
+                                    {:else}
+                                        Befejezve (100%)
+                                    {/if}
                                 </div>
                             </div>
                         </div>
@@ -197,7 +193,6 @@
 </section>
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -230,7 +225,6 @@
         --navbar-height: 70px;
     }
 
-    /* Base Styles */
     .events-section {
         padding: 7.5rem 1rem 4rem;
         background-color: var(--gray-100);
@@ -248,7 +242,6 @@
         padding: 0 1rem;
     }
 
-    /* Section Header */
     .section-header {
         text-align: center;
         margin-bottom: 3.5rem;
@@ -288,7 +281,6 @@
         border-radius: 2px;
     }
 
-    /* Controls */
     .controls {
         display: flex;
         flex-direction: column;
@@ -392,7 +384,6 @@
         pointer-events: none;
     }
 
-    /* Loading & No Results */
     .loading, .no-results {
         display: flex;
         flex-direction: column;
@@ -427,14 +418,12 @@
         max-width: 350px;
     }
 
-    /* Events Grid */
     .events-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
         gap: 2.5rem;
     }
 
-    /* Event Card */
     .event-card {
         background-color: white;
         border-radius: var(--radius-lg);
@@ -542,7 +531,6 @@
         line-height: 1.4;
     }
 
-    /* Progress Bar */
     .event-progress {
         margin-top: 1.5rem;
     }
@@ -573,7 +561,6 @@
         text-align: right;
     }
 
-    /* Enhanced Responsive Adjustments */
     @media (max-width: 1400px) {
         .events-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -753,7 +740,6 @@
         }
     }
 
-    /* Extra small devices */
     @media (max-width: 360px) {
         .section-subtitle {
             font-size: 1.35rem;
@@ -791,7 +777,6 @@
         }
     }
 
-    /* Ensure touch targets are large enough on mobile */
     @media (max-width: 768px) {
         .search-input, .sort-select {
             min-height: 3rem;

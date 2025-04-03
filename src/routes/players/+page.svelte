@@ -5,12 +5,10 @@
     import { onMount } from 'svelte';
     import { fade, fly } from 'svelte/transition';
     
-    // API instances
     const jatekosApi = new JatekosApi();
     const nemzetisegApi = new NemzetisegApi();
     const csapatApi = new CsapatApi();
     
-    // State
     let jatekosok = [];
     let searchQuery = "";
     let sortBy = "abc";
@@ -19,10 +17,21 @@
     let csapatCache = new Map();
     let viewportWidth;
     
-    // Load players on mount
-    onMount(() => {
-        loadPlayers();
-    });
+    const positionMap = {
+        0: { text: 'Kapus', class: 'position-goalkeeper' },
+        1: { text: 'Védő', class: 'position-defender' },
+        2: { text: 'Középpályás', class: 'position-midfielder' },
+        3: { text: 'Csatár', class: 'position-forward' }
+    };
+    
+    const statusMap = {
+        0: { text: 'Aktív', class: 'status-active' },
+        1: { text: 'Inaktív', class: 'status-inactive' },
+        2: { text: 'Sérült', class: 'status-injured' },
+        3: { text: 'Visszavonult', class: 'status-retired' }
+    };
+    
+    onMount(loadPlayers);
     
     function loadPlayers() {
         isLoading = true;
@@ -36,91 +45,69 @@
         });
     }
     
-    // Get nationality name with caching
+    async function getCachedData(id, cache, fetchFn, defaultValue) {
+        if (cache.has(id)) {
+            return cache.get(id);
+        }
+        
+        try {
+            const result = await fetchFn(id);
+            cache.set(id, result);
+            return result;
+        } catch (error) {
+            console.error(`Error fetching data:`, error);
+            return defaultValue;
+        }
+    }
+    
     async function getNemzetisegName(nemzetisegId) {
-        // Return from cache if available
-        if (nemzetisegCache.has(nemzetisegId)) {
-            return nemzetisegCache.get(nemzetisegId);
-        }
-        
-        try {
-            const nemzetisegName = await new Promise((resolve, reject) => {
-                nemzetisegApi.nemzetisegIdGet(nemzetisegId, (error, data, response) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(data.nemzetisegNev);
-                    }
+        return getCachedData(
+            nemzetisegId, 
+            nemzetisegCache, 
+            async (id) => {
+                return new Promise((resolve, reject) => {
+                    nemzetisegApi.nemzetisegIdGet(id, (error, data, response) => {
+                        if (error) reject(error);
+                        else resolve(data.nemzetisegNev);
+                    });
                 });
-            });
-            
-            // Cache the result
-            nemzetisegCache.set(nemzetisegId, nemzetisegName);
-            return nemzetisegName;
-        } catch (error) {
-            console.error('Error fetching nemzetiseg:', error);
-            return 'Ismeretlen nemzetiség';
-        }
+            },
+            'Ismeretlen nemzetiség'
+        );
     }
     
-    // Get team name with caching
     async function getCsapatName(csapatId) {
-        // Return from cache if available
-        if (csapatCache.has(csapatId)) {
-            return csapatCache.get(csapatId);
-        }
-        
-        try {
-            const csapatName = await new Promise((resolve, reject) => {
-                csapatApi.apiCsapatIdGet(csapatId, (error, data, response) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(data.csapatNev);
-                    }
+        return getCachedData(
+            csapatId, 
+            csapatCache, 
+            async (id) => {
+                return new Promise((resolve, reject) => {
+                    csapatApi.apiCsapatIdGet(id, (error, data, response) => {
+                        if (error) reject(error);
+                        else resolve(data.csapatNev);
+                    });
                 });
-            });
-            
-            // Cache the result
-            csapatCache.set(csapatId, csapatName);
-            return csapatName;
-        } catch (error) {
-            console.error('Error fetching csapatok:', error);
-            return 'Ismeretlen csapat';
-        }
+            },
+            'Ismeretlen csapat'
+        );
     }
     
-    // Convert position code to text with color class
     function convertPozicio(id) {
-        const positionMap = {
-            0: { text: 'Kapus', class: 'position-goalkeeper' },
-            1: { text: 'Védő', class: 'position-defender' },
-            2: { text: 'Középpályás', class: 'position-midfielder' },
-            3: { text: 'Csatár', class: 'position-forward' }
-        };
-        
         return positionMap[id] || { text: 'Ismeretlen', class: 'position-unknown' };
     }
     
-    // Convert status code to text with color class
     function convertStatusz(id) {
-        const statusMap = {
-            0: { text: 'Aktív', class: 'status-active' },
-            1: { text: 'Inaktív', class: 'status-inactive' },
-            2: { text: 'Sérült', class: 'status-injured' },
-            3: { text: 'Visszavonult', class: 'status-retired' }
-        };
-        
         return statusMap[id] || { text: 'Ismeretlen', class: 'status-unknown' };
     }
     
-    // Format birth date
     function formatBirthDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
+        return new Date(dateString).toLocaleDateString('hu-HU', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
     }
     
-    // Calculate age from birth date
     function calculateAge(birthDate) {
         const today = new Date();
         const birth = new Date(birthDate);
@@ -134,7 +121,6 @@
         return age;
     }
     
-    // Reactive filtered and sorted players
     $: filteredPlayers = jatekosok
         .filter(jatekos => `${jatekos.vezeteknev} ${jatekos.keresztnev}`.toLowerCase().includes(searchQuery.toLowerCase()))
         .sort((a, b) => {
@@ -296,7 +282,6 @@
 </section>
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -327,21 +312,17 @@
         --transition: all 0.3s ease;
         --font-base: 1.125rem;
         --navbar-height: 70px;
-        
-        /* Position-specific colors */
         --goalkeeper: #4361ee;
         --defender: #3a0ca3;
         --midfielder: #7209b7;
         --forward: #f72585;
         
-        /* Status-specific colors */
         --active: #2a9d8f;
         --inactive: #6c757d;
         --injured: #e9c46a;
         --retired: #e76f51;
     }
 
-    /* Base Styles */
     .players-section {
         padding: 7.5rem 1rem 4rem;
         background-color: var(--gray-100);
@@ -359,7 +340,6 @@
         padding: 0 1rem;
     }
 
-    /* Section Header */
     .section-header {
         text-align: center;
         margin-bottom: 3.5rem;
@@ -399,7 +379,6 @@
         border-radius: 2px;
     }
 
-    /* Controls */
     .controls {
         display: flex;
         flex-direction: column;
@@ -503,7 +482,6 @@
         pointer-events: none;
     }
 
-    /* Loading & No Results */
     .loading, .no-results {
         display: flex;
         flex-direction: column;
@@ -538,14 +516,12 @@
         max-width: 350px;
     }
 
-    /* Players Grid */
     .players-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
         gap: 2.5rem;
     }
 
-    /* Player Card */
     .player-card {
         background-color: white;
         border-radius: var(--radius-lg);
@@ -737,7 +713,6 @@
         font-style: italic;
     }
 
-    /* Enhanced Responsive Adjustments */
     @media (max-width: 1400px) {
         .players-grid {
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -926,7 +901,6 @@
         }
     }
 
-    /* Ensure touch targets are large enough on mobile */
     @media (max-width: 768px) {
         .search-input, .sort-select {
             min-height: 3rem;
@@ -940,8 +914,7 @@
             width: 100%;
         }
     }
-    
-    /* Extra small devices */
+
     @media (max-width: 360px) {
         .section-subtitle {
             font-size: 1.35rem;

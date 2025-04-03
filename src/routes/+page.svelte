@@ -1,6 +1,6 @@
 <script>
     import { onMount, tick } from 'svelte';
-    import { fade, fly, scale } from 'svelte/transition';
+    import { fade, fly } from 'svelte/transition';
     
     import velemeny1 from '$lib/images/testimonial/velemeny.jpg';
     import quotes from '$lib/images/testimonial/qoutes.svg';
@@ -15,7 +15,7 @@
     import gallery6 from '$lib/images/gallery/g-6.jpg';
 
     const galleryImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
-    const backgroundImages = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
+    const backgroundImages = galleryImages;
 
     const testimonials = [
         {
@@ -72,204 +72,137 @@
     let touchEndX = 0;
     let viewportWidth;
     
-    function changeTestimonial(direction) {
-        if (isTestimonialTransitioning) return;
+    async function changeSlide(type, direction) {
+        const isTransitioning = type === 'testimonial' ? isTestimonialTransitioning : 
+                               type === 'about' ? isAboutTransitioning : isBackgroundTransitioning;
         
-        isTestimonialTransitioning = true;
+        if (isTransitioning) return;
         
-        if (direction === 'next') {
-            currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonials.length;
-        } else {
-            currentTestimonialIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+        if (type === 'testimonial') {
+            isTestimonialTransitioning = true;
+            stopAutoplay('testimonial');
+            
+            if (direction === 'next') {
+                currentTestimonialIndex = (currentTestimonialIndex + 1) % testimonials.length;
+            } else if (direction === 'prev') {
+                currentTestimonialIndex = (currentTestimonialIndex - 1 + testimonials.length) % testimonials.length;
+            } else if (typeof direction === 'number') {
+                currentTestimonialIndex = direction;
+            }
+            
+            setTimeout(() => {
+                isTestimonialTransitioning = false;
+                startAutoplay('testimonial');
+            }, 500);
+        } else if (type === 'about') {
+            isAboutTransitioning = true;
+            stopAutoplay('about');
+            
+            if (direction === 'next') {
+                currentAboutIndex = (currentAboutIndex + 1) % aboutSlides.length;
+            } else if (direction === 'prev') {
+                currentAboutIndex = (currentAboutIndex - 1 + aboutSlides.length) % aboutSlides.length;
+            } else if (typeof direction === 'number') {
+                currentAboutIndex = direction;
+            }
+            
+            await tick();
+            setTimeout(() => {
+                isAboutTransitioning = false;
+                startAutoplay('about');
+            }, 500);
+        } else if (type === 'background') {
+            isBackgroundTransitioning = true;
+            
+            currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
+            
+            await tick();
+            setTimeout(() => {
+                isBackgroundTransitioning = false;
+            }, 1000);
         }
-        
-        setTimeout(() => {
-            isTestimonialTransitioning = false;
-        }, 500);
     }
-    
-    async function changeAboutSlide(direction) {
-        if (isAboutTransitioning) return;
-        
-        isAboutTransitioning = true;
-        stopAboutAutoplay();
-        
-        if (direction === 'next') {
-            currentAboutIndex = (currentAboutIndex + 1) % aboutSlides.length;
-        } else {
-            currentAboutIndex = (currentAboutIndex - 1 + aboutSlides.length) % aboutSlides.length;
+
+    function startAutoplay(type) {
+        if (type === 'testimonial') {
+            stopAutoplay('testimonial');
+            testimonialAutoplayInterval = setInterval(() => changeSlide('testimonial', 'next'), 5000);
+        } else if (type === 'about') {
+            stopAutoplay('about');
+            aboutAutoplayInterval = setInterval(() => changeSlide('about', 'next'), 6000);
+        } else if (type === 'background') {
+            stopAutoplay('background');
+            backgroundAutoplayInterval = setInterval(() => changeSlide('background', 'next'), 4000);
         }
-        
-        await tick();
-        setTimeout(() => {
-            isAboutTransitioning = false;
-            startAboutAutoplay();
-        }, 500);
     }
     
-    async function changeBackgroundImage() {
-        if (isBackgroundTransitioning) return;
-        
-        isBackgroundTransitioning = true;
-        
-        currentBackgroundIndex = (currentBackgroundIndex + 1) % backgroundImages.length;
-        
-        await tick();
-        setTimeout(() => {
-            isBackgroundTransitioning = false;
-        }, 1000);
-    }
-    
-    function goToAboutSlide(index) {
-        if (isAboutTransitioning || index === currentAboutIndex) return;
-        
-        isAboutTransitioning = true;
-        stopAboutAutoplay();
-        
-        currentAboutIndex = index;
-        
-        setTimeout(() => {
-            isAboutTransitioning = false;
-            startAboutAutoplay();
-        }, 500);
-    }
-    
-    function startTestimonialAutoplay() {
-        stopTestimonialAutoplay();
-        testimonialAutoplayInterval = setInterval(() => {
-            changeTestimonial('next');
-        }, 5000);
-    }
-    
-    function stopTestimonialAutoplay() {
-        if (testimonialAutoplayInterval) {
+    function stopAutoplay(type) {
+        if (type === 'testimonial' && testimonialAutoplayInterval) {
             clearInterval(testimonialAutoplayInterval);
-        }
-    }
-    
-    function startAboutAutoplay() {
-        stopAboutAutoplay();
-        aboutAutoplayInterval = setInterval(() => {
-            changeAboutSlide('next');
-        }, 6000); 
-    }
-    
-    function stopAboutAutoplay() {
-        if (aboutAutoplayInterval) {
+        } else if (type === 'about' && aboutAutoplayInterval) {
             clearInterval(aboutAutoplayInterval);
-        }
-    }
-    
-    function startBackgroundAutoplay() {
-        stopBackgroundAutoplay();
-        backgroundAutoplayInterval = setInterval(() => {
-            changeBackgroundImage();
-        }, 4000); 
-    }
-    
-    function stopBackgroundAutoplay() {
-        if (backgroundAutoplayInterval) {
+        } else if (type === 'background' && backgroundAutoplayInterval) {
             clearInterval(backgroundAutoplayInterval);
         }
     }
-    
-    // Touch events for about carousel
-    function handleAboutTouchStart(e) {
+ 
+    function handleTouchStart(e, type) {
         touchStartX = e.touches[0].clientX;
-        stopAboutAutoplay();
+        stopAutoplay(type);
     }
     
-    function handleAboutTouchMove(e) {
+    function handleTouchMove(e) {
         touchEndX = e.touches[0].clientX;
     }
     
-    function handleAboutTouchEnd() {
+    function handleTouchEnd(type) {
         if (!touchStartX || !touchEndX) return;
         
         const diff = touchStartX - touchEndX;
-        const threshold = 50; // Minimum swipe distance
+        const threshold = 50;
         
         if (Math.abs(diff) > threshold) {
             if (diff > 0) {
-                // Swipe left, go to next slide
-                changeAboutSlide('next');
+               
+                changeSlide(type, 'next');
             } else {
-                // Swipe right, go to previous slide
-                changeAboutSlide('prev');
+               
+                changeSlide(type, 'prev');
             }
         }
         
-        // Reset touch coordinates
         touchStartX = 0;
         touchEndX = 0;
-        startAboutAutoplay();
+        startAutoplay(type);
     }
     
-    // Touch events for testimonial carousel
-    function handleTestimonialTouchStart(e) {
-        touchStartX = e.touches[0].clientX;
-        stopTestimonialAutoplay();
-    }
-    
-    function handleTestimonialTouchMove(e) {
-        touchEndX = e.touches[0].clientX;
-    }
-    
-    function handleTestimonialTouchEnd() {
-        if (!touchStartX || !touchEndX) return;
-        
-        const diff = touchStartX - touchEndX;
-        const threshold = 50; // Minimum swipe distance
-        
-        if (Math.abs(diff) > threshold) {
-            if (diff > 0) {
-                // Swipe left, go to next slide
-                changeTestimonial('next');
-            } else {
-                // Swipe right, go to previous slide
-                changeTestimonial('prev');
-            }
-        }
-        
-        // Reset touch coordinates
-        touchStartX = 0;
-        touchEndX = 0;
-        startTestimonialAutoplay();
-    }
-    
-    // Open lightbox
     function openLightbox(image) {
         activeImage = image;
         isLightboxOpen = true;
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
+        document.body.style.overflow = 'hidden';
     }
     
-    // Close lightbox
     function closeLightbox() {
         isLightboxOpen = false;
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = ''; 
     }
     
-    // Initialize on mount
     onMount(() => {
-        startTestimonialAutoplay();
-        startAboutAutoplay();
-        startBackgroundAutoplay();
+        startAutoplay('testimonial');
+        startAutoplay('about');
+        startAutoplay('background');
         
-        // Clean up on component destruction
         return () => {
-            stopTestimonialAutoplay();
-            stopAboutAutoplay();
-            stopBackgroundAutoplay();
+            stopAutoplay('testimonial');
+            stopAutoplay('about');
+            stopAutoplay('background');
         };
     });
 </script>
 
 <svelte:window bind:innerWidth={viewportWidth} />
 
-<!-- About Section -->
 <section class="about-section">
-    <!-- Full-width background container -->
     <div class="about-background-container">
         {#each backgroundImages as bgImage, i}
             {#if i === currentBackgroundIndex}
@@ -280,7 +213,6 @@
                 ></div>
             {/if}
         {/each}
-        <!-- Dark overlay for better text readability -->
         <div class="background-overlay"></div>
     </div>
     
@@ -289,16 +221,15 @@
             <p class="section-subtitle">{aboutSlides[currentAboutIndex].title}</p>
         </header>
         
-        <!-- Content Carousel -->
         <div class="about-carousel-wrapper">
             <div class="about-carousel"
-                 on:touchstart={handleAboutTouchStart}
-                 on:touchmove={handleAboutTouchMove}
-                 on:touchend={handleAboutTouchEnd}
-                 on:mouseenter={stopAboutAutoplay}
-                 on:mouseleave={startAboutAutoplay}>
+                 on:touchstart={(e) => handleTouchStart(e, 'about')}
+                 on:touchmove={handleTouchMove}
+                 on:touchend={() => handleTouchEnd('about')}
+                 on:mouseenter={() => stopAutoplay('about')}
+                 on:mouseleave={() => startAutoplay('about')}>
                 
-                <button class="carousel-arrow carousel-prev about-arrow" on:click={() => changeAboutSlide('prev')} aria-label="Previous slide">
+                <button class="carousel-arrow carousel-prev about-arrow" on:click={() => changeSlide('about', 'prev')} aria-label="Previous slide">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -308,7 +239,7 @@
                     <p>{aboutSlides[currentAboutIndex].content}</p>
                 </div>
                 
-                <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeAboutSlide('next')} aria-label="Next slide">
+                <button class="carousel-arrow carousel-next about-arrow" on:click={() => changeSlide('about', 'next')} aria-label="Next slide">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -320,7 +251,7 @@
             {#each aboutSlides as _, index}
                 <button 
                     class="indicator-dot {currentAboutIndex === index ? 'active' : ''}"
-                    on:click={() => goToAboutSlide(index)}
+                    on:click={() => changeSlide('about', index)}
                     aria-label={`About slide ${index + 1}`}
                 ></button>
             {/each}
@@ -328,7 +259,6 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
 <section class="testimonials-section">
     <div class="container">
         <header class="section-header">
@@ -338,13 +268,13 @@
         <div class="testimonials-carousel">
             <div class="testimonial-container" 
                  in:fade={{ duration: 300 }}
-                 on:touchstart={handleTestimonialTouchStart}
-                 on:touchmove={handleTestimonialTouchMove}
-                 on:touchend={handleTestimonialTouchEnd}
-                 on:mouseenter={stopTestimonialAutoplay}
-                 on:mouseleave={startTestimonialAutoplay}>
+                 on:touchstart={(e) => handleTouchStart(e, 'testimonial')}
+                 on:touchmove={handleTouchMove}
+                 on:touchend={() => handleTouchEnd('testimonial')}
+                 on:mouseenter={() => stopAutoplay('testimonial')}
+                 on:mouseleave={() => startAutoplay('testimonial')}>
                 
-                <button class="carousel-arrow carousel-prev" on:click={() => changeTestimonial('prev')} aria-label="Previous testimonial">
+                <button class="carousel-arrow carousel-prev" on:click={() => changeSlide('testimonial', 'prev')} aria-label="Previous testimonial">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
@@ -376,7 +306,7 @@
                     </div>
                 </div>
                 
-                <button class="carousel-arrow carousel-next" on:click={() => changeTestimonial('next')} aria-label="Next testimonial">
+                <button class="carousel-arrow carousel-next" on:click={() => changeSlide('testimonial', 'next')} aria-label="Next testimonial">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -387,9 +317,7 @@
                 {#each testimonials as _, index}
                     <button 
                         class="indicator-dot {currentTestimonialIndex === index ? 'active' : ''}"
-                        on:click={() => {
-                            currentTestimonialIndex = index;
-                        }}
+                        on:click={() => changeSlide('testimonial', index)}
                         aria-label={`Testimonial ${index + 1}`}
                     ></button>
                 {/each}
@@ -398,7 +326,6 @@
     </div>
 </section>
 
-<!-- Gallery Section -->
 <section class="gallery-section">
     <div class="container">
         <header class="section-header">
@@ -433,7 +360,6 @@
     </div>
 </section>
 
-<!-- Lightbox -->
 {#if isLightboxOpen}
     <div class="lightbox" 
          in:fade={{ duration: 200 }}
@@ -455,7 +381,6 @@
 {/if}
 
 <style>
-    /* Variables */
     :root {
         --primary: #1d3557;
         --primary-light: #457b9d;
@@ -488,7 +413,6 @@
         --navbar-height: 70px;
     }
 
-    /* Base Styles */
     .about-section,
     .testimonials-section,
     .gallery-section {
@@ -508,7 +432,6 @@
         padding: 0 1.25rem;
     }
 
-    /* About Section with Full-Width Background */
     .about-background-container {
         position: absolute;
         top: 0;
@@ -550,7 +473,6 @@
         justify-content: center;
     }
 
-    /* Section Header */
     .section-header {
         text-align: center;
         margin-bottom: 2rem;
@@ -592,7 +514,6 @@
         border-radius: 2px;
     }
 
-    /* About Carousel */
     .about-carousel-wrapper {
         position: relative;
         max-width: 900px;
@@ -684,7 +605,6 @@
         z-index: 10;
     }
 
-    /* Testimonials Section */
     .testimonials-section {
         padding-top: 5rem;
     }
@@ -792,7 +712,6 @@
         transform: scale(1.2);
     }
 
-    /* Gallery Section */
     .gallery-grid {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
@@ -855,7 +774,6 @@
         color: white;
     }
 
-    /* Lightbox */
     .lightbox {
         position: fixed;
         top: 0;
@@ -910,7 +828,6 @@
         border-radius: var(--radius);
     }
 
-    /* Responsive Adjustments */
     @media (min-width: 576px) {
         .section-subtitle {
             font-size: 2.5rem;
@@ -1060,7 +977,6 @@
         }
     }
 
-    /* Small phone optimizations */
     @media (max-width: 360px) {
         .section-subtitle {
             font-size: 1.5rem;

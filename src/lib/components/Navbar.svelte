@@ -19,12 +19,7 @@
 
 	function toggleMenu() {
 		isMenuOpen = !isMenuOpen;
-
-		if (isMenuOpen) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
+		document.body.style.overflow = isMenuOpen ? 'hidden' : '';
 	}
 
 	function closeMenu() {
@@ -36,15 +31,11 @@
 
 	function handleScroll() {
 		const currentScrollY = window.scrollY;
-
 		isScrollingUp = currentScrollY < lastScrollY;
-
 		scrolled = currentScrollY > 50;
-
 		lastScrollY = currentScrollY;
 	}
 
-	// Check if device has a notch
 	function hasNotch() {
 		const ratio = window.devicePixelRatio || 1;
 		const screen = {
@@ -52,18 +43,12 @@
 			height: window.screen.height * ratio
 		};
 		
-		// Common iPhone models with notch
 		return (
-			(screen.width === 1125 && screen.height === 2436) ||
-			
-			(screen.width === 828 && screen.height === 1792) ||
-
-			(screen.width === 1242 && screen.height === 2688) ||
-			
-			(screen.width === 1170 && screen.height === 2532) ||
-			
-			(screen.width === 1284 && screen.height === 2778) ||
-			
+			(screen.width === 1125 && screen.height === 2436) || 
+			(screen.width === 828 && screen.height === 1792) ||  
+			(screen.width === 1242 && screen.height === 2688) || 
+			(screen.width === 1170 && screen.height === 2532) || 
+			(screen.width === 1284 && screen.height === 2778) || 
 			(CSS.supports('padding-top: env(safe-area-inset-top)') && 
 			 getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top') !== '')
 		);
@@ -79,15 +64,12 @@
 			);
 		}
         
-        // Apply navbar height to body padding
-        const navbarHeight = document.querySelector('.navbar-wrapper').offsetHeight;
-        document.body.style.paddingTop = `${navbarHeight}px`;
-        
-        // Update padding when window resizes
         const updateBodyPadding = () => {
-            const currentNavHeight = document.querySelector('.navbar-wrapper').offsetHeight;
-            document.body.style.paddingTop = `${currentNavHeight}px`;
+            const navbarHeight = document.querySelector('.navbar-wrapper').offsetHeight;
+            document.body.style.paddingTop = `${navbarHeight}px`;
         };
+        
+        updateBodyPadding();
         
         window.addEventListener('resize', updateBodyPadding);
 
@@ -203,9 +185,7 @@
 		--safe-area-inset-top: 0px;
 	}
 
-	/* Apply this globally */
 	:global(body) {
-		/* This will be set dynamically in JS, but provide a fallback */
 		padding-top: var(--navbar-height);
 	}
 
@@ -295,7 +275,6 @@
 		}
 	}
 
-	/* New hamburger menu styling */
 	.menu-toggle {
 		display: flex;
 		align-items: center;
@@ -428,7 +407,6 @@
 		color: var(--accent);
 	}
 
-	/* Active indicator using pseudo-element for better control */
 	.nav-item.active .nav-link::after {
 		content: '';
 		position: absolute;
@@ -469,7 +447,6 @@
 			padding: 0.5rem 0;
 		}
 
-		/* For desktop, adjust the indicator position */
 		.nav-item.active .nav-link::after {
 			height: 2px;
 			bottom: -2px;
@@ -521,7 +498,6 @@
 		}
 	}
 	
-	/* Fix for iOS Safari 100vh issue */
 	@supports (-webkit-touch-callout: none) {
 		.navbar-menu {
 			height: -webkit-fill-available;

@@ -3,7 +3,6 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { LogIn, User, Lock, AlertCircle, Home } from 'lucide-svelte';
-    import logo from '$lib/images/logo.png';
     import AuthApi from "../../../generated-client/src/api/AuthApi.js";
 
     let email = '';
@@ -25,27 +24,16 @@
         isLoading = true;
         errorMessage = '';
         
-        const loginModel = {
-            email,
-            password
-        };
-        
         try {
-            loginInstance.apiAuthLoginPost({ loginModel }, (error, data, response) => {
+            loginInstance.apiAuthLoginPost({ loginModel: { email, password } }, (error, data, response) => {
                 if (error) {
                     console.error("Login error:", error);
                     errorMessage = "Hibás e-mail vagy jelszó!";
                     isLoading = false;
                 } else {
                     console.log("Login successful");
-                   
                     localStorage.setItem("AuthToken", JSON.parse(response.text).token);
-                    
-                    if (typeof goto === 'function') {
-                        goto('/admin/surface');
-                    } else {
-                        window.location.href = "/admin/surface";
-                    }
+                    navigateTo('/admin/surface');
                 }
             });
         } catch (error) {
@@ -59,12 +47,16 @@
         showPassword = !showPassword;
     }
     
-    function navigateToHome() {
+    function navigateTo(path) {
         if (typeof goto === 'function') {
-            goto('/');
+            goto(path);
         } else {
-            window.location.href = "/";
+            window.location.href = path;
         }
+    }
+    
+    function navigateToHome() {
+        navigateTo('/');
     }
     
     onMount(() => {
@@ -357,22 +349,6 @@
     
     .password-toggle:hover {
         color: var(--primary);
-    }
-    
-    .checkbox-group {
-        margin-top: -0.5rem;
-    }
-    
-    .checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-    }
-    
-    .checkbox-label {
-        font-size: 0.95rem;
-        color: var(--gray-700);
     }
     
     .submit-button {
